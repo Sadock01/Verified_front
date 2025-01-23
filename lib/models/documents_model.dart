@@ -5,24 +5,21 @@ class DocumentsModel extends Equatable {
     int? id,
     required String identifier,
     required String descriptionDocument,
-    int? typeId,
-    int? userId,
+    required int? typeId,
   })  : _id = id,
         _identifier = identifier,
         _descriptionDocument = descriptionDocument,
-        _typeId = typeId,
-        _userId = userId;
+        _typeId = typeId;
+
   final int? _id;
   final String _identifier;
   final String _descriptionDocument;
   final int? _typeId;
-  final int? _userId;
 
   int? get id => _id;
   String get identifier => _identifier;
   String get descriptionDocument => _descriptionDocument;
   int? get typeId => _typeId;
-  int? get userId => _userId;
 
   factory DocumentsModel.fromJson(Map<String, dynamic> json) {
     return DocumentsModel(
@@ -30,7 +27,6 @@ class DocumentsModel extends Equatable {
       identifier: json['identifier'],
       descriptionDocument: json['description'],
       typeId: json['type_id'],
-      userId: json['user_id'],
     );
   }
 
@@ -40,7 +36,6 @@ class DocumentsModel extends Equatable {
       identifier: map['identifier'],
       descriptionDocument: map['descriptionDocument'],
       typeId: map['typeId'],
-      userId: map['userId'],
     );
   }
 
@@ -50,7 +45,14 @@ class DocumentsModel extends Equatable {
       "identifier": _identifier,
       "descriptionDocument": _descriptionDocument,
       "typeId": _typeId,
-      "userId": _userId
+    };
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'identifier': _identifier,
+      'description': _descriptionDocument,
+      'type_id': _typeId,
     };
   }
 
@@ -59,14 +61,12 @@ class DocumentsModel extends Equatable {
     String? identifier,
     String? descriptionDocument,
     int? typeId,
-    int? userId,
   }) {
     return DocumentsModel(
       id: id ?? _id,
       identifier: identifier ?? _identifier,
       descriptionDocument: descriptionDocument ?? _descriptionDocument,
       typeId: typeId ?? _typeId,
-      userId: userId ?? _userId,
     );
   }
 
@@ -77,7 +77,6 @@ class DocumentsModel extends Equatable {
       _identifier,
       descriptionDocument,
       typeId,
-      userId,
     ];
   }
 }

@@ -9,19 +9,51 @@ class DocumentCubit extends Cubit<DocumentState> {
     required this.documentRepository,
   }) : super(DocumentState.initial()) {}
 
-  Future<void> getAllDocument() async {
+  Future<void> getAllDocument(int page) async {
     try {
       emit(state.copyWith(
           documentStatus: DocumentStatus.loading, errorMessage: ""));
       final List<DocumentsModel> documents =
-          await documentRepository.getAllDocument(1);
+          await documentRepository.getAllDocument(page);
+            // final int totalPages = response['last_page'];
       emit(state.copyWith(
           documentStatus: DocumentStatus.loaded,
-          listDocuments: documents,
+          listDocuments: documents,currentPage: page,totalPage: 10 ,
           errorMessage: ""));
     } catch (e) {
       emit(state.copyWith(
           errorMessage: e.toString(), documentStatus: DocumentStatus.error));
     }
   }
+
+  Future <void> addDocument(DocumentsModel documentsModel) async {
+    try {
+      emit(state.copyWith(
+          documentStatus: DocumentStatus.loading, errorMessage: ""));
+      await documentRepository.addDocument(documentsModel);
+      emit(state.copyWith(
+          documentStatus: DocumentStatus.loaded, errorMessage: ""));
+    } catch (e) {
+      emit(state.copyWith(
+          errorMessage: e.toString(), documentStatus: DocumentStatus.error));
+    }
+  }
+
+  Future <void> updateDocument(DocumentsModel documentsModel) async {
+    try {
+      emit(state.copyWith(
+          documentStatus: DocumentStatus.loading ,errorMessage: ""));
+      await documentRepository.updateDocument(documentsModel);
+      emit(state.copyWith(
+          documentStatus: DocumentStatus.loaded, errorMessage: ""));
+    } catch (e) {
+      emit(state.copyWith(
+          errorMessage: e.toString(), documentStatus: DocumentStatus.error));
+    }
+  }
+
+  // Future<void> showDocument(DocumentsModel documentsModel) async {
+  //   emit(state.copyWith(
+  //       documentStatus: DocumentStatus.loaded, selectedDocument: documentsModel));
+  // }
 }

@@ -1,5 +1,10 @@
 import 'package:doc_authentificator/const/const.dart';
+import 'package:doc_authentificator/cubits/documents/document_cubit.dart';
+import 'package:doc_authentificator/cubits/documents/document_state.dart';
+
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 
 class ListDocumentScreen extends StatefulWidget {
   const ListDocumentScreen({super.key});
@@ -11,65 +16,149 @@ class ListDocumentScreen extends StatefulWidget {
 class _ListDocumentScreenState extends State<ListDocumentScreen> {
   @override
   Widget build(BuildContext context) {
-    return Column(children: [
-      Container(
-        margin: EdgeInsets.symmetric(vertical: 10, horizontal: 10),
-        width: Const.screenWidth(context),
-        height: Const.screenHeight(context) * 0.2,
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(25),
-          color: Colors.white,
-          boxShadow: [
-            BoxShadow(
-              color: Colors.grey.withValues(alpha: 0.2), // Couleur de l'ombre
-              spreadRadius: 10, // Étalement de l'ombre
-              blurRadius: 10, // Flou de l'ombre
-              offset:
-                  Offset(0, 3), // Décalage horizontal et vertical de l'ombre
+    return BlocBuilder<DocumentCubit, DocumentState>(builder: (context, state) {
+      return Column(children: [
+        SingleChildScrollView(
+          child: Expanded(
+            child: Container(
+              margin: EdgeInsets.symmetric(vertical: 10, horizontal: 10),
+              width: Const.screenWidth(context),
+              height: Const.screenHeight(context) * 0.2,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(25),
+                color: Colors.white,
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.grey
+                        .withValues(alpha: 0.2), // Couleur de l'ombre
+                    spreadRadius: 10, // Étalement de l'ombre
+                    blurRadius: 10, // Flou de l'ombre
+                    offset: Offset(
+                        0, 3), // Décalage horizontal et vertical de l'ombre
+                  ),
+                ],
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  SizedBox(width: 5),
+                  OutlinedButton(
+                    style: OutlinedButton.styleFrom(
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(5)),
+                      side: BorderSide(
+                          color: Theme.of(context).colorScheme.primary),
+                    ),
+                    onPressed: () {
+                      context.go('document/nouveau_document');
+                    },
+                    child: Text(
+                      "Nouveau Document +",
+                      style: Theme.of(context).textTheme.displayMedium,
+                    ),
+                  )
+                ],
+              ),
             ),
-          ],
+          ),
         ),
-      ),
-      SizedBox(width: 10),
-      Container(
-        margin: EdgeInsets.symmetric(horizontal: 10),
-        width: Const.screenWidth(context),
-        decoration: BoxDecoration(
-            borderRadius: BorderRadius.only(
-                topLeft: Radius.circular(15), topRight: Radius.circular(15)),
-            color: Colors.white),
-        child: DataTable(
-          headingRowHeight: 30,
-          columns: [
-            DataColumn(label: Text("Id")),
-            DataColumn(label: Text("Name")),
-            DataColumn(label: Text("Code")),
-            DataColumn(label: Text("Quantity")),
-            DataColumn(label: Text("Amount")),
-          ],
-          rows: [
-            DataRow(
-              cells: [
-                DataCell(
-                  Text('1'),
+        SizedBox(width: 10),
+        if (state.documentStatus == DocumentStatus.loading)
+          const Center(
+            child: CircularProgressIndicator(
+              strokeWidth: 3.0,
+            ),
+          )
+        else if (state.documentStatus == DocumentStatus.error)
+          Center(
+            child: Text(
+              state.errorMessage,
+              style: Theme.of(context).textTheme.labelMedium,
+            ),
+          )
+        else if (state.documentStatus == DocumentStatus.loaded)
+          Container(
+            margin: const EdgeInsets.symmetric(horizontal: 10),
+            width: Const.screenWidth(context),
+            decoration: const BoxDecoration(
+              borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(15),
+                topRight: Radius.circular(15),
+              ),
+              color: Colors.white,
+            ),
+            child: DataTable(
+              headingRowHeight: 30,
+              columns: [
+                DataColumn(
+                  label: Text(
+                    "Identifiant",
+                    style: Theme.of(context).textTheme.displayMedium,
+                  ),
                 ),
-                DataCell(
-                  Text('Janelle'),
+                DataColumn(
+                  label: Text(
+                    "Description",
+                    style: Theme.of(context).textTheme.displayMedium,
+                  ),
                 ),
-                DataCell(
-                  Text('234567'),
+                DataColumn(
+                  label: Text(
+                    "Type",
+                    style: Theme.of(context).textTheme.displayMedium,
+                  ),
                 ),
-                DataCell(
-                  Text('3'),
-                ),
-                DataCell(
-                  Text('1547'),
+                DataColumn(
+                  label: Text(
+                    "Action",
+                    style: Theme.of(context).textTheme.displayMedium,
+                  ),
                 ),
               ],
-            )
-          ],
-        ),
-      )
-    ]);
+              rows: state.listDocuments
+                  .map((document) => DataRow(
+                        cells: [
+                          DataCell(
+                            Text(document.identifier.toString()),
+                          ),
+                          DataCell(
+                            Text(document.descriptionDocument),
+                          ),
+                          DataCell(
+                            Text(document.typeId.toString()),
+                          ),
+                          DataCell(ElevatedButton(
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor:
+                                  Theme.of(context).colorScheme.primary,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(5),
+                              ),
+                            ),
+                            onPressed: () {},
+                            child: Text(
+                              "Modifier",
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .labelMedium!
+                                  .copyWith(
+                                    color: Colors.white,
+                                  ),
+                            ),
+                          )),
+                        ],
+                      ))
+                  .toList(),
+            ),
+          )
+        else
+          Center(
+            child: Text(
+              "Erreur inattendue",
+              style: Theme.of(context).textTheme.labelLarge,
+            ),
+          )
+      ]);
+    });
   }
 }

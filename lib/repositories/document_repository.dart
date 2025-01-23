@@ -15,4 +15,26 @@ class DocumentRepository {
       throw Exception("Erreur lors de la récupération des documents");
     }
   }
+
+  Future<void> addDocument(DocumentsModel documentsModel) async {
+    try {
+      log("Appel au service pour ajouter un document");
+      await DocumentService.addDocument(documentsModel);
+      log("Document ajouté");
+    } catch (e) {
+      log("Erreur dans DocumentRepository: $e");
+      throw Exception("Erreur lors de l'ajout du document");
+    }
+  }
+
+  Future<void> updateDocument(DocumentsModel documentsModel) async {
+    try {
+      log("Appel au service pour mettre à jour un document");
+      await DocumentService.updateDocument(documentsModel);
+      log("Document mis à jour");
+    } catch (e) {
+      log("Erreur dans DocumentRepository: $e");
+      throw Exception("Erreur lors de la mise à jour du document");
+    }
+  }
 }

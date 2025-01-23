@@ -3,6 +3,7 @@ import 'package:doc_authentificator/cubits/switch_page/switch_page_state.dart';
 import 'package:doc_authentificator/pages/screens/Rapports_screen.dart';
 import 'package:doc_authentificator/pages/screens/collaborateur_screen.dart';
 import 'package:doc_authentificator/pages/screens/list_document_screen.dart';
+import 'package:doc_authentificator/pages/screens/new_document_screen.dart';
 import 'package:doc_authentificator/widgets/appbar_dashboard.dart';
 import 'package:doc_authentificator/widgets/drawer_dashboard.dart';
 import 'package:flutter/material.dart';
@@ -33,8 +34,8 @@ class _DashboardHomeScreenState extends State<DashboardHomeScreen> {
               } else if (state.selectedPage == 1) {
                 content = ListDocumentScreen();
               } else if (state.selectedPage == 2) {
-                content = RapportsScreen();
-              } else if (state.selectedPage == 1) {
+                content = NewDocumentScreen();
+              } else if (state.selectedPage == 3) {
                 content = CollaborateurScreen();
               }
               return content;

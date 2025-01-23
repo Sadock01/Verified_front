@@ -56,6 +56,53 @@ class DrawerDashboard extends StatelessWidget {
                 child: TextButton(
                   onPressed: () {
                     context.read<SwitchPageCubit>().switchPage(1);
+                    // ListView.builder(itemBuilder: (context, index) {
+                    //   return Container(
+                    //     margin: EdgeInsets.symmetric(vertical: 10, horizontal: 10),
+                    //     width: Const.screenWidth(context),
+                    //     height: Const.screenHeight(context) * 0.2,
+                    //     decoration: BoxDecoration(
+                    //       borderRadius: BorderRadius.circular(25),
+                    //       color: Colors.white,
+                    //       boxShadow: [
+                    //         BoxShadow(
+                    //           color: Colors.grey
+                    //               .withValues(alpha: 0.2), // Couleur de l'ombre
+                    //           spreadRadius: 10, // Étalement de l'ombre
+                    //           blurRadius: 10, // Flou de l'ombre
+                    //           offset: Offset(
+                    //               0, 3), // Décalage horizontal et vertical de l'ombre
+                    //         ),
+                    //       ],
+                    //     ),
+                    //     child: Column(
+                    //       children: [
+                    //         InkWell(
+                    //           onTap: () {
+                    //             context.read<SwitchPageCubit>().switchPage(1);
+                    //           },
+                    //           child: Container(
+                    //             padding: EdgeInsets.all(10),
+                    //             decoration: BoxDecoration(
+                    //                 color: Theme.of(context).colorScheme.primary,
+                    //                 borderRadius: BorderRadius.circular(5)),
+                    //             child: Text(
+                    //               'Ajouter un document',
+                    //               style: Theme.of(context).textTheme.displayMedium,
+                    //             ),
+                    //           ),
+                    //         ),
+                    //         SizedBox(
+                    //           height: 10,
+                    //         ),
+                    //         Text(
+                    //           'Liste des documents',
+                    //           style: Theme.of(context).textTheme.displayMedium,
+                    //         ),
+                    //       ],
+                    //     ),
+                    //   );
+                    // });
                   },
                   child: Text(
                     'Documents',
@@ -113,7 +160,15 @@ class DrawerDashboard extends StatelessWidget {
                   },
                   child: Text(
                     'Collaborateurs',
-                    style: Theme.of(context).textTheme.displayMedium,
+                    style: Theme.of(context).textTheme.displayMedium!.copyWith(
+                          color: context
+                                      .read<SwitchPageCubit>()
+                                      .state
+                                      .selectedPage ==
+                                  3
+                              ? Colors.white
+                              : Colors.black,
+                        ),
                   ),
                 ),
               ),

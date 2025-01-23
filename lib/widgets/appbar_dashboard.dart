@@ -45,7 +45,10 @@ class AppbarDashboard extends StatelessWidget {
                         children: [
                           Icon(Icons.exit_to_app),
                           SizedBox(width: 8),
-                          Text('Déconnexion'),
+                          Text(
+                            'Déconnexion',
+                            style: Theme.of(context).textTheme.labelSmall,
+                          ),
                         ],
                       ),
                     ),
@@ -55,7 +58,8 @@ class AppbarDashboard extends StatelessWidget {
                         children: [
                           Icon(Icons.settings),
                           SizedBox(width: 8),
-                          Text('Configuration'),
+                          Text('Configuration',
+                              style: Theme.of(context).textTheme.labelSmall),
                         ],
                       ),
                     ),

@@ -1,7 +1,17 @@
+import 'package:doc_authentificator/cubits/documents/document_cubit.dart';
 import 'package:doc_authentificator/cubits/switch_page/switch_page_cubit.dart';
+import 'package:doc_authentificator/cubits/types/type_doc_cubit.dart';
 import 'package:doc_authentificator/pages/dashboard_home_screen.dart';
+import 'package:doc_authentificator/pages/screens/Rapports_screen.dart';
+import 'package:doc_authentificator/pages/screens/collaborateur_screen.dart';
+import 'package:doc_authentificator/pages/screens/list_document_screen.dart';
+import 'package:doc_authentificator/pages/screens/new_document_screen.dart';
+import 'package:doc_authentificator/repositories/document_repository.dart';
+import 'package:doc_authentificator/repositories/type_doc_repository.dart';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 void main() async {
@@ -9,9 +19,35 @@ void main() async {
   runApp(const MyApp());
 }
 
+final GoRouter _router = GoRouter(routes: [
+  GoRoute(
+    path: '/',
+    builder: (BuildContext context, GoRouterState state) =>
+        DashboardHomeScreen(),
+  ),
+  GoRoute(
+    path: 'document/List_document',
+    builder: (BuildContext context, GoRouterState state) =>
+        ListDocumentScreen(),
+  ),
+  GoRoute(
+    path: 'document/nouveau_document',
+    builder: (BuildContext context, GoRouterState state) => NewDocumentScreen(),
+  ),
+  GoRoute(
+    path: 'rapports',
+    builder: (BuildContext context, GoRouterState state) => RapportsScreen(),
+  ),
+  GoRoute(
+    path: 'collaborateurs',
+    builder: (BuildContext context, GoRouterState state) =>
+        CollaborateurScreen(),
+  ),
+]);
+
 var kColorScheme = ColorScheme.fromSeed(
-  seedColor: const Color(0xFF00FFEF),
-  primary: const Color(0xFF00FFEF),
+  seedColor: const Color.fromARGB(255, 18, 40, 149),
+  primary: const Color.fromARGB(255, 18, 40, 149),
 );
 
 class MyApp extends StatelessWidget {
@@ -21,14 +57,41 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MultiRepositoryProvider(
-      providers: [],
+      providers: [
+        RepositoryProvider<DocumentRepository>(
+          create: (context) => DocumentRepository(),
+        ),
+        RepositoryProvider<TypeDocRepository>(
+          create: (context) => TypeDocRepository(),
+        )
+      ],
       child: MultiBlocProvider(
-          providers: [],
+          providers: [
+            BlocProvider<SwitchPageCubit>(
+              create: (context) => SwitchPageCubit(),
+              child: DashboardHomeScreen(),
+            ),
+            // BlocProvider(
+            //   create: (context) => DocumentCubit(
+            //     documentRepository: context.read<DocumentRepository>(),
+            //   ),
+            // ),
+            BlocProvider<TypeDocCubit>(
+                create: (context) => TypeDocCubit(
+                      typeDocRepository: context.read<TypeDocRepository>(),
+                    )..getAllType(1)),
+            BlocProvider<DocumentCubit>(
+              create: (context) => DocumentCubit(
+                documentRepository: context.read<DocumentRepository>(),
+              )..getAllDocument(1),
+            ),
+          ],
           child: Builder(builder: (context) {
             WidgetsBinding.instance.addPostFrameCallback((_) {});
-            return MaterialApp(
+            return MaterialApp.router(
               debugShowCheckedModeBanner: false,
               title: 'Flutter Demo',
+              routerConfig: _router,
               theme: ThemeData().copyWith(
                 appBarTheme: const AppBarTheme(
                   backgroundColor: Color(0xFFFCFCFC),
@@ -66,9 +129,6 @@ class MyApp extends StatelessWidget {
                   ),
                 ),
               ),
-              home: BlocProvider(
-                  create: (context) => SwitchPageCubit(),
-                  child: DashboardHomeScreen()),
             );
           })),
     );

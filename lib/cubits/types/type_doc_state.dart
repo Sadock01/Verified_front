@@ -1,34 +1,35 @@
-import 'package:doc_authentificator/models/documents_model.dart';
+
+import 'package:doc_authentificator/models/type_doc_model.dart';
 import 'package:equatable/equatable.dart';
 
-enum DocumentStatus {
+enum TypeStatus {
   initial,
   loading,
   loaded,
   error,
 }
 
-class DocumentState extends Equatable {
-  final DocumentStatus documentStatus;
-  final List<DocumentsModel> listDocuments;
+class TypeDocState extends Equatable {
+  final TypeStatus typeStatus;
+  final List<TypeDocModel> listType;
   // final int currentPage;
   // final int totalPage;
   final String errorMessage;
   // int? offset;
   // final String? searchKey;
-  const DocumentState({
-    required this.documentStatus,
-    required this.listDocuments,
+  const TypeDocState({
+    required this.typeStatus,
+    required this.listType,
     required this.errorMessage,
     // required this.currentPage,
     // required this.totalPage,
     // this.searchKey,
   });
 
-  factory DocumentState.initial() {
-    return DocumentState(
-      documentStatus: DocumentStatus.initial,
-      listDocuments: [],
+  factory TypeDocState.initial() {
+    return TypeDocState(
+      typeStatus: TypeStatus.initial,
+      listType: [],
       // currentPage: 1,
       // totalPage: 1,
       errorMessage: "",
@@ -36,18 +37,18 @@ class DocumentState extends Equatable {
     );
   }
 
-  DocumentState copyWith({
-    DocumentStatus? documentStatus,
-    List<DocumentsModel>? listDocuments,
+  TypeDocState copyWith({
+    TypeStatus? typeStatus,
+    List<TypeDocModel>? listType,
     int? currentPage,
     int? totalPage,
     String? errorMessage,
     
     // String? searchKey,
   }) {
-    return DocumentState(
-      documentStatus: documentStatus ?? this.documentStatus,
-      listDocuments: listDocuments ?? this.listDocuments,
+    return TypeDocState(
+      typeStatus: typeStatus ?? this.typeStatus,
+      listType: listType ?? this.listType,
       errorMessage: errorMessage ?? this.errorMessage,
       // currentPage: currentPage ?? this.currentPage,
       // totalPage: totalPage ?? this.totalPage,
@@ -57,8 +58,8 @@ class DocumentState extends Equatable {
 
   @override
   List<Object?> get props => [
-        documentStatus,
-        listDocuments,
+        typeStatus,
+        listType,
         // currentPage,
         // totalPage,
         errorMessage,
