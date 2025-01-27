@@ -11,6 +11,7 @@ enum DocumentStatus {
 class DocumentState extends Equatable {
   final DocumentStatus documentStatus;
   final List<DocumentsModel> listDocuments;
+  final String apiResponse;
   // final int currentPage;
   // final int totalPage;
   final String errorMessage;
@@ -20,6 +21,7 @@ class DocumentState extends Equatable {
     required this.documentStatus,
     required this.listDocuments,
     required this.errorMessage,
+    required this.apiResponse,
     // required this.currentPage,
     // required this.totalPage,
     // this.searchKey,
@@ -31,23 +33,25 @@ class DocumentState extends Equatable {
       listDocuments: [],
       // currentPage: 1,
       // totalPage: 1,
-      errorMessage: "",
-      
+      errorMessage: "", 
+      apiResponse: '',
     );
   }
 
   DocumentState copyWith({
     DocumentStatus? documentStatus,
     List<DocumentsModel>? listDocuments,
-    int? currentPage,
-    int? totalPage,
+    String? apiresponse,
+    // int? currentPage,
+    // int? totalPage,
     String? errorMessage,
-    
+
     // String? searchKey,
   }) {
     return DocumentState(
       documentStatus: documentStatus ?? this.documentStatus,
       listDocuments: listDocuments ?? this.listDocuments,
+      apiResponse: apiresponse ?? this.apiResponse,
       errorMessage: errorMessage ?? this.errorMessage,
       // currentPage: currentPage ?? this.currentPage,
       // totalPage: totalPage ?? this.totalPage,

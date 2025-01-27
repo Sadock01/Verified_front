@@ -29,9 +29,14 @@ class AppbarDashboard extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
             Container(
-                // decoration:
-                //     BoxDecoration(image: DecorationImage(image: AssetImage(''))),
-                ),
+              margin: EdgeInsets.only(left: 5),
+              width: Const.screenWidth(context) * 0.1,
+              height: 35,
+              decoration: BoxDecoration(
+                  image: DecorationImage(
+                      image:
+                          AssetImage('assets/images/Verified_original.png'))),
+            ),
             Spacer(),
             InkWell(
               onTap: () {
@@ -66,35 +71,27 @@ class AppbarDashboard extends StatelessWidget {
                   ],
                 );
               },
-              child: Container(
-                margin: EdgeInsets.symmetric(horizontal: 8),
-                width: Const.screenWidth(context) * 0.1,
-                height: 20,
-                decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(15),
-                    color: Colors.grey.withAlpha(15)),
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    // Container(
-                    //   width: 50,
-                    //   height: 50,
-                    //   decoration: BoxDecoration(
-                    //       shape: BoxShape.circle,
-                    //       image: DecorationImage(
-                    //           fit: BoxFit.cover,
-                    //           image: AssetImage(
-                    //               'assets/images/profile_admin.jpg'))),
-                    // ),
-                    SizedBox(width: 2),
-                    Text(
-                      "John Doe",
-                      style: TextStyle(fontSize: 12),
-                    ),
-                    SizedBox(width: 10),
-                    Icon(Icons.arrow_drop_down),
-                  ],
-                ),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Container(
+                    width: 50,
+                    height: 40,
+                    decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        image: DecorationImage(
+                            fit: BoxFit.contain,
+                            image:
+                                AssetImage('assets/images/profile_admin.jpg'))),
+                  ),
+                  SizedBox(width: 2),
+                  Text(
+                    "John Doe",
+                    style: TextStyle(fontSize: 12),
+                  ),
+                  SizedBox(width: 10),
+                  Icon(Icons.arrow_drop_down),
+                ],
               ),
             )
           ],

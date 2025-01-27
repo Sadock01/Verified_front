@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:doc_authentificator/cubits/documents/document_state.dart';
 import 'package:doc_authentificator/models/documents_model.dart';
 import 'package:doc_authentificator/repositories/document_repository.dart';
@@ -9,16 +11,16 @@ class DocumentCubit extends Cubit<DocumentState> {
     required this.documentRepository,
   }) : super(DocumentState.initial()) {}
 
-  Future<void> getAllDocument(int page) async {
+  Future<void> getAllDocument() async {
     try {
       emit(state.copyWith(
           documentStatus: DocumentStatus.loading, errorMessage: ""));
       final List<DocumentsModel> documents =
-          await documentRepository.getAllDocument(page);
-            // final int totalPages = response['last_page'];
+          await documentRepository.getAllDocument();
+      // final int totalPages = response['last_page'];
       emit(state.copyWith(
           documentStatus: DocumentStatus.loaded,
-          listDocuments: documents,currentPage: page,totalPage: 10 ,
+          listDocuments: documents,
           errorMessage: ""));
     } catch (e) {
       emit(state.copyWith(
@@ -26,7 +28,7 @@ class DocumentCubit extends Cubit<DocumentState> {
     }
   }
 
-  Future <void> addDocument(DocumentsModel documentsModel) async {
+  Future<void> addDocument(DocumentsModel documentsModel) async {
     try {
       emit(state.copyWith(
           documentStatus: DocumentStatus.loading, errorMessage: ""));
@@ -39,13 +41,37 @@ class DocumentCubit extends Cubit<DocumentState> {
     }
   }
 
-  Future <void> updateDocument(DocumentsModel documentsModel) async {
+  Future<void> updateDocument(DocumentsModel documentsModel) async {
     try {
       emit(state.copyWith(
-          documentStatus: DocumentStatus.loading ,errorMessage: ""));
+          documentStatus: DocumentStatus.loading, errorMessage: ""));
       await documentRepository.updateDocument(documentsModel);
       emit(state.copyWith(
           documentStatus: DocumentStatus.loaded, errorMessage: ""));
+    } catch (e) {
+      emit(state.copyWith(
+          errorMessage: e.toString(), documentStatus: DocumentStatus.error));
+    }
+  }
+
+  Future<void> verifyDocument(String identifier) async {
+    try {
+      log("Il fait appel au service pour récupérer la data");
+      emit(state.copyWith(
+          documentStatus: DocumentStatus.loading, errorMessage: ""));
+      final response = await documentRepository.verifyDocument(identifier);
+
+      if (response['success']) {
+        emit(state.copyWith(
+            documentStatus: DocumentStatus.loaded,
+            apiresponse: response['data'].toString(),
+            errorMessage: ""));
+      } else {
+        emit(state.copyWith(
+          documentStatus: DocumentStatus.error,
+          errorMessage: response['message'],
+        ));
+      }
     } catch (e) {
       emit(state.copyWith(
           errorMessage: e.toString(), documentStatus: DocumentStatus.error));

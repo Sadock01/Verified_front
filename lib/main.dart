@@ -6,6 +6,7 @@ import 'package:doc_authentificator/pages/screens/Rapports_screen.dart';
 import 'package:doc_authentificator/pages/screens/collaborateur_screen.dart';
 import 'package:doc_authentificator/pages/screens/list_document_screen.dart';
 import 'package:doc_authentificator/pages/screens/new_document_screen.dart';
+import 'package:doc_authentificator/pages/user_verify_page.dart';
 import 'package:doc_authentificator/repositories/document_repository.dart';
 import 'package:doc_authentificator/repositories/type_doc_repository.dart';
 
@@ -13,35 +14,43 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:url_strategy/url_strategy.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  setPathUrlStrategy();
   runApp(const MyApp());
 }
 
-final GoRouter _router = GoRouter(routes: [
+final GoRouter _router = GoRouter(
+  initialLocation: '/', 
+  routes: [
   GoRoute(
     path: '/',
     builder: (BuildContext context, GoRouterState state) =>
         DashboardHomeScreen(),
   ),
   GoRoute(
-    path: 'document/List_document',
+    path: '/document/List_document',
     builder: (BuildContext context, GoRouterState state) =>
         ListDocumentScreen(),
   ),
   GoRoute(
-    path: 'document/nouveau_document',
+    path: '/document/nouveau_document',
     builder: (BuildContext context, GoRouterState state) => NewDocumentScreen(),
   ),
   GoRoute(
-    path: 'rapports',
+    path: '/rapports',
     builder: (BuildContext context, GoRouterState state) => RapportsScreen(),
   ),
   GoRoute(
-    path: 'collaborateurs',
+    path: '/collaborateurs',
     builder: (BuildContext context, GoRouterState state) =>
         CollaborateurScreen(),
+  ),
+  GoRoute(
+    path: '/verify_document',
+    builder: (BuildContext context, GoRouterState state) => UserVerifyPage(),
   ),
 ]);
 
@@ -83,7 +92,7 @@ class MyApp extends StatelessWidget {
             BlocProvider<DocumentCubit>(
               create: (context) => DocumentCubit(
                 documentRepository: context.read<DocumentRepository>(),
-              )..getAllDocument(1),
+              )..getAllDocument(),
             ),
           ],
           child: Builder(builder: (context) {

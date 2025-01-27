@@ -4,10 +4,10 @@ import 'package:doc_authentificator/models/documents_model.dart';
 import 'package:doc_authentificator/services/document_service.dart';
 
 class DocumentRepository {
-   Future<List<DocumentsModel>> getAllDocument(int page) async {
+  Future<List<DocumentsModel>> getAllDocument() async {
     try {
-      log("Appel au service pour récupérer les documents à la page $page");
-      final documents = await DocumentService.getAllDocument(page);
+      log("Appel au service pour récupérer les documents à la page ");
+      final documents = await DocumentService.getAllDocument();
       log("Nombre de documents récupérés: ${documents.length}");
       return documents;
     } catch (e) {
@@ -35,6 +35,31 @@ class DocumentRepository {
     } catch (e) {
       log("Erreur dans DocumentRepository: $e");
       throw Exception("Erreur lors de la mise à jour du document");
+    }
+  }
+
+  Future<Map<String, dynamic>> verifyDocument(String identifier) async {
+    try {
+      final response = await DocumentService.verifyDocument(identifier);
+
+      // Retourner directement la réponse du service
+      if (response['success']) {
+        return {
+          'success': true,
+          'data': response['data']['data'],
+        };
+      } else {
+        return {
+          'success': false,
+          'message': response['message'], // Message d'erreur
+        };
+      }
+    } catch (e) {
+      // Gérer les exceptions et retourner un message d'erreur formaté
+      return {
+        'success': false,
+        'message': 'Une erreur est survenue : $e',
+      };
     }
   }
 }

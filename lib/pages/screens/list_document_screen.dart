@@ -50,7 +50,7 @@ class _ListDocumentScreenState extends State<ListDocumentScreen> {
                           color: Theme.of(context).colorScheme.primary),
                     ),
                     onPressed: () {
-                      context.go('document/nouveau_document');
+                      context.go('/document/nouveau_document');
                     },
                     child: Text(
                       "Nouveau Document +",
