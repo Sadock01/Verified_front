@@ -7,34 +7,48 @@ import 'package:doc_authentificator/models/documents_model.dart';
 class DocumentService {
   static Dio api = ApiConfig.api();
 
-  static Future<List<DocumentsModel>> getAllDocument() async {
+  static Future<Map<String, dynamic>> getAllDocument(int page) async {
     api.options.headers['AUTHORIZATION'] =
         'Bearer 10|hmRWGfAMQ9fkodYhg96joyiPpFz5jBDV9U4bqJVza47c0b53';
-    final response = await api.get("documents", queryParameters: {});
+    final response = await api.get("documents", queryParameters: {
+      'page': page,
+      'per_page': 10,
+    });
     log("Il a commencé à récupérer les documents");
     if (response.statusCode == 200 || response.statusCode == 201) {
       log("Voici la response de la requête: ${response.data}");
       List<dynamic> allDocumentMap = response.data['data'];
       log("Il a récupéré les documents: $allDocumentMap");
-      return allDocumentMap
-          .map((documentMap) =>
-              DocumentsModel.fromJson(documentMap as Map<String, dynamic>))
-          .toList();
+      return {
+        // allDocumentMap
+        //   .map((documentMap) =>
+        //       DocumentsModel.fromJson(documentMap as Map<String, dynamic>))
+        //   .toList();
+        'status_code': response.data['status_code'],
+        'data': response.data['data'], // Liste des documents
+        'current_page': response.data['current_page'], // Page actuelle
+        'last_page': response.data['last_page'], // Dernière page
+      };
     } else {
       throw Exception("Echec lors de la recuperation des articles");
     }
   }
 
-  static Future<String?> addDocument(DocumentsModel documentsModel) async {
+  static Future<Map<String, dynamic>> addDocument(
+      DocumentsModel documentsModel) async {
     api.options.headers['AUTHORIZATION'] =
-        '10|hmRWGfAMQ9fkodYhg96joyiPpFz5jBDV9U4bqJVza47c0b53';
+        'Bearer 10|hmRWGfAMQ9fkodYhg96joyiPpFz5jBDV9U4bqJVza47c0b53';
     log("il est la?? ${documentsModel.toJson()}");
     final response =
         await api.post("/documents/create", data: documentsModel.toJson());
     log("Il a commencé à ajouter un document");
     // log("$response");
     if (response.statusCode == 200 || response.statusCode == 201) {
-      return response.data['message'] ?? "Document ajouté avec succès";
+      return {
+        'status_code': response.statusCode,
+        'message': response.data['message'] ?? "Document ajouté avec succès",
+        'data': response.data['data'] ?? {},
+      };
     } else {
       log("${response.statusCode}");
       log("$response");
@@ -77,7 +91,7 @@ class DocumentService {
       } else {
         return {
           'success': false,
-          'message': 'Erreur inattendue. Veuillez réessayer plus tard.',
+          'message': 'Aucun document ne correspond a cet identifiant',
         };
       }
     } catch (e) {

@@ -114,19 +114,10 @@ class _UserVerifyPageState extends State<UserVerifyPage> {
                           ),
                           onPressed: () {
                             final identifier = _identifierController.text;
-                            if (identifier.isNotEmpty) {
-                              context
-                                  .read<DocumentCubit>()
-                                  .verifyDocument(identifier);
-                            } else {
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(
-                                  content: Text(
-                                      "Veuillez entrer un identifiant valide."),
-                                  backgroundColor: Colors.red,
-                                ),
-                              );
-                            }
+
+                            context
+                                .read<DocumentCubit>()
+                                .verifyDocument(identifier);
                           },
                           child: Text(
                             "Rechercher",
@@ -152,8 +143,20 @@ class _UserVerifyPageState extends State<UserVerifyPage> {
                         );
                       } else if (state.documentStatus == DocumentStatus.error) {
                         return Center(
-                          child: Text(state.errorMessage,
-                              style: Theme.of(context).textTheme.displayMedium),
+                          child: Column(
+                            children: [
+                              Image.asset(
+                                "images/9214777.jpg",
+                                width: Const.screenWidth(context) * 0.3,
+                                height: Const.screenHeight(context) * 0.3,
+                              ),
+                              const SizedBox(height: 15),
+                              Text(state.errorMessage,
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .displayMedium),
+                            ],
+                          ),
                         );
                       } else {
                         return Text(
@@ -163,7 +166,7 @@ class _UserVerifyPageState extends State<UserVerifyPage> {
                       }
                     },
                   ),
-                  SizedBox(height: Const.screenHeight(context)),
+                  SizedBox(height: Const.screenHeight(context) * 0.35),
                   Container(
                     width: Const.screenWidth(context),
                     height: Const.screenHeight(context) * 0.3,

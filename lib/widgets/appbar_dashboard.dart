@@ -29,9 +29,8 @@ class AppbarDashboard extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
             Container(
-              margin: EdgeInsets.only(left: 5),
               width: Const.screenWidth(context) * 0.1,
-              height: 35,
+              height: 25,
               decoration: BoxDecoration(
                   image: DecorationImage(
                       image:

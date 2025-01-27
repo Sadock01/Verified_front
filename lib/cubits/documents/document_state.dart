@@ -5,6 +5,7 @@ enum DocumentStatus {
   initial,
   loading,
   loaded,
+  sucess,
   error,
 }
 
@@ -12,16 +13,19 @@ class DocumentState extends Equatable {
   final DocumentStatus documentStatus;
   final List<DocumentsModel> listDocuments;
   final String apiResponse;
-  // final int currentPage;
-  // final int totalPage;
+  final int currentPage;
+  final int lastPage;
   final String errorMessage;
-  // int? offset;
+
   // final String? searchKey;
-  const DocumentState({
+  const DocumentState(
+     {
     required this.documentStatus,
     required this.listDocuments,
     required this.errorMessage,
     required this.apiResponse,
+    required this.currentPage,
+    required this.lastPage,
     // required this.currentPage,
     // required this.totalPage,
     // this.searchKey,
@@ -31,9 +35,9 @@ class DocumentState extends Equatable {
     return DocumentState(
       documentStatus: DocumentStatus.initial,
       listDocuments: [],
-      // currentPage: 1,
-      // totalPage: 1,
-      errorMessage: "", 
+      currentPage: 1,
+      lastPage: 1,
+      errorMessage: "",
       apiResponse: '',
     );
   }
@@ -42,8 +46,8 @@ class DocumentState extends Equatable {
     DocumentStatus? documentStatus,
     List<DocumentsModel>? listDocuments,
     String? apiresponse,
-    // int? currentPage,
-    // int? totalPage,
+    int? currentPage,
+    int? lastPage,
     String? errorMessage,
 
     // String? searchKey,
@@ -53,8 +57,8 @@ class DocumentState extends Equatable {
       listDocuments: listDocuments ?? this.listDocuments,
       apiResponse: apiresponse ?? this.apiResponse,
       errorMessage: errorMessage ?? this.errorMessage,
-      // currentPage: currentPage ?? this.currentPage,
-      // totalPage: totalPage ?? this.totalPage,
+      currentPage: currentPage ?? this.currentPage,
+      lastPage: lastPage ?? this.lastPage,
       // searchKey: searchKey ?? this.searchKey,
     );
   }

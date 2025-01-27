@@ -11,16 +11,19 @@ class DocumentCubit extends Cubit<DocumentState> {
     required this.documentRepository,
   }) : super(DocumentState.initial()) {}
 
-  Future<void> getAllDocument() async {
+  Future<void> getAllDocument(int page) async {
     try {
       emit(state.copyWith(
           documentStatus: DocumentStatus.loading, errorMessage: ""));
-      final List<DocumentsModel> documents =
-          await documentRepository.getAllDocument();
-      // final int totalPages = response['last_page'];
+      final response = await documentRepository.getAllDocument(page);
+      final List<DocumentsModel> documents = (response['data'] as List)
+          .map((doc) => DocumentsModel.fromJson(doc))
+          .toList();
       emit(state.copyWith(
           documentStatus: DocumentStatus.loaded,
           listDocuments: documents,
+          currentPage: page,
+          lastPage: response['last_page'],
           errorMessage: ""));
     } catch (e) {
       emit(state.copyWith(
@@ -32,9 +35,14 @@ class DocumentCubit extends Cubit<DocumentState> {
     try {
       emit(state.copyWith(
           documentStatus: DocumentStatus.loading, errorMessage: ""));
-      await documentRepository.addDocument(documentsModel);
-      emit(state.copyWith(
-          documentStatus: DocumentStatus.loaded, errorMessage: ""));
+      final response = await documentRepository.addDocument(documentsModel);
+      if (response['status_code'] == 200) {
+        emit(state.copyWith(
+          documentStatus: DocumentStatus.sucess,
+          errorMessage: response['message'],
+        ));
+        log("voici ma response: ${response['message']}");
+      }
     } catch (e) {
       emit(state.copyWith(
           errorMessage: e.toString(), documentStatus: DocumentStatus.error));
@@ -78,6 +86,23 @@ class DocumentCubit extends Cubit<DocumentState> {
     }
   }
 
+ 
+
+  void goToNextPage() {
+    if (state.currentPage < state.lastPage) {
+      final nextPage = state.currentPage + 1;
+      emit(state.copyWith(currentPage: nextPage));
+      getAllDocument(nextPage);
+    }
+  }
+
+  void goToPreviousPage() {
+    if (state.currentPage > 1) {
+      final prevPage = state.currentPage - 1;
+      emit(state.copyWith(currentPage: prevPage));
+      getAllDocument(prevPage);
+    }
+  }
   // Future<void> showDocument(DocumentsModel documentsModel) async {
   //   emit(state.copyWith(
   //       documentStatus: DocumentStatus.loaded, selectedDocument: documentsModel));

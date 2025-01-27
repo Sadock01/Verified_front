@@ -10,14 +10,18 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class DashboardHomeScreen extends StatefulWidget {
-  const DashboardHomeScreen({super.key});
+  final Widget widget;
+
+  
+  const DashboardHomeScreen({super.key, required this.widget,});
 
   @override
   State<DashboardHomeScreen> createState() => _DashboardHomeScreenState();
+  
 }
 
 class _DashboardHomeScreenState extends State<DashboardHomeScreen> {
-  Widget content = const DashboardHomeScreen();
+ 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -30,15 +34,17 @@ class _DashboardHomeScreenState extends State<DashboardHomeScreen> {
             BlocBuilder<SwitchPageCubit, SwitchPageState>(
                 builder: (context, state) {
               if (state.selectedPage == 0) {
-                content = Container();
+                return Container();
               } else if (state.selectedPage == 1) {
-                content = ListDocumentScreen();
+                return ListDocumentScreen();
               } else if (state.selectedPage == 2) {
-                content = NewDocumentScreen();
+                return NewDocumentScreen();
               } else if (state.selectedPage == 3) {
-                content = CollaborateurScreen();
+                return CollaborateurScreen();
               }
-              return content;
+              return Center(
+                child: Text("Page not found"),
+              );
             }),
           ]),
         )

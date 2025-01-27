@@ -132,7 +132,7 @@ class DrawerDashboard extends StatelessWidget {
                     context.read<SwitchPageCubit>().switchPage(2);
                   },
                   child: Text(
-                    'Rapports',
+                    'Nouveau Document',
                     style: Theme.of(context).textTheme.displayMedium!.copyWith(
                           color: context
                                       .read<SwitchPageCubit>()

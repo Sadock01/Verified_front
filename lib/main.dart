@@ -23,36 +23,63 @@ void main() async {
 }
 
 final GoRouter _router = GoRouter(
-  initialLocation: '/', 
+  initialLocation: '/',
   routes: [
-  GoRoute(
-    path: '/',
-    builder: (BuildContext context, GoRouterState state) =>
-        DashboardHomeScreen(),
-  ),
-  GoRoute(
-    path: '/document/List_document',
-    builder: (BuildContext context, GoRouterState state) =>
-        ListDocumentScreen(),
-  ),
-  GoRoute(
-    path: '/document/nouveau_document',
-    builder: (BuildContext context, GoRouterState state) => NewDocumentScreen(),
-  ),
-  GoRoute(
-    path: '/rapports',
-    builder: (BuildContext context, GoRouterState state) => RapportsScreen(),
-  ),
-  GoRoute(
-    path: '/collaborateurs',
-    builder: (BuildContext context, GoRouterState state) =>
-        CollaborateurScreen(),
-  ),
-  GoRoute(
-    path: '/verify_document',
-    builder: (BuildContext context, GoRouterState state) => UserVerifyPage(),
-  ),
-]);
+    GoRoute(
+      path: '/',
+      builder: (BuildContext context, GoRouterState state) {
+        context
+            .read<SwitchPageCubit>()
+            .switchPage(0); // Sélectionner la page Dashboard
+        return const DashboardHomeScreen(
+          widget: SizedBox(),
+        );
+      },
+    ),
+    GoRoute(
+      path: '/document/List_document',
+      builder: (BuildContext context, GoRouterState state) {
+        context
+            .read<SwitchPageCubit>()
+            .switchPage(1); // Sélectionner la page Liste des documents
+        return DashboardHomeScreen(widget: const ListDocumentScreen());
+      },
+    ),
+    GoRoute(
+      path: '/document/nouveau_document',
+      builder: (BuildContext context, GoRouterState state) {
+        context
+            .read<SwitchPageCubit>()
+            .switchPage(2); // Sélectionner la page Nouveau document
+        return DashboardHomeScreen(widget: const NewDocumentScreen());
+      },
+    ),
+    GoRoute(
+      path: '/collaborateurs',
+      builder: (BuildContext context, GoRouterState state) {
+        context
+            .read<SwitchPageCubit>()
+            .switchPage(3); // Sélectionner la page Collaborateurs
+        return DashboardHomeScreen(widget: const CollaborateurScreen());
+      },
+    ),
+    GoRoute(
+      path: '/rapports',
+      builder: (BuildContext context, GoRouterState state) {
+        context
+            .read<SwitchPageCubit>()
+            .switchPage(4); // Sélectionner la page Rapports
+        return const RapportsScreen();
+      },
+    ),
+    GoRoute(
+      path: '/verify_document',
+      builder: (BuildContext context, GoRouterState state) {
+        return const UserVerifyPage();
+      },
+    ),
+  ],
+);
 
 var kColorScheme = ColorScheme.fromSeed(
   seedColor: const Color.fromARGB(255, 18, 40, 149),
@@ -78,7 +105,9 @@ class MyApp extends StatelessWidget {
           providers: [
             BlocProvider<SwitchPageCubit>(
               create: (context) => SwitchPageCubit(),
-              child: DashboardHomeScreen(),
+              child: DashboardHomeScreen(
+                widget: SizedBox(),
+              ),
             ),
             // BlocProvider(
             //   create: (context) => DocumentCubit(
@@ -92,7 +121,7 @@ class MyApp extends StatelessWidget {
             BlocProvider<DocumentCubit>(
               create: (context) => DocumentCubit(
                 documentRepository: context.read<DocumentRepository>(),
-              )..getAllDocument(),
+              )..getAllDocument(1),
             ),
           ],
           child: Builder(builder: (context) {

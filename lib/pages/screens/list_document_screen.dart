@@ -77,79 +77,102 @@ class _ListDocumentScreenState extends State<ListDocumentScreen> {
             ),
           )
         else if (state.documentStatus == DocumentStatus.loaded)
-          Container(
-            margin: const EdgeInsets.symmetric(horizontal: 10),
-            width: Const.screenWidth(context),
-            decoration: const BoxDecoration(
-              borderRadius: BorderRadius.only(
-                topLeft: Radius.circular(15),
-                topRight: Radius.circular(15),
-              ),
-              color: Colors.white,
-            ),
-            child: DataTable(
-              headingRowHeight: 30,
-              columns: [
-                DataColumn(
-                  label: Text(
-                    "Identifiant",
-                    style: Theme.of(context).textTheme.displayMedium,
+          Column(
+            children: [
+              Container(
+                margin: const EdgeInsets.symmetric(horizontal: 10),
+                width: Const.screenWidth(context),
+                decoration: const BoxDecoration(
+                  borderRadius: BorderRadius.only(
+                    topLeft: Radius.circular(15),
+                    topRight: Radius.circular(15),
                   ),
+                  color: Colors.white,
                 ),
-                DataColumn(
-                  label: Text(
-                    "Description",
-                    style: Theme.of(context).textTheme.displayMedium,
-                  ),
-                ),
-                DataColumn(
-                  label: Text(
-                    "Type",
-                    style: Theme.of(context).textTheme.displayMedium,
-                  ),
-                ),
-                DataColumn(
-                  label: Text(
-                    "Action",
-                    style: Theme.of(context).textTheme.displayMedium,
-                  ),
-                ),
-              ],
-              rows: state.listDocuments
-                  .map((document) => DataRow(
-                        cells: [
-                          DataCell(
-                            Text(document.identifier.toString()),
-                          ),
-                          DataCell(
-                            Text(document.descriptionDocument),
-                          ),
-                          DataCell(
-                            Text(document.typeId.toString()),
-                          ),
-                          DataCell(ElevatedButton(
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor:
-                                  Theme.of(context).colorScheme.primary,
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(5),
+                child: DataTable(
+                  headingRowHeight: 30,
+                  columns: [
+                    DataColumn(
+                      label: Text(
+                        "Identifiant",
+                        style: Theme.of(context).textTheme.displayMedium,
+                      ),
+                    ),
+                    DataColumn(
+                      label: Text(
+                        "Description",
+                        style: Theme.of(context).textTheme.displayMedium,
+                      ),
+                    ),
+                    DataColumn(
+                      label: Text(
+                        "Type",
+                        style: Theme.of(context).textTheme.displayMedium,
+                      ),
+                    ),
+                    DataColumn(
+                      label: Text(
+                        "Action",
+                        style: Theme.of(context).textTheme.displayMedium,
+                      ),
+                    ),
+                  ],
+                  rows: state.listDocuments
+                      .map((document) => DataRow(
+                            cells: [
+                              DataCell(
+                                Text(document.identifier.toString()),
                               ),
-                            ),
-                            onPressed: () {},
-                            child: Text(
-                              "Modifier",
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .labelMedium!
-                                  .copyWith(
-                                    color: Colors.white,
+                              DataCell(
+                                Text(document.descriptionDocument),
+                              ),
+                              DataCell(
+                                Text(document.typeId.toString()),
+                              ),
+                              DataCell(ElevatedButton(
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor:
+                                      Theme.of(context).colorScheme.primary,
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(5),
                                   ),
-                            ),
-                          )),
-                        ],
-                      ))
-                  .toList(),
-            ),
+                                ),
+                                onPressed: () {},
+                                child: Text(
+                                  "Modifier",
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .labelMedium!
+                                      .copyWith(
+                                        color: Colors.white,
+                                      ),
+                                ),
+                              )),
+                            ],
+                          ))
+                      .toList(),
+                ),
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  IconButton(
+                    icon: Icon(Icons.arrow_back),
+                    onPressed: state.currentPage > 1
+                        ? () => context.read<DocumentCubit>().goToPreviousPage()
+                        : null, // Désactivé si c'est la première page
+                  ),
+                  
+                  Text('${state.currentPage} / ${state.lastPage}'),
+                  IconButton(
+                    icon: Icon(Icons.arrow_forward),
+                    onPressed: state.currentPage < state.lastPage
+                        ? () => context.read<DocumentCubit>().goToNextPage()
+                        : null, // Désactivé si c'est la dernière page
+                  ),
+                ],
+              )
+            ],
           )
         else
           Center(
