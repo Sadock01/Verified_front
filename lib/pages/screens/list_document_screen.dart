@@ -156,19 +156,29 @@ class _ListDocumentScreenState extends State<ListDocumentScreen> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  IconButton(
-                    icon: Icon(Icons.arrow_back),
-                    onPressed: state.currentPage > 1
+                  InkWell(
+                    onTap: state.currentPage > 1
                         ? () => context.read<DocumentCubit>().goToPreviousPage()
-                        : null, // Désactivé si c'est la première page
+                        : null,
+                    child: Container(
+                        decoration: BoxDecoration(
+                            color: Colors.grey.withValues(alpha: 0.1),
+                            borderRadius: BorderRadius.circular(3)),
+                        child: Icon(Icons.arrow_back_ios)),
                   ),
-                  
-                  Text('${state.currentPage} / ${state.lastPage}'),
-                  IconButton(
-                    icon: Icon(Icons.arrow_forward),
-                    onPressed: state.currentPage < state.lastPage
+                  Text(
+                    '${state.currentPage} sur ${state.lastPage}',
+                    style: Theme.of(context).textTheme.labelSmall,
+                  ),
+                  InkWell(
+                    onTap: state.currentPage < state.lastPage
                         ? () => context.read<DocumentCubit>().goToNextPage()
-                        : null, // Désactivé si c'est la dernière page
+                        : null,
+                    child: Container(
+                        decoration: BoxDecoration(
+                            color: Colors.grey.withValues(alpha: 0.1),
+                            borderRadius: BorderRadius.circular(3)),
+                        child: Icon(Icons.arrow_forward_ios)),
                   ),
                 ],
               )
