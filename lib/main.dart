@@ -1,12 +1,15 @@
 import 'package:doc_authentificator/cubits/documents/document_cubit.dart';
+import 'package:doc_authentificator/cubits/login/login_cubit.dart';
 import 'package:doc_authentificator/cubits/switch_page/switch_page_cubit.dart';
 import 'package:doc_authentificator/cubits/types/type_doc_cubit.dart';
 import 'package:doc_authentificator/pages/dashboard_home_screen.dart';
+import 'package:doc_authentificator/pages/login_page.dart';
 import 'package:doc_authentificator/pages/screens/Rapports_screen.dart';
 import 'package:doc_authentificator/pages/screens/collaborateur_screen.dart';
 import 'package:doc_authentificator/pages/screens/list_document_screen.dart';
 import 'package:doc_authentificator/pages/screens/new_document_screen.dart';
 import 'package:doc_authentificator/pages/user_verify_page.dart';
+import 'package:doc_authentificator/repositories/auth_repository.dart';
 import 'package:doc_authentificator/repositories/document_repository.dart';
 import 'package:doc_authentificator/repositories/type_doc_repository.dart';
 
@@ -27,6 +30,12 @@ final GoRouter _router = GoRouter(
   routes: [
     GoRoute(
       path: '/',
+      builder: (BuildContext context, GoRouterState state) {
+        return const LoginPage();
+      },
+    ),
+    GoRoute(
+      path: '/dashboard',
       builder: (BuildContext context, GoRouterState state) {
         context
             .read<SwitchPageCubit>()
@@ -99,7 +108,8 @@ class MyApp extends StatelessWidget {
         ),
         RepositoryProvider<TypeDocRepository>(
           create: (context) => TypeDocRepository(),
-        )
+        ),
+        RepositoryProvider<AuthRepository>(create: (context)=> AuthRepository())
       ],
       child: MultiBlocProvider(
           providers: [
@@ -109,11 +119,11 @@ class MyApp extends StatelessWidget {
                 widget: SizedBox(),
               ),
             ),
-            // BlocProvider(
-            //   create: (context) => DocumentCubit(
-            //     documentRepository: context.read<DocumentRepository>(),
-            //   ),
-            // ),
+            BlocProvider(
+              create: (context) => LoginCubit(
+                authRepository: context.read<AuthRepository>(),
+              ),
+            ),
             BlocProvider<TypeDocCubit>(
                 create: (context) => TypeDocCubit(
                       typeDocRepository: context.read<TypeDocRepository>(),
