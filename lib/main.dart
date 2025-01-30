@@ -2,12 +2,14 @@ import 'package:doc_authentificator/cubits/documents/document_cubit.dart';
 import 'package:doc_authentificator/cubits/login/login_cubit.dart';
 import 'package:doc_authentificator/cubits/switch_page/switch_page_cubit.dart';
 import 'package:doc_authentificator/cubits/types/type_doc_cubit.dart';
+import 'package:doc_authentificator/models/documents_model.dart';
 import 'package:doc_authentificator/pages/dashboard_home_screen.dart';
 import 'package:doc_authentificator/pages/login_page.dart';
 import 'package:doc_authentificator/pages/screens/Rapports_screen.dart';
 import 'package:doc_authentificator/pages/screens/collaborateur_screen.dart';
 import 'package:doc_authentificator/pages/screens/list_document_screen.dart';
 import 'package:doc_authentificator/pages/screens/new_document_screen.dart';
+import 'package:doc_authentificator/pages/screens/update_document_screen.dart';
 import 'package:doc_authentificator/pages/user_verify_page.dart';
 import 'package:doc_authentificator/repositories/auth_repository.dart';
 import 'package:doc_authentificator/repositories/document_repository.dart';
@@ -87,6 +89,18 @@ final GoRouter _router = GoRouter(
         return const UserVerifyPage();
       },
     ),
+    // GoRoute(
+    //   path:
+    //       '/document/update/:id', // Utilisation de :id pour passer l'ID du document
+    //   builder: (BuildContext context, GoRouterState state) {
+    //     final documentId = state.pathParameters['id']!;
+    //     final DocumentsModel document;
+    //     return UpdateDocumentScreen(
+    //       document: document,
+    //       documentId: int.parse(documentId),
+    //     );
+    //   },
+    // ),
   ],
 );
 
@@ -98,7 +112,6 @@ var kColorScheme = ColorScheme.fromSeed(
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return MultiRepositoryProvider(
@@ -109,7 +122,8 @@ class MyApp extends StatelessWidget {
         RepositoryProvider<TypeDocRepository>(
           create: (context) => TypeDocRepository(),
         ),
-        RepositoryProvider<AuthRepository>(create: (context)=> AuthRepository())
+        RepositoryProvider<AuthRepository>(
+            create: (context) => AuthRepository())
       ],
       child: MultiBlocProvider(
           providers: [

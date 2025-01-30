@@ -172,6 +172,16 @@ class _UserVerifyPageState extends State<UserVerifyPage> {
                     height: Const.screenHeight(context) * 0.3,
                     decoration: BoxDecoration(
                         color: Theme.of(context).colorScheme.primary),
+                    child: Row(
+                      children: [
+                        Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            TextButton(onPressed: () {}, child: Text(""))
+                          ],
+                        )
+                      ],
+                    ),
                   )
                 ],
               ),

@@ -82,7 +82,7 @@ class _LoginPageState extends State<LoginPage> {
                                     "assets/images/Verified_original.png"))),
                       ),
                       Text(
-                        "Bienvenue sur le Dashboard de Verified!",
+                        "Dashboard de Verified!",
                         style: Theme.of(context)
                             .textTheme
                             .displayMedium!
@@ -106,27 +106,20 @@ class _LoginPageState extends State<LoginPage> {
                           },
                           style: Theme.of(context).textTheme.displaySmall,
                           decoration: InputDecoration(
+                            prefixIcon: Icon(Icons.mail_rounded),
                             enabledBorder: OutlineInputBorder(
                               borderSide: BorderSide(
-                                  color: Theme.of(context)
-                                      .colorScheme
-                                      .primary), // Couleur du bord quand le champ est désactivé
+                                  color: Theme.of(context).colorScheme.primary),
                               borderRadius: BorderRadius.circular(10),
                             ),
                             focusedBorder: OutlineInputBorder(
                               borderSide: BorderSide(
-                                  color: Theme.of(context)
-                                      .colorScheme
-                                      .primary), // Couleur du bord quand le champ est sélectionné
-                              borderRadius: BorderRadius.circular(
-                                  10), // Arrondi des bords
+                                  color: Theme.of(context).colorScheme.primary),
+                              borderRadius: BorderRadius.circular(10),
                             ),
                             errorBorder: OutlineInputBorder(
-                              borderSide: BorderSide(
-                                  color: Colors
-                                      .red), // Couleur du bord en cas d'erreur
-                              borderRadius: BorderRadius.circular(
-                                  10), // Arrondi des bords
+                              borderSide: BorderSide(color: Colors.red),
+                              borderRadius: BorderRadius.circular(10),
                             ),
                             hintText: "email",
                             hintStyle: Theme.of(context).textTheme.displaySmall,
@@ -141,20 +134,16 @@ class _LoginPageState extends State<LoginPage> {
                           obscureText: !_isPasswordVisible,
                           style: Theme.of(context).textTheme.displaySmall,
                           decoration: InputDecoration(
+                            prefixIcon: Icon(Icons.key),
                             enabledBorder: OutlineInputBorder(
                               borderSide: BorderSide(
-                                  color: Theme.of(context)
-                                      .colorScheme
-                                      .primary), // Couleur du bord quand le champ est désactivé
+                                  color: Theme.of(context).colorScheme.primary),
                               borderRadius: BorderRadius.circular(10),
                             ),
                             focusedBorder: OutlineInputBorder(
                               borderSide: BorderSide(
-                                  color: Theme.of(context)
-                                      .colorScheme
-                                      .primary), // Couleur du bord quand le champ est sélectionné
-                              borderRadius: BorderRadius.circular(
-                                  10), // Arrondi des bords
+                                  color: Theme.of(context).colorScheme.primary),
+                              borderRadius: BorderRadius.circular(10),
                             ),
                             errorBorder: OutlineInputBorder(
                               borderSide: BorderSide(
@@ -183,9 +172,6 @@ class _LoginPageState extends State<LoginPage> {
                       SizedBox(height: 20),
                       BlocBuilder<LoginCubit, LoginState>(
                         builder: (context, state) {
-                          if (state.loginStatus == LoginStatus.loading) {
-                            return CircularProgressIndicator();
-                          }
                           return SizedBox(
                             width: Const.screenWidth(context) * 0.2,
                             child: ElevatedButton(
@@ -207,13 +193,30 @@ class _LoginPageState extends State<LoginPage> {
                                       .login(email, password);
                                 }
                               },
-                              child: Text(
-                                'Se connecter',
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .displaySmall!
-                                    .copyWith(color: Colors.white),
-                              ),
+                              child: state.loginStatus == LoginStatus.loading
+                                  ? SizedBox(
+                                      width: 15,
+                                      height: 15,
+                                      child: CircularProgressIndicator(
+                                        color: Colors.white,
+                                        strokeWidth: 1,
+                                      ),
+                                    )
+                                  : Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      children: [
+                                        Icon(Icons.login, color: Colors.white),
+                                        SizedBox(width: 10),
+                                        Text(
+                                          'Se connecter',
+                                          style: Theme.of(context)
+                                              .textTheme
+                                              .displaySmall!
+                                              .copyWith(color: Colors.white),
+                                        ),
+                                      ],
+                                    ),
                             ),
                           );
                         },

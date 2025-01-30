@@ -129,25 +129,53 @@ class _ListDocumentScreenState extends State<ListDocumentScreen> {
                               DataCell(
                                 Text(document.typeId.toString()),
                               ),
-                              DataCell(ElevatedButton(
-                                style: ElevatedButton.styleFrom(
-                                  backgroundColor:
-                                      Theme.of(context).colorScheme.primary,
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(5),
+                              DataCell(
+                                PopupMenuButton<String>(
+                                  onSelected: (value) {
+                                    if (value == "edit") {
+                                      // Naviguer vers la page d'édition du document
+                                      context.go(
+                                          '/document/edit/${document.identifier}');
+                                    } else if (value == "view") {
+                                      // Naviguer vers la page d'affichage du document
+                                      context.go(
+                                          '/document/view/${document.identifier}');
+                                    }
+                                  },
+                                  itemBuilder: (context) => [
+                                    PopupMenuItem(
+                                      value: "edit",
+                                      child: Text("Modifier document"),
+                                    ),
+                                    PopupMenuItem(
+                                      value: "view",
+                                      child: Text("Afficher document"),
+                                    ),
+                                  ],
+                                  child: MouseRegion(
+                                    cursor: SystemMouseCursors.click,
+                                    child: Container(
+                                      padding: const EdgeInsets.symmetric(
+                                          horizontal: 8, vertical: 5),
+                                      decoration: BoxDecoration(
+                                        color: Theme.of(context)
+                                            .colorScheme
+                                            .primary,
+                                        borderRadius: BorderRadius.circular(5),
+                                      ),
+                                      child: Text(
+                                        "Option",
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .labelMedium!
+                                            .copyWith(
+                                              color: Colors.white,
+                                            ),
+                                      ),
+                                    ),
                                   ),
                                 ),
-                                onPressed: () {},
-                                child: Text(
-                                  "Modifier",
-                                  style: Theme.of(context)
-                                      .textTheme
-                                      .labelMedium!
-                                      .copyWith(
-                                        color: Colors.white,
-                                      ),
-                                ),
-                              )),
+                              ),
                             ],
                           ))
                       .toList(),

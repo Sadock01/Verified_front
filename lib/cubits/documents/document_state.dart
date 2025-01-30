@@ -15,11 +15,11 @@ class DocumentState extends Equatable {
   final String apiResponse;
   final int currentPage;
   final int lastPage;
+  final String searchKey;
   final String errorMessage;
 
   // final String? searchKey;
-  const DocumentState(
-     {
+  const DocumentState({
     required this.documentStatus,
     required this.listDocuments,
     required this.errorMessage,
@@ -28,7 +28,7 @@ class DocumentState extends Equatable {
     required this.lastPage,
     // required this.currentPage,
     // required this.totalPage,
-    // this.searchKey,
+    required this.searchKey,
   });
 
   factory DocumentState.initial() {
@@ -39,6 +39,7 @@ class DocumentState extends Equatable {
       lastPage: 1,
       errorMessage: "",
       apiResponse: '',
+      searchKey: '',
     );
   }
 
@@ -49,8 +50,7 @@ class DocumentState extends Equatable {
     int? currentPage,
     int? lastPage,
     String? errorMessage,
-
-    // String? searchKey,
+    String? searchKey,
   }) {
     return DocumentState(
       documentStatus: documentStatus ?? this.documentStatus,
@@ -59,7 +59,7 @@ class DocumentState extends Equatable {
       errorMessage: errorMessage ?? this.errorMessage,
       currentPage: currentPage ?? this.currentPage,
       lastPage: lastPage ?? this.lastPage,
-      // searchKey: searchKey ?? this.searchKey,
+      searchKey: searchKey ?? this.searchKey,
     );
   }
 
@@ -67,8 +67,9 @@ class DocumentState extends Equatable {
   List<Object?> get props => [
         documentStatus,
         listDocuments,
-        // currentPage,
-        // totalPage,
+        currentPage,
+        lastPage,
         errorMessage,
+        searchKey,
       ];
 }

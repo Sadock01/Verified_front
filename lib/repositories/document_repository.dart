@@ -44,10 +44,10 @@ class DocumentRepository {
     }
   }
 
-  Future<void> updateDocument(DocumentsModel documentsModel) async {
+  Future<void> updateDocument(int documentId,DocumentsModel documentsModel) async {
     try {
       log("Appel au service pour mettre à jour un document");
-      await DocumentService.updateDocument(documentsModel);
+      await DocumentService.updateDocument(documentId,documentsModel);
       log("Document mis à jour");
     } catch (e) {
       log("Erreur dans DocumentRepository: $e");

@@ -12,34 +12,46 @@ import 'package:elegant_notification/resources/arrays.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-class NewDocumentScreen extends StatefulWidget {
-  const NewDocumentScreen({super.key});
+class UpdateDocumentScreen extends StatefulWidget {
+  final DocumentsModel document;
+  final int documentId; 
+  const UpdateDocumentScreen({super.key, required this.document, required this.documentId});
 
   @override
-  State<NewDocumentScreen> createState() => _NewDocumentScreenState();
+  State<UpdateDocumentScreen> createState() => _UpdateDocumentScreenState();
 }
 
-class _NewDocumentScreenState extends State<NewDocumentScreen> {
+class _UpdateDocumentScreenState extends State<UpdateDocumentScreen> {
   final _formKey = GlobalKey<FormState>();
-  final TextEditingController _identifierController = TextEditingController();
-  final TextEditingController _descriptionController = TextEditingController();
+  late TextEditingController _identifierController;
+  late TextEditingController _descriptionController;
 
-  // Stocker le type sélectionné
   TypeDocModel? _selectedType;
- @override
+
+  @override
+  void initState() {
+    super.initState();
+    _identifierController =
+        TextEditingController(text: widget.document.identifier);
+    _descriptionController =
+        TextEditingController(text: widget.document.descriptionDocument);
+    _selectedType = null;
+  }
+
+  @override
   void dispose() {
     _identifierController.dispose();
-     _descriptionController.dispose();
+    _descriptionController.dispose();
     super.dispose();
   }
+
   @override
   Widget build(BuildContext context) {
     return BlocListener<DocumentCubit, DocumentState>(
       listener: (context, state) {
         if (state.documentStatus == DocumentStatus.sucess) {
           ElegantNotification.success(
-            background: Theme.of(context).colorScheme.primary,
-           height: 25,
+            width: Const.screenWidth(context) * 0.5,
             description: Text(state.errorMessage),
             position: Alignment.topRight,
             animation: AnimationType.fromRight,
@@ -51,9 +63,9 @@ class _NewDocumentScreenState extends State<NewDocumentScreen> {
         }
         if (state.documentStatus == DocumentStatus.error) {
           ElegantNotification.error(
-           
-            description:  Text(
-                state.errorMessage),
+            width: Const.screenWidth(context) * 0.12,
+            description: const Text(
+                'Une erreur est survenue lors de la création du document.'),
             position: Alignment.topRight,
             animation: AnimationType.fromRight,
             icon: const Icon(
@@ -65,6 +77,12 @@ class _NewDocumentScreenState extends State<NewDocumentScreen> {
       },
       child: BlocBuilder<TypeDocCubit, TypeDocState>(
         builder: (context, state) {
+          if (state.typeStatus == TypeStatus.loaded) {
+            _selectedType ??= state.listType.firstWhere(
+              (type) => type.id == widget.document.typeId,
+              orElse: () => state.listType.first,
+            );
+          }
           return SingleChildScrollView(
             child: Column(
               children: [
@@ -101,7 +119,6 @@ class _NewDocumentScreenState extends State<NewDocumentScreen> {
                     ],
                   ),
                 ),
-                // Formulaire
                 Container(
                   margin:
                       const EdgeInsets.symmetric(vertical: 10, horizontal: 10),
@@ -214,15 +231,17 @@ class _NewDocumentScreenState extends State<NewDocumentScreen> {
                         ElevatedButton(
                           style: ElevatedButton.styleFrom(
                             backgroundColor:
-                                Theme.of(context).colorScheme.secondary,
+                                Theme.of(context).colorScheme.primary,
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(10),
                             ),
                           ),
                           onPressed: () {
                             if (_formKey.currentState!.validate()) {
-                              context.read<DocumentCubit>().addDocument(
+                              context.read<DocumentCubit>().updateDocument(
+                                    widget.document.id!,
                                     DocumentsModel(
+                               
                                       identifier: _identifierController.text,
                                       descriptionDocument:
                                           _descriptionController.text,

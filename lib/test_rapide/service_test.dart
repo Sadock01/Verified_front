@@ -51,11 +51,11 @@ class _ServiceTestState extends State<ServiceTest> {
                 );
 
                 // Appel de la méthode addDocument
-                final String? message =
-                    await DocumentService.updateDocument(document);
+                // final String? message =
+                //     await DocumentService.updateDocument(document);
 
                 // Affichez le message dans la console ou une Snackbar
-                log(message ?? "Aucun message reçu");
+                // log(message ?? "Aucun message reçu");
               } catch (e) {
                 // Gérez les erreurs ici
                 log("Erreur lors de l'ajout du document : $e");

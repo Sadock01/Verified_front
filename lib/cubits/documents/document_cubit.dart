@@ -49,11 +49,11 @@ class DocumentCubit extends Cubit<DocumentState> {
     }
   }
 
-  Future<void> updateDocument(DocumentsModel documentsModel) async {
+  Future<void> updateDocument(int id ,DocumentsModel documentsModel) async {
     try {
       emit(state.copyWith(
           documentStatus: DocumentStatus.loading, errorMessage: ""));
-      await documentRepository.updateDocument(documentsModel);
+      await documentRepository.updateDocument(id,documentsModel);
       emit(state.copyWith(
           documentStatus: DocumentStatus.loaded, errorMessage: ""));
     } catch (e) {
@@ -102,6 +102,11 @@ class DocumentCubit extends Cubit<DocumentState> {
       emit(state.copyWith(currentPage: prevPage));
       getAllDocument(prevPage);
     }
+  }
+
+ 
+ void setSearchKey(String searchKey) {
+    emit(state.copyWith(searchKey: searchKey));
   }
   // Future<void> showDocument(DocumentsModel documentsModel) async {
   //   emit(state.copyWith(

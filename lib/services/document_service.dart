@@ -56,10 +56,10 @@ class DocumentService {
     }
   }
 
-  static Future<String?> updateDocument(DocumentsModel documentsModel) async {
+  static Future<String?> updateDocument(int documentId,DocumentsModel documentsModel) async {
     api.options.headers['AUTHORIZATION'] =
         'Bearer 7|3JtLwLxvJtkVlnRvTgKln1XZIXHPNRP8mhlF42Mt32d8c745';
-    final response = await api.put("documents/edit/document4",
+    final response = await api.put("documents/edit/$documentId",
         data: documentsModel.toJson());
     log("Il a commencé à mettre à jour un document");
     if (response.statusCode == 200 || response.statusCode == 201) {
