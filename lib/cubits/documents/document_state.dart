@@ -5,20 +5,21 @@ enum DocumentStatus {
   initial,
   loading,
   loaded,
-  sucess,
+sucess,
   error,
 }
 
 class DocumentState extends Equatable {
   final DocumentStatus documentStatus;
   final List<DocumentsModel> listDocuments;
-  final String apiResponse;
+  final String? apiResponse;
+  final DocumentsModel? selectedDocument;
   final int currentPage;
   final int lastPage;
-  final String searchKey;
+  final String? searchKey;
   final String errorMessage;
 
-  // final String? searchKey;
+
   const DocumentState({
     required this.documentStatus,
     required this.listDocuments,
@@ -26,8 +27,7 @@ class DocumentState extends Equatable {
     required this.apiResponse,
     required this.currentPage,
     required this.lastPage,
-    // required this.currentPage,
-    // required this.totalPage,
+    this.selectedDocument,
     required this.searchKey,
   });
 
@@ -35,6 +35,7 @@ class DocumentState extends Equatable {
     return DocumentState(
       documentStatus: DocumentStatus.initial,
       listDocuments: [],
+      selectedDocument: null,
       currentPage: 1,
       lastPage: 1,
       errorMessage: "",
@@ -47,6 +48,7 @@ class DocumentState extends Equatable {
     DocumentStatus? documentStatus,
     List<DocumentsModel>? listDocuments,
     String? apiresponse,
+    DocumentsModel? selectedDocument,
     int? currentPage,
     int? lastPage,
     String? errorMessage,
@@ -56,6 +58,7 @@ class DocumentState extends Equatable {
       documentStatus: documentStatus ?? this.documentStatus,
       listDocuments: listDocuments ?? this.listDocuments,
       apiResponse: apiresponse ?? this.apiResponse,
+      selectedDocument: selectedDocument ?? this.selectedDocument,
       errorMessage: errorMessage ?? this.errorMessage,
       currentPage: currentPage ?? this.currentPage,
       lastPage: lastPage ?? this.lastPage,
@@ -67,6 +70,7 @@ class DocumentState extends Equatable {
   List<Object?> get props => [
         documentStatus,
         listDocuments,
+          selectedDocument,
         currentPage,
         lastPage,
         errorMessage,

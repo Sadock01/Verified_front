@@ -1,21 +1,39 @@
-// class FlutterStoraageSecure {
-//   static const _storage = FlutterSecureStorage();
+import 'dart:developer';
 
-//   // Clé du token
-//   static const String _tokenKey = "user_token";
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
-//   /// Sauvegarde du token
-//   static Future<void> saveToken(String token) async {
-//     await _storage.write(key: _tokenKey, value: token);
-//   }
+class FlutterStorageSecure {
+  static final FlutterSecureStorage _storage = FlutterSecureStorage();
 
-//   /// Récupération du token
-//   static Future<String?> getToken() async {
-//     return await _storage.read(key: _tokenKey);
-//   }
+  // Clé du token
+  static const String _tokenKey = "user_token";
 
-//   /// Suppression du token (déconnexion)
-//   static Future<void> deleteToken() async {
-//     await _storage.delete(key: _tokenKey);
-//   }
-// }
+  /// Sauvegarde du token
+  static Future<void> saveToken(String token) async {
+    try {
+      await _storage.write(key: _tokenKey, value: token);
+      log("Token sauvegardé avec succès");
+    } catch (e) {
+      log("Erreur lors de l'enregistrement du token: $e");
+    }
+  }
+
+  /// Récupération du token
+  static Future<String?> getToken() async {
+    try {
+      return await _storage.read(key: _tokenKey);
+    } catch (e) {
+      log("Erreur lors de la récupération du token: $e");
+      return null;
+    }
+  }
+
+  /// Suppression du token (déconnexion)
+  static Future<void> deleteToken() async {
+    try {
+      await _storage.delete(key: _tokenKey);
+    } catch (e) {
+      log("Erreur lors de la suppression du token: $e");
+    }
+  }
+}

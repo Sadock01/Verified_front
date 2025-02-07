@@ -2,7 +2,7 @@ import 'package:doc_authentificator/cubits/documents/document_cubit.dart';
 import 'package:doc_authentificator/cubits/login/login_cubit.dart';
 import 'package:doc_authentificator/cubits/switch_page/switch_page_cubit.dart';
 import 'package:doc_authentificator/cubits/types/type_doc_cubit.dart';
-import 'package:doc_authentificator/models/documents_model.dart';
+
 import 'package:doc_authentificator/pages/dashboard_home_screen.dart';
 import 'package:doc_authentificator/pages/login_page.dart';
 import 'package:doc_authentificator/pages/screens/Rapports_screen.dart';
@@ -10,6 +10,7 @@ import 'package:doc_authentificator/pages/screens/collaborateur_screen.dart';
 import 'package:doc_authentificator/pages/screens/list_document_screen.dart';
 import 'package:doc_authentificator/pages/screens/new_document_screen.dart';
 import 'package:doc_authentificator/pages/screens/update_document_screen.dart';
+import 'package:doc_authentificator/pages/statistiques_screen.dart';
 import 'package:doc_authentificator/pages/user_verify_page.dart';
 import 'package:doc_authentificator/repositories/auth_repository.dart';
 import 'package:doc_authentificator/repositories/document_repository.dart';
@@ -39,12 +40,8 @@ final GoRouter _router = GoRouter(
     GoRoute(
       path: '/dashboard',
       builder: (BuildContext context, GoRouterState state) {
-        context
-            .read<SwitchPageCubit>()
-            .switchPage(0); // Sélectionner la page Dashboard
-        return const DashboardHomeScreen(
-          widget: SizedBox(),
-        );
+        context.read<SwitchPageCubit>().switchPage(0);
+        return const StatistiquesScreen();
       },
     ),
     GoRoute(
@@ -53,7 +50,7 @@ final GoRouter _router = GoRouter(
         context
             .read<SwitchPageCubit>()
             .switchPage(1); // Sélectionner la page Liste des documents
-        return DashboardHomeScreen(widget: const ListDocumentScreen());
+        return  ListDocumentScreen();
       },
     ),
     GoRoute(
@@ -62,7 +59,7 @@ final GoRouter _router = GoRouter(
         context
             .read<SwitchPageCubit>()
             .switchPage(2); // Sélectionner la page Nouveau document
-        return DashboardHomeScreen(widget: const NewDocumentScreen());
+        return  const NewDocumentScreen();
       },
     ),
     GoRoute(
@@ -89,18 +86,19 @@ final GoRouter _router = GoRouter(
         return const UserVerifyPage();
       },
     ),
-    // GoRoute(
-    //   path:
-    //       '/document/update/:id', // Utilisation de :id pour passer l'ID du document
-    //   builder: (BuildContext context, GoRouterState state) {
-    //     final documentId = state.pathParameters['id']!;
-    //     final DocumentsModel document;
-    //     return UpdateDocumentScreen(
-    //       document: document,
-    //       documentId: int.parse(documentId),
-    //     );
-    //   },
-    // ),
+    GoRoute(
+      path: '/document/update/:id',
+      builder: (BuildContext context, GoRouterState state) {
+        //  context
+        //     .read<SwitchPageCubit>()
+        //     .switchPage(5);
+        final documentId = int.parse(state.pathParameters['id']!);
+
+        return UpdateDocumentScreen(
+          documentId: documentId,
+        );
+      },
+    )
   ],
 );
 

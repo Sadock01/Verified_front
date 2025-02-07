@@ -9,12 +9,16 @@ class DocumentRepository {
       log("Appel au service pour récupérer les documents à la page ");
       final response = await DocumentService.getAllDocument(page);
       if (response['status_code'] == 200) {
-          log("Réponse réussie pour la page $page : ${response['data']}");
-        return {'data': response['data'], 'last_page': response['last_page'],};
+        log("Réponse réussie pour la page $page : ${response['data']}");
+        return {
+          'data': response['data'],
+          'last_page': response['last_page'],
+        };
       } else {
-      log("Erreur : Code de statut inattendu ${response['status_code']}");
-      throw Exception("Erreur lors de la récupération des documents : ${response['message']}");
-    }
+        log("Erreur : Code de statut inattendu ${response['status_code']}");
+        throw Exception(
+            "Erreur lors de la récupération des documents : ${response['message']}");
+      }
     } catch (e) {
       log("Erreur dans DocumentRepository: $e");
       throw Exception("Erreur lors de la récupération des documents");
@@ -44,11 +48,18 @@ class DocumentRepository {
     }
   }
 
-  Future<void> updateDocument(int documentId,DocumentsModel documentsModel) async {
+  Future<Map<String, dynamic>> updateDocument(
+      int documentId, DocumentsModel documentsModel) async {
     try {
       log("Appel au service pour mettre à jour un document");
-      await DocumentService.updateDocument(documentId,documentsModel);
-      log("Document mis à jour");
+
+      final response =
+          await DocumentService.updateDocument(documentId, documentsModel);
+      log("$response");
+      return {
+        'status_code':response['status_code'],
+        'message': response['message'],
+      };
     } catch (e) {
       log("Erreur dans DocumentRepository: $e");
       throw Exception("Erreur lors de la mise à jour du document");
@@ -77,6 +88,28 @@ class DocumentRepository {
         'success': false,
         'message': 'Une erreur est survenue : $e',
       };
+    }
+  }
+
+  Future<Map<String, dynamic>> getDocumentById(int documentId) async {
+    try {
+      log("Appel au service pour récupérer le document ID: $documentId");
+      final response = await DocumentService.getDocumentById(documentId);
+
+      if (response['status_code'] == 200) {
+        log("Document récupéré avec succès: ${response['data']}");
+        return {
+          'data': response['data'],
+          'message': response['message'],
+        };
+      } else {
+        log("Erreur: Code de statut inattendu ${response['status_code']}");
+        throw Exception(
+            "Erreur lors de la récupération du document: ${response['message']}");
+      }
+    } catch (e) {
+      log("Erreur dans DocumentRepository: $e");
+      throw Exception("Erreur lors de la récupération du document");
     }
   }
 }

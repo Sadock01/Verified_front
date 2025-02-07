@@ -37,8 +37,15 @@ class DocumentCubit extends Cubit<DocumentState> {
           documentStatus: DocumentStatus.loading, errorMessage: ""));
       final response = await documentRepository.addDocument(documentsModel);
       if (response['status_code'] == 200) {
+        log("État actuel: ${state.documentStatus}");
         emit(state.copyWith(
-          documentStatus: DocumentStatus.sucess,
+          documentStatus: DocumentStatus.loaded,
+          errorMessage: response['message'],
+        ));
+        log("voici ma response: ${response['message']}");
+      }else {
+         emit(state.copyWith(
+          documentStatus: DocumentStatus.error,
           errorMessage: response['message'],
         ));
         log("voici ma response: ${response['message']}");
@@ -49,16 +56,25 @@ class DocumentCubit extends Cubit<DocumentState> {
     }
   }
 
-  Future<void> updateDocument(int id ,DocumentsModel documentsModel) async {
+  Future<void> updateDocument(
+      int documentId, DocumentsModel documentsModel) async {
     try {
       emit(state.copyWith(
           documentStatus: DocumentStatus.loading, errorMessage: ""));
-      await documentRepository.updateDocument(id,documentsModel);
-      emit(state.copyWith(
-          documentStatus: DocumentStatus.loaded, errorMessage: ""));
+      final response =
+          await documentRepository.updateDocument(documentId, documentsModel);
+      log("${response['message']}");
+     if (response['status_code'] == 200) {
+       emit(state.copyWith(
+          documentStatus: DocumentStatus.sucess,
+          errorMessage: response['message'])); 
+     }
+     
     } catch (e) {
+ 
       emit(state.copyWith(
-          errorMessage: e.toString(), documentStatus: DocumentStatus.error));
+          errorMessage: e.toString(),
+          documentStatus: DocumentStatus.error));
     }
   }
 
@@ -86,8 +102,6 @@ class DocumentCubit extends Cubit<DocumentState> {
     }
   }
 
- 
-
   void goToNextPage() {
     if (state.currentPage < state.lastPage) {
       final nextPage = state.currentPage + 1;
@@ -104,12 +118,32 @@ class DocumentCubit extends Cubit<DocumentState> {
     }
   }
 
- 
- void setSearchKey(String searchKey) {
+  void setSearchKey(String searchKey) {
     emit(state.copyWith(searchKey: searchKey));
   }
-  // Future<void> showDocument(DocumentsModel documentsModel) async {
-  //   emit(state.copyWith(
-  //       documentStatus: DocumentStatus.loaded, selectedDocument: documentsModel));
-  // }
+
+  Future<void> getDocumentById(int documentId) async {
+    try {
+      emit(state.copyWith(
+        documentStatus: DocumentStatus.loading,
+        errorMessage: "",
+      ));
+      log("Récupération du document avec l'ID: $documentId");
+
+      final response = await documentRepository.getDocumentById(documentId);
+
+      final document = DocumentsModel.fromJson(response['data']);
+
+      emit(state.copyWith(
+        documentStatus: DocumentStatus.loaded,
+        selectedDocument: document,
+        errorMessage: response['message'],
+      ));
+    } catch (e) {
+      emit(state.copyWith(
+        documentStatus: DocumentStatus.error,
+        errorMessage: e.toString(),
+      ));
+    }
+  }
 }
