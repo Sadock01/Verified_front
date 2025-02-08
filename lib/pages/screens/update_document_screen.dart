@@ -55,14 +55,14 @@ class _UpdateDocumentScreenState extends State<UpdateDocumentScreen> {
         if (state.documentStatus == DocumentStatus.sucess) {
           ElegantNotification.success(
             width: Const.screenWidth(context) * 0.5,
-            description: Text(state.errorMessage),
+            description: Text(state.errorMessage,
+                style: Theme.of(context).textTheme.labelSmall),
             position: Alignment.topRight,
             animation: AnimationType.fromRight,
             icon: const Icon(Icons.check_circle_outline, color: Colors.green),
           ).show(context);
           context.read<SwitchPageCubit>().switchPage(1);
           Future.delayed(const Duration(seconds: 1), () {
-           
             if (state.documentStatus == DocumentStatus.loaded) {
               context.go('/document/List_document');
             }
@@ -71,7 +71,8 @@ class _UpdateDocumentScreenState extends State<UpdateDocumentScreen> {
         if (state.documentStatus == DocumentStatus.error) {
           ElegantNotification.error(
             width: Const.screenWidth(context) * 0.12,
-            description: const Text("Une erreur est survenue."),
+            description: Text("Une erreur est survenue.",
+                style: Theme.of(context).textTheme.labelSmall),
             position: Alignment.topRight,
             animation: AnimationType.fromRight,
             icon: const Icon(Icons.error_outline, color: Colors.red),

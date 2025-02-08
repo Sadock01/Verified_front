@@ -44,9 +44,10 @@ class _NewDocumentScreenState extends State<NewDocumentScreen> {
       listener: (context, state) {
         if (state.documentStatus == DocumentStatus.loaded) {
           ElegantNotification.success(
+            notificationMargin: 10,
             background: Theme.of(context).colorScheme.primary,
             width: Const.screenWidth(context) * 0.2,
-            description: Text(state.errorMessage),
+            description: Text(state.errorMessage,style: Theme.of(context).textTheme.labelSmall),
             position: Alignment.topRight,
             animation: AnimationType.fromRight,
             icon: const Icon(
@@ -63,7 +64,8 @@ class _NewDocumentScreenState extends State<NewDocumentScreen> {
         }
         if (state.documentStatus == DocumentStatus.error) {
           ElegantNotification.error(
-            description: Text(state.errorMessage),
+            notificationMargin: 10,
+            description: Text(state.errorMessage,style: Theme.of(context).textTheme.labelSmall),
             position: Alignment.topRight,
             animation: AnimationType.fromRight,
             icon: const Icon(

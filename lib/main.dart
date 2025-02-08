@@ -50,7 +50,7 @@ final GoRouter _router = GoRouter(
         context
             .read<SwitchPageCubit>()
             .switchPage(1); // Sélectionner la page Liste des documents
-        return  ListDocumentScreen();
+        return ListDocumentScreen();
       },
     ),
     GoRoute(
@@ -59,7 +59,7 @@ final GoRouter _router = GoRouter(
         context
             .read<SwitchPageCubit>()
             .switchPage(2); // Sélectionner la page Nouveau document
-        return  const NewDocumentScreen();
+        return const NewDocumentScreen();
       },
     ),
     GoRoute(

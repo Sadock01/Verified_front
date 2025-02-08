@@ -75,60 +75,84 @@ class _UserVerifyPageState extends State<UserVerifyPage> {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   SizedBox(
-                    height: Const.screenHeight(context) * 0.2,
+                    height: Const.screenHeight(context) * 0.1,
                   ),
-                  Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Container(
-                        width: Const.screenWidth(context) * 0.2,
-                        height: 40,
-                        decoration: BoxDecoration(
-                          border: Border.all(color: Colors.black45),
-                          borderRadius: BorderRadius.only(
-                            topLeft: Radius.circular(8),
-                            bottomLeft: Radius.circular(8),
-                          ),
+                  Container(
+                    width: Const.screenWidth(context),
+                    height: Const.screenHeight(context) * 0.25,
+                    decoration: BoxDecoration(
+                        color: const Color.fromARGB(255, 9, 6, 68)),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text(
+                          "Verifier l'authenticité d'un document à partir de l'identifiant",
+                          style: Theme.of(context)
+                              .textTheme
+                              .displayMedium!
+                              .copyWith(
+                                  fontSize: 25, fontWeight: FontWeight.bold),
                         ),
-                        child: TextField(
-                          controller: _identifierController,
-                          focusNode: _focusNode,
-                          decoration: InputDecoration(
-                            contentPadding:
-                                EdgeInsets.only(bottom: 12, left: 5),
-                            hintText: "Entrez l'identifiant",
-                            hintStyle: Theme.of(context).textTheme.labelSmall,
-                            border: InputBorder.none,
-                          ),
-                        ),
-                      ),
-                      SizedBox(
-                        height: 40,
-                        child: ElevatedButton(
-                          style: ElevatedButton.styleFrom(
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(5),
+                        Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Container(
+                              width: Const.screenWidth(context) * 0.5,
+                              height: 40,
+                              decoration: BoxDecoration(
+                                border: Border.all(color: Colors.black45),
+                                borderRadius: BorderRadius.only(
+                                  topLeft: Radius.circular(8),
+                                  bottomLeft: Radius.circular(8),
+                                ),
+                              ),
+                              child: TextField(
+                                controller: _identifierController,
+                                focusNode: _focusNode,
+                                style: Theme.of(context).textTheme.labelSmall,
+                                decoration: InputDecoration(
+                                  contentPadding:
+                                      EdgeInsets.only(bottom: 12, left: 5),
+                                  hintText: "N d'identification de document",
+                                  hintStyle:
+                                      Theme.of(context).textTheme.labelSmall,
+                                  border: InputBorder.none,
+                                ),
+                              ),
                             ),
-                            backgroundColor:
-                                Theme.of(context).colorScheme.primary,
-                          ),
-                          onPressed: () {
-                            final identifier = _identifierController.text;
+                            SizedBox(
+                              height: 40,
+                              child: ElevatedButton(
+                                style: ElevatedButton.styleFrom(
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.only(
+                                      topLeft: Radius.circular(8),
+                                      bottomLeft: Radius.circular(8),
+                                    ),
+                                  ),
+                                  backgroundColor:
+                                      Theme.of(context).colorScheme.primary,
+                                ),
+                                onPressed: () {
+                                  final identifier = _identifierController.text;
 
-                            context
-                                .read<DocumentCubit>()
-                                .verifyDocument(identifier);
-                          },
-                          child: Text(
-                            "Rechercher",
-                            style: Theme.of(context)
-                                .textTheme
-                                .labelSmall!
-                                .copyWith(color: Colors.white),
-                          ),
+                                  context
+                                      .read<DocumentCubit>()
+                                      .verifyDocument(identifier);
+                                },
+                                child: Text(
+                                  "Rechercher",
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .labelSmall!
+                                      .copyWith(color: Colors.white),
+                                ),
+                              ),
+                            )
+                          ],
                         ),
-                      )
-                    ],
+                      ],
+                    ),
                   ),
                   SizedBox(height: Const.screenHeight(context) * 0.1),
                   BlocBuilder<DocumentCubit, DocumentState>(
@@ -139,7 +163,12 @@ class _UserVerifyPageState extends State<UserVerifyPage> {
                           DocumentStatus.loaded) {
                         return Center(
                           child: Text(state.apiResponse.toString(),
-                              style: Theme.of(context).textTheme.displayMedium),
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .displayMedium!
+                                  .copyWith(
+                                      fontSize: 20,
+                                      fontWeight: FontWeight.bold)),
                         );
                       } else if (state.documentStatus == DocumentStatus.error) {
                         return Center(
