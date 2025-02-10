@@ -31,12 +31,16 @@ class TypeDocModel extends Equatable {
   }
 
   Map<String, dynamic> toMap() {
-    return {"name": name};
+    return {
+      "name": name,
+      "descriptionType": _descriptionType,
+    };
   }
 
   Map<String, dynamic> toJson() {
     return {
       'name': name,
+      "description": _descriptionType,
     };
   }
 
