@@ -86,7 +86,7 @@ class _NewDocumentScreenState extends State<NewDocumentScreen> {
 
     return BlocListener<DocumentCubit, DocumentState>(
       listener: (context, state) {
-        if (state.documentStatus == DocumentStatus.loaded) {
+        if (state.documentStatus == DocumentStatus.sucess) {
           ElegantNotification.success(
             notificationMargin: 10,
             background: Theme.of(context).colorScheme.primary,

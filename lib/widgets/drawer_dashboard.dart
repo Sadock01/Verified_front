@@ -195,6 +195,50 @@ class DrawerDashboard extends StatelessWidget {
                   ),
                 ),
               ),
+              Container(
+                padding: EdgeInsets.symmetric(vertical: 10),
+                width: Const.screenWidth(context) * 0.19,
+                height: 35,
+                decoration: BoxDecoration(
+                  color: context.read<SwitchPageCubit>().state.selectedPage == 4
+                      ? Theme.of(context).colorScheme.primary
+                      : Colors.white,
+                ),
+                child: TextButton(
+                  onPressed: () {
+                    context.read<SwitchPageCubit>().switchPage(4);
+                    context.go('/collaborateurs');
+                  },
+                  child: Row(
+                    children: [
+                      Icon(
+                        Icons.group,
+                        color: context
+                                    .read<SwitchPageCubit>()
+                                    .state
+                                    .selectedPage ==
+                                4
+                            ? Colors.white
+                            : Colors.grey.withValues(alpha: 0.2),
+                      ),
+                      SizedBox(width: 5),
+                      Text(
+                        'Collaborateurs',
+                        style:
+                            Theme.of(context).textTheme.displayMedium!.copyWith(
+                                  color: context
+                                              .read<SwitchPageCubit>()
+                                              .state
+                                              .selectedPage ==
+                                          4
+                                      ? Colors.white
+                                      : Colors.black,
+                                ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
             ],
           )),
     );

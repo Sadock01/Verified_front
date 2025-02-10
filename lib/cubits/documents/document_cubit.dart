@@ -39,7 +39,7 @@ class DocumentCubit extends Cubit<DocumentState> {
       if (response['status_code'] == 200) {
         log("État actuel: ${state.documentStatus}");
         emit(state.copyWith(
-          documentStatus: DocumentStatus.loaded,
+          documentStatus: DocumentStatus.sucess,
           errorMessage: response['message'],
         ));
         log("voici ma response: ${response['message']}");

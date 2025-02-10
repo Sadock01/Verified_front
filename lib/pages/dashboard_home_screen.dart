@@ -1,5 +1,6 @@
 import 'package:doc_authentificator/cubits/switch_page/switch_page_cubit.dart';
 import 'package:doc_authentificator/cubits/switch_page/switch_page_state.dart';
+import 'package:doc_authentificator/pages/screens/collaborateur_screen.dart';
 
 
 import 'package:doc_authentificator/pages/screens/history_screen.dart';
@@ -37,7 +38,9 @@ class _DashboardHomeScreenState extends State<DashboardHomeScreen> {
           return NewDocumentScreen();
         } else if (state.selectedPage == 3) {
           return HistoryScreen();
-        } else {
+        } else if (state.selectedPage == 4) {
+          return CollaborateurScreen();
+        }else {
           return Center(
             child: Text("Page not found",
                 style: Theme.of(context).textTheme.labelMedium),

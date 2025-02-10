@@ -1,12 +1,12 @@
 import 'package:equatable/equatable.dart';
 
 class CollaborateursModel extends Equatable {
-  CollaborateursModel({
+ const CollaborateursModel({
     int? id,
     required String firstName,
     required String lastName,
     required String email,
-    bool? status,
+    int? status,
     int? roleId,
   })  : _id = id,
         _firstName = firstName,
@@ -19,14 +19,14 @@ class CollaborateursModel extends Equatable {
   final String _firstName;
   final String _lastName;
   final String _email;
-  final bool? _status;
+  final int? _status;
   final int? _roleId;
 
   int? get id => _id;
-  String? get firstName => _firstName;
-  String? get lastName => _lastName;
-  String? get email => _email;
-  bool? get status => _status;
+  String get firstName => _firstName;
+  String get lastName => _lastName;
+  String get email => _email;
+  int? get status => _status;
   int? get roleId => _roleId;
 
   factory CollaborateursModel.fromJson(Map<String, dynamic> json) {
@@ -63,7 +63,7 @@ class CollaborateursModel extends Equatable {
     String? firstName,
     String? lastName,
     String? email,
-    bool? status,
+    int? status,
     int? roleId,
   }) {
     return CollaborateursModel(

@@ -121,7 +121,7 @@ class _LoginPageState extends State<LoginPage> {
                               borderSide: BorderSide(color: Colors.red),
                               borderRadius: BorderRadius.circular(10),
                             ),
-                            hintText: "email",
+                            hintText: "Email",
                             hintStyle: Theme.of(context).textTheme.displaySmall,
                           ),
                         ),
@@ -152,7 +152,7 @@ class _LoginPageState extends State<LoginPage> {
                               borderRadius: BorderRadius.circular(
                                   10), // Arrondi des bords
                             ),
-                            hintText: "mot de Passe",
+                            hintText: "Mot de Passe",
                             hintStyle: Theme.of(context).textTheme.displaySmall,
                             suffixIcon: IconButton(
                               icon: Icon(
