@@ -2,11 +2,13 @@ import 'package:doc_authentificator/cubits/documents/document_cubit.dart';
 import 'package:doc_authentificator/cubits/login/login_cubit.dart';
 import 'package:doc_authentificator/cubits/switch_page/switch_page_cubit.dart';
 import 'package:doc_authentificator/cubits/types/type_doc_cubit.dart';
+import 'package:doc_authentificator/cubits/verification/verification_cubit.dart';
 
 import 'package:doc_authentificator/pages/dashboard_home_screen.dart';
 import 'package:doc_authentificator/pages/login_page.dart';
 import 'package:doc_authentificator/pages/screens/Rapports_screen.dart';
-import 'package:doc_authentificator/pages/screens/collaborateur_screen.dart';
+
+import 'package:doc_authentificator/pages/screens/history_screen.dart';
 import 'package:doc_authentificator/pages/screens/list_document_screen.dart';
 import 'package:doc_authentificator/pages/screens/new_document_screen.dart';
 import 'package:doc_authentificator/pages/screens/update_document_screen.dart';
@@ -15,6 +17,7 @@ import 'package:doc_authentificator/pages/user_verify_page.dart';
 import 'package:doc_authentificator/repositories/auth_repository.dart';
 import 'package:doc_authentificator/repositories/document_repository.dart';
 import 'package:doc_authentificator/repositories/type_doc_repository.dart';
+import 'package:doc_authentificator/repositories/verification_repository.dart';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -63,12 +66,12 @@ final GoRouter _router = GoRouter(
       },
     ),
     GoRoute(
-      path: '/collaborateurs',
+      path: '/historiques',
       builder: (BuildContext context, GoRouterState state) {
         context
             .read<SwitchPageCubit>()
             .switchPage(3); // Sélectionner la page Collaborateurs
-        return DashboardHomeScreen(widget: const CollaborateurScreen());
+        return DashboardHomeScreen(widget: const HistoryScreen());
       },
     ),
     GoRoute(
@@ -121,7 +124,9 @@ class MyApp extends StatelessWidget {
           create: (context) => TypeDocRepository(),
         ),
         RepositoryProvider<AuthRepository>(
-            create: (context) => AuthRepository())
+            create: (context) => AuthRepository()),
+        RepositoryProvider<VerificationRepository>(
+            create: (context) => VerificationRepository())
       ],
       child: MultiBlocProvider(
           providers: [
@@ -145,6 +150,11 @@ class MyApp extends StatelessWidget {
                 documentRepository: context.read<DocumentRepository>(),
               )..getAllDocument(1),
             ),
+            BlocProvider<VerificationCubit>(
+              create: (context) => VerificationCubit(
+                verificationRepository: context.read<VerificationRepository>(),
+              )..getAllVerification(1),
+            )
           ],
           child: Builder(builder: (context) {
             WidgetsBinding.instance.addPostFrameCallback((_) {});

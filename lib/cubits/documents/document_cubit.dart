@@ -118,9 +118,7 @@ class DocumentCubit extends Cubit<DocumentState> {
     }
   }
 
-  void setSearchKey(String searchKey) {
-    emit(state.copyWith(searchKey: searchKey));
-  }
+ 
 
   Future<void> getDocumentById(int documentId) async {
     try {
@@ -145,5 +143,17 @@ class DocumentCubit extends Cubit<DocumentState> {
         errorMessage: e.toString(),
       ));
     }
+  }
+
+   void setSearchKey(String searchKey) {
+    emit(state.copyWith(searchKey: searchKey));
+  }
+
+  int statisticsByDays(){
+    emit(state.copyWith(
+        documentStatus: DocumentStatus.loading,
+        errorMessage: "",
+      ));
+      log("Récupération des stats");
   }
 }

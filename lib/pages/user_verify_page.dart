@@ -22,7 +22,7 @@ class _UserVerifyPageState extends State<UserVerifyPage> {
         children: [
           Container(
             padding: EdgeInsets.only(right: 10),
-            margin: EdgeInsets.only(left: 10, right: 10, top: 10),
+            // margin: EdgeInsets.only(top: 10),
             width: Const.screenWidth(context),
             height: 50,
             decoration: BoxDecoration(
@@ -74,14 +74,11 @@ class _UserVerifyPageState extends State<UserVerifyPage> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  SizedBox(
-                    height: Const.screenHeight(context) * 0.1,
-                  ),
                   Container(
                     width: Const.screenWidth(context),
-                    height: Const.screenHeight(context) * 0.25,
+                    height: Const.screenHeight(context) * 0.2,
                     decoration: BoxDecoration(
-                        color: const Color.fromARGB(255, 9, 6, 68)),
+                        color: Theme.of(context).colorScheme.primary),
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
@@ -91,13 +88,18 @@ class _UserVerifyPageState extends State<UserVerifyPage> {
                               .textTheme
                               .displayMedium!
                               .copyWith(
-                                  fontSize: 25, fontWeight: FontWeight.bold),
+                                  color: Colors.white,
+                                  fontSize: 15,
+                                  fontWeight: FontWeight.bold),
+                        ),
+                        SizedBox(
+                          height: Const.screenHeight(context) * 0.1,
                         ),
                         Row(
                           mainAxisSize: MainAxisSize.min,
                           children: [
                             Container(
-                              width: Const.screenWidth(context) * 0.5,
+                              width: Const.screenWidth(context) * 0.25,
                               height: 40,
                               decoration: BoxDecoration(
                                 border: Border.all(color: Colors.black45),
@@ -111,9 +113,11 @@ class _UserVerifyPageState extends State<UserVerifyPage> {
                                 focusNode: _focusNode,
                                 style: Theme.of(context).textTheme.labelSmall,
                                 decoration: InputDecoration(
+                                  filled: true,
+                                  fillColor: Colors.white,
                                   contentPadding:
                                       EdgeInsets.only(bottom: 12, left: 5),
-                                  hintText: "N d'identification de document",
+                                  hintText: "N d'identification du document",
                                   hintStyle:
                                       Theme.of(context).textTheme.labelSmall,
                                   border: InputBorder.none,
@@ -126,8 +130,8 @@ class _UserVerifyPageState extends State<UserVerifyPage> {
                                 style: ElevatedButton.styleFrom(
                                   shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.only(
-                                      topLeft: Radius.circular(8),
-                                      bottomLeft: Radius.circular(8),
+                                      topRight: Radius.circular(8),
+                                      bottomRight: Radius.circular(8),
                                     ),
                                   ),
                                   backgroundColor:
@@ -167,7 +171,7 @@ class _UserVerifyPageState extends State<UserVerifyPage> {
                                   .textTheme
                                   .displayMedium!
                                   .copyWith(
-                                      fontSize: 20,
+                                      fontSize: 15,
                                       fontWeight: FontWeight.bold)),
                         );
                       } else if (state.documentStatus == DocumentStatus.error) {

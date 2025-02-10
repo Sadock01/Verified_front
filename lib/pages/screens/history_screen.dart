@@ -1,24 +1,24 @@
 import 'package:doc_authentificator/const/const.dart';
-import 'package:doc_authentificator/cubits/documents/document_cubit.dart';
-import 'package:doc_authentificator/cubits/documents/document_state.dart';
-import 'package:doc_authentificator/widgets/appbar_dashboard.dart';
+import 'package:doc_authentificator/cubits/verification/verification_cubit.dart';
+import 'package:doc_authentificator/cubits/verification/verification_state.dart';
 import 'package:doc_authentificator/widgets/drawer_dashboard.dart';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:go_router/go_router.dart';
 
-class ListDocumentScreen extends StatefulWidget {
-  const ListDocumentScreen({super.key});
+import '../../widgets/appbar_dashboard.dart';
+
+class HistoryScreen extends StatefulWidget {
+  const HistoryScreen({super.key});
 
   @override
-  State<ListDocumentScreen> createState() => _ListDocumentScreenState();
+  State<HistoryScreen> createState() => _HistoryScreenState();
 }
 
-class _ListDocumentScreenState extends State<ListDocumentScreen> {
+class _HistoryScreenState extends State<HistoryScreen> {
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<DocumentCubit, DocumentState>(builder: (context, state) {
+    return BlocBuilder<VerificationCubit, VerificationState>(
+        builder: (context, state) {
       return Scaffold(
         body: Row(
           children: [
@@ -32,8 +32,8 @@ class _ListDocumentScreenState extends State<ListDocumentScreen> {
                     child: SingleChildScrollView(
                       child: Column(children: [
                         Container(
-                          margin:
-                              EdgeInsets.symmetric(vertical: 10, horizontal: 10),
+                          margin: EdgeInsets.symmetric(
+                              vertical: 10, horizontal: 10),
                           width: Const.screenWidth(context),
                           height: Const.screenHeight(context) * 0.2,
                           decoration: BoxDecoration(
@@ -52,41 +52,45 @@ class _ListDocumentScreenState extends State<ListDocumentScreen> {
                             crossAxisAlignment: CrossAxisAlignment.center,
                             children: [
                               SizedBox(height: 5),
-                              OutlinedButton(
-                                style: OutlinedButton.styleFrom(
-                                  shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(5)),
-                                  side: BorderSide(
-                                      color: Theme.of(context).colorScheme.primary),
-                                ),
-                                onPressed: () {
-                                  context.go('/document/nouveau_document');
-                                },
-                                child: Text(
-                                  "Nouveau Document +",
-                                  style: Theme.of(context).textTheme.displayMedium,
-                                ),
-                              )
+                              // OutlinedButton(
+                              //   style: OutlinedButton.styleFrom(
+                              //     shape: RoundedRectangleBorder(
+                              //         borderRadius: BorderRadius.circular(5)),
+                              //     side: BorderSide(
+                              //         color: Theme.of(context).colorScheme.primary),
+                              //   ),
+                              //   onPressed: () {
+                              //     context.go('/document/nouveau_document');
+                              //   },
+                              //   child: Text(
+                              //     "Nouveau Document +",
+                              //     style: Theme.of(context).textTheme.displayMedium,
+                              //   ),
+                              // )
                             ],
                           ),
                         ),
                         SizedBox(width: 10),
                         Column(
                           children: [
-                            if (state.documentStatus == DocumentStatus.loading)
+                            if (state.verificationStatus ==
+                                VerificationStatus.loading)
                               const Center(
                                 child: CircularProgressIndicator(
                                   strokeWidth: 3.0,
                                 ),
                               )
-                            else if (state.documentStatus == DocumentStatus.error)
+                            else if (state.verificationStatus ==
+                                VerificationStatus.error)
                               Center(
                                 child: Text(
                                   state.errorMessage,
-                                  style: Theme.of(context).textTheme.labelMedium,
+                                  style:
+                                      Theme.of(context).textTheme.labelMedium,
                                 ),
                               )
-                            else if (state.documentStatus == DocumentStatus.loaded)
+                            else if (state.verificationStatus ==
+                                VerificationStatus.loaded)
                               Column(
                                 mainAxisSize: MainAxisSize.max,
                                 children: [
@@ -117,9 +121,9 @@ class _ListDocumentScreenState extends State<ListDocumentScreen> {
                                         ),
                                         DataColumn(
                                           label: SizedBox(
-                                            width:
-                                                Const.screenWidth(context) * 0.25,
-                                            child: Text("Description",
+                                            width: Const.screenWidth(context) *
+                                                0.25,
+                                            child: Text("Date de verification",
                                                 style: Theme.of(context)
                                                     .textTheme
                                                     .displayMedium),
@@ -127,33 +131,24 @@ class _ListDocumentScreenState extends State<ListDocumentScreen> {
                                         ),
                                         DataColumn(
                                           label: SizedBox(
-                                            width: Const.screenWidth(context) * 0.1,
-                                            child: Text("Type",
-                                                style: Theme.of(context)
-                                                    .textTheme
-                                                    .displayMedium),
-                                          ),
-                                        ),
-                                        DataColumn(
-                                          label: SizedBox(
-                                            width:
-                                                Const.screenWidth(context) * 0.12,
-                                            child: Text("Action",
+                                            width: Const.screenWidth(context) *
+                                                0.12,
+                                            child: Text("Status",
                                                 style: Theme.of(context)
                                                     .textTheme
                                                     .displayMedium),
                                           ),
                                         ),
                                       ],
-                                      rows: state.listDocuments
-                                          .map((document) => DataRow(
+                                      rows: state.listVerifications
+                                          .map((verification) => DataRow(
                                                 cells: [
                                                   DataCell(SizedBox(
-                                                    width:
-                                                        Const.screenWidth(context) *
-                                                            0.1,
+                                                    width: Const.screenWidth(
+                                                            context) *
+                                                        0.1,
                                                     child: Text(
-                                                      document.identifier
+                                                      verification.identifier
                                                           .toString(),
                                                       style: Theme.of(context)
                                                           .textTheme
@@ -163,14 +158,16 @@ class _ListDocumentScreenState extends State<ListDocumentScreen> {
                                                     ),
                                                   )),
                                                   DataCell(SizedBox(
-                                                    width:
-                                                        Const.screenWidth(context) *
-                                                            0.25,
+                                                    width: Const.screenWidth(
+                                                            context) *
+                                                        0.25,
                                                     height: Const.screenHeight(
                                                             context) *
                                                         0.05,
                                                     child: Text(
-                                                      document.descriptionDocument,
+                                                      verification
+                                                          .verificationDate
+                                                          .toString(),
                                                       style: Theme.of(context)
                                                           .textTheme
                                                           .labelSmall,
@@ -179,61 +176,33 @@ class _ListDocumentScreenState extends State<ListDocumentScreen> {
                                                     ),
                                                   )),
                                                   DataCell(SizedBox(
-                                                    width:
-                                                        Const.screenWidth(context) *
-                                                            0.1,
-                                                    child: Text(
-                                                      document.typeName.toString(),
-                                                      style: Theme.of(context)
-                                                          .textTheme
-                                                          .displayMedium,
-                                                    ),
-                                                  )),
-                                                  DataCell(PopupMenuButton<String>(
-                                                    onSelected: (value) {
-                                                      if (value == "edit") {
-                                                        context.go(
-                                                            '/document/update/${document.id}');
-                                                      } else if (value == "view") {
-                                                        context.go(
-                                                            '/document/view/${document.identifier}');
-                                                      }
-                                                    },
-                                                    itemBuilder: (context) => [
-                                                      PopupMenuItem(
-                                                          value: "edit",
-                                                          child: Text(
-                                                              "Modifier document")),
-                                                      PopupMenuItem(
-                                                          value: "view",
-                                                          child: Text(
-                                                              "Afficher document")),
-                                                    ],
-                                                    child: MouseRegion(
-                                                      cursor:
-                                                          SystemMouseCursors.click,
-                                                      child: Container(
-                                                        padding: const EdgeInsets
-                                                            .symmetric(
-                                                            horizontal: 8,
-                                                            vertical: 5),
-                                                        decoration: BoxDecoration(
-                                                          color: Theme.of(context)
-                                                              .colorScheme
-                                                              .primary,
+                                                    width: Const.screenWidth(
+                                                            context) *
+                                                        0.1,
+                                                    child: Container(
+                                                      padding:
+                                                          EdgeInsets.symmetric(
+                                                              horizontal: 10),
+                                                      decoration: BoxDecoration(
                                                           borderRadius:
-                                                              BorderRadius.circular(
-                                                                  5),
-                                                        ),
-                                                        child: Text(
-                                                          "Option",
-                                                          style: Theme.of(context)
-                                                              .textTheme
-                                                              .labelMedium!
-                                                              .copyWith(
-                                                                  color:
-                                                                      Colors.white),
-                                                        ),
+                                                              BorderRadius
+                                                                  .circular(15),
+                                                          color: verification
+                                                                      .status ==
+                                                                  'Authentique'
+                                                              ? Colors.green
+                                                                  .withValues(
+                                                                      alpha:
+                                                                          0.2)
+                                                              : Colors.red
+                                                                  .withValues(
+                                                                      alpha:
+                                                                          0.2)),
+                                                      child: Text(
+                                                        verification.status,
+                                                        style: Theme.of(context)
+                                                            .textTheme
+                                                            .displayMedium,
                                                       ),
                                                     ),
                                                   )),
@@ -249,7 +218,7 @@ class _ListDocumentScreenState extends State<ListDocumentScreen> {
                                       InkWell(
                                         onTap: state.currentPage > 1
                                             ? () => context
-                                                .read<DocumentCubit>()
+                                                .read<VerificationCubit>()
                                                 .goToPreviousPage()
                                             : null,
                                         child: Container(
@@ -262,22 +231,25 @@ class _ListDocumentScreenState extends State<ListDocumentScreen> {
                                       ),
                                       Text(
                                         '${state.currentPage} sur ${state.lastPage}',
-                                        style:
-                                            Theme.of(context).textTheme.labelSmall,
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .labelSmall,
                                       ),
                                       InkWell(
-                                        onTap: state.currentPage < state.lastPage
-                                            ? () => context
-                                                .read<DocumentCubit>()
-                                                .goToNextPage()
-                                            : null,
+                                        onTap:
+                                            state.currentPage < state.lastPage
+                                                ? () => context
+                                                    .read<VerificationCubit>()
+                                                    .goToNextPage()
+                                                : null,
                                         child: Container(
                                             decoration: BoxDecoration(
                                                 color: Colors.grey
                                                   ..withValues(alpha: 0.2),
                                                 borderRadius:
                                                     BorderRadius.circular(3)),
-                                            child: Icon(Icons.arrow_forward_ios)),
+                                            child:
+                                                Icon(Icons.arrow_forward_ios)),
                                       ),
                                     ],
                                   )

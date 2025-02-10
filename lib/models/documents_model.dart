@@ -1,25 +1,28 @@
 import 'package:equatable/equatable.dart';
 
 class DocumentsModel extends Equatable {
-  const DocumentsModel({
+  const DocumentsModel( {
     int? id,
     required String identifier,
     required String descriptionDocument,
     required int? typeId,
+    String? typeName,
   })  : _id = id,
         _identifier = identifier,
         _descriptionDocument = descriptionDocument,
-        _typeId = typeId;
-
+        _typeId = typeId,
+        _typeName = typeName;
   final int? _id;
   final String _identifier;
   final String _descriptionDocument;
   final int? _typeId;
+  final String? _typeName;
 
   int? get id => _id;
   String get identifier => _identifier;
   String get descriptionDocument => _descriptionDocument;
   int? get typeId => _typeId;
+  String? get typeName => _typeName;
 
   factory DocumentsModel.fromJson(Map<String, dynamic> json) {
     return DocumentsModel(
@@ -27,6 +30,7 @@ class DocumentsModel extends Equatable {
       identifier: json['identifier'],
       descriptionDocument: json['description'],
       typeId: json['type_id'],
+      typeName: json['type_name']
     );
   }
 
@@ -61,12 +65,14 @@ class DocumentsModel extends Equatable {
     String? identifier,
     String? descriptionDocument,
     int? typeId,
+    String? typeName,
   }) {
     return DocumentsModel(
       id: id ?? _id,
       identifier: identifier ?? _identifier,
       descriptionDocument: descriptionDocument ?? _descriptionDocument,
       typeId: typeId ?? _typeId,
+      typeName: typeName ?? _typeName,
     );
   }
 
