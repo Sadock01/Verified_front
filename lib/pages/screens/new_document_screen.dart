@@ -28,6 +28,7 @@ class _NewDocumentScreenState extends State<NewDocumentScreen> {
   final _formKey = GlobalKey<FormState>();
   final TextEditingController _identifierController = TextEditingController();
   final TextEditingController _descriptionController = TextEditingController();
+  final TextEditingController _newTypeController = TextEditingController();
 
   // Stocker le type sélectionné
   TypeDocModel? _selectedType;
@@ -35,11 +36,54 @@ class _NewDocumentScreenState extends State<NewDocumentScreen> {
   void dispose() {
     _identifierController.dispose();
     _descriptionController.dispose();
+    _newTypeController.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
+    void _showAddTypeDialog(BuildContext context) {
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: Text(
+              "Ajouter un nouveau type",
+              style: Theme.of(context).textTheme.labelSmall,
+            ),
+            content: TextField(
+              controller: _newTypeController,
+              style: Theme.of(context).textTheme.labelSmall,
+              decoration: InputDecoration(
+                hintText: "Entrez le nom du type",
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(5),
+                ),
+              ),
+            ),
+            actions: [
+              TextButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+                child: Text("Annuler"),
+              ),
+              TextButton(
+                onPressed: () {
+                  if (_newTypeController.text.isNotEmpty) {
+                    context.read<TypeDocCubit>().addType(TypeDocModel(
+                          name: _newTypeController.text,
+                        ));
+                  }
+                },
+                child: Text("Ajouter"),
+              ),
+            ],
+          );
+        },
+      );
+    }
+
     return BlocListener<DocumentCubit, DocumentState>(
       listener: (context, state) {
         if (state.documentStatus == DocumentStatus.loaded) {
@@ -47,7 +91,8 @@ class _NewDocumentScreenState extends State<NewDocumentScreen> {
             notificationMargin: 10,
             background: Theme.of(context).colorScheme.primary,
             width: Const.screenWidth(context) * 0.2,
-            description: Text(state.errorMessage,style: Theme.of(context).textTheme.labelSmall),
+            description: Text(state.errorMessage,
+                style: Theme.of(context).textTheme.labelSmall),
             position: Alignment.topRight,
             animation: AnimationType.fromRight,
             icon: const Icon(
@@ -65,7 +110,8 @@ class _NewDocumentScreenState extends State<NewDocumentScreen> {
         if (state.documentStatus == DocumentStatus.error) {
           ElegantNotification.error(
             notificationMargin: 10,
-            description: Text(state.errorMessage,style: Theme.of(context).textTheme.labelSmall),
+            description: Text(state.errorMessage,
+                style: Theme.of(context).textTheme.labelSmall),
             position: Alignment.topRight,
             animation: AnimationType.fromRight,
             icon: const Icon(
@@ -191,48 +237,73 @@ class _NewDocumentScreenState extends State<NewDocumentScreen> {
                                               .textTheme
                                               .labelMedium,
                                         )
-                                      : SizedBox(
-                                          width:
-                                              Const.screenWidth(context) * 0.2,
-                                          child: DropdownButtonFormField<
-                                              TypeDocModel>(
-                                            value: _selectedType,
-                                            hint: Text(
-                                              "Choisir un type",
-                                              style: Theme.of(context)
-                                                  .textTheme
-                                                  .labelMedium,
-                                            ),
-                                            decoration: InputDecoration(
-                                              border: OutlineInputBorder(
-                                                borderRadius:
-                                                    BorderRadius.circular(10),
-                                              ),
-                                            ),
-                                            items: state.listType.map((type) {
-                                              return DropdownMenuItem<
+                                      : Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceBetween,
+                                          children: [
+                                            SizedBox(
+                                              width:
+                                                  Const.screenWidth(context) *
+                                                      0.3,
+                                              child: DropdownButtonFormField<
                                                   TypeDocModel>(
-                                                value: type,
-                                                child: Text(
-                                                  type.name,
+                                                value: _selectedType,
+                                                hint: Text(
+                                                  "Choisir un type",
                                                   style: Theme.of(context)
                                                       .textTheme
-                                                      .labelSmall,
+                                                      .labelMedium,
                                                 ),
-                                              );
-                                            }).toList(),
-                                            onChanged: (value) {
-                                              setState(() {
-                                                _selectedType = value;
-                                              });
-                                            },
-                                            validator: (value) {
-                                              if (value == null) {
-                                                return "Veuillez sélectionner un type.";
-                                              }
-                                              return null;
-                                            },
-                                          ),
+                                                decoration: InputDecoration(
+                                                  border: OutlineInputBorder(
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            10),
+                                                  ),
+                                                ),
+                                                items:
+                                                    state.listType.map((type) {
+                                                  return DropdownMenuItem<
+                                                      TypeDocModel>(
+                                                    value: type,
+                                                    child: Text(
+                                                      type.name,
+                                                      style: Theme.of(context)
+                                                          .textTheme
+                                                          .labelSmall,
+                                                    ),
+                                                  );
+                                                }).toList(),
+                                                onChanged: (value) {
+                                                  setState(() {
+                                                    _selectedType = value;
+                                                  });
+                                                },
+                                                validator: (value) {
+                                                  if (value == null) {
+                                                    return "Veuillez sélectionner un type.";
+                                                  }
+                                                  return null;
+                                                },
+                                              ),
+                                            ),
+                                            OutlinedButton(
+                                              style: OutlinedButton.styleFrom(
+                                                  shape: RoundedRectangleBorder(
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              5))),
+                                              onPressed: () {
+                                                _showAddTypeDialog(context);
+                                              },
+                                              child: Text(
+                                                "Nouveau type",
+                                                style: Theme.of(context)
+                                                    .textTheme
+                                                    .labelMedium,
+                                              ),
+                                            ),
+                                          ],
                                         ),
                               const SizedBox(height: 20),
                               ElevatedButton(

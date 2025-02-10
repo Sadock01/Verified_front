@@ -16,4 +16,26 @@ class TypeDocRepository {
     }
   }
 
+ Future<Map<String, dynamic>> addType(
+     TypeDocModel typeDocModel) async {
+    try {
+      log("Appel au service pour ajouter un document");
+      final response = await TypeService.addType(typeDocModel);
+      if (response['status_code'] == 200) {
+        log("voici ma response: ${response['message']}");
+        return {
+          'message': response['message'],
+          'data': response['data'],
+        };
+      } else {
+        return {
+          'message': response['message'],
+          'status_code': response['status_code'],
+        };
+      }
+    } catch (e) {
+      log("Erreur dans DocumentRepository: $e");
+      throw Exception("Erreur lors de l'ajout du document");
+    }
+  }
 }

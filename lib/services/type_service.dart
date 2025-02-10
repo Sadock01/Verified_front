@@ -24,4 +24,25 @@ class TypeService {
       throw Exception("Echec lors de la recuperation des articles");
     }
   }
+
+  static Future<Map<String, dynamic>> addType(TypeDocModel typeDocModel) async {
+    api.options.headers['AUTHORIZATION'] =
+        'Bearer 10|hmRWGfAMQ9fkodYhg96joyiPpFz5jBDV9U4bqJVza47c0b53';
+    log("il est la?? ${typeDocModel.toJson()}");
+    final response =
+        await api.post("/types/create", data: typeDocModel.toJson());
+    log("Il a commencé à ajouter un type");
+    log("$response");
+    if (response.statusCode == 200 || response.statusCode == 201) {
+      return {
+        'status_code': response.statusCode,
+        'message': response.data['message'] ?? "Document ajouté avec succès",
+        'data': response.data['data'] ?? {},
+      };
+    } else {
+      log("${response.statusCode}");
+      log("$response");
+      throw Exception("Echec lors de l'ajout d'un document");
+    }
+  }
 }

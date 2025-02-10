@@ -1,7 +1,7 @@
 import 'package:equatable/equatable.dart';
 
 class TypeDocModel extends Equatable {
-  TypeDocModel({
+  const TypeDocModel({
     int? id,
     required String name,
     String? descriptionType,
@@ -15,13 +15,12 @@ class TypeDocModel extends Equatable {
 
   int? get id => _id;
   String get name => _name;
-  String get descriptionType => descriptionType;
 
   factory TypeDocModel.fromJson(Map<String, dynamic> json) {
     return TypeDocModel(
         id: json['id'],
         name: json['name'],
-        descriptionType: json['description']);
+        descriptionType: json['description'] ?? "Description par defaut");
   }
 
   factory TypeDocModel.fromMap(Map<String, dynamic> map) {
@@ -32,10 +31,12 @@ class TypeDocModel extends Equatable {
   }
 
   Map<String, dynamic> toMap() {
+    return {"name": name};
+  }
+
+  Map<String, dynamic> toJson() {
     return {
-      "id": _id,
-      "name": _descriptionType,
-      "description": _descriptionType,
+      'name': name,
     };
   }
 

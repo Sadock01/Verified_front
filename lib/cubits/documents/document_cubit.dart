@@ -88,7 +88,7 @@ class DocumentCubit extends Cubit<DocumentState> {
       if (response['success']) {
         emit(state.copyWith(
             documentStatus: DocumentStatus.loaded,
-            apiresponse: response['data'].toString(),
+            apiresponse: response['data']['description'].toString(),
             errorMessage: ""));
       } else {
         emit(state.copyWith(
@@ -149,7 +149,7 @@ class DocumentCubit extends Cubit<DocumentState> {
     emit(state.copyWith(searchKey: searchKey));
   }
 
-  int statisticsByDays(){
+  void statisticsByDays(){
     emit(state.copyWith(
         documentStatus: DocumentStatus.loading,
         errorMessage: "",
