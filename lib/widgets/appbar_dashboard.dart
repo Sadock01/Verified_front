@@ -1,5 +1,6 @@
 import 'package:doc_authentificator/const/const.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 class AppbarDashboard extends StatelessWidget {
   const AppbarDashboard({super.key});
@@ -45,6 +46,7 @@ class AppbarDashboard extends StatelessWidget {
                   items: [
                     PopupMenuItem<String>(
                       value: 'Déconnexion',
+                      onTap: () => context.go('/login'),
                       child: Row(
                         children: [
                           Icon(Icons.exit_to_app),

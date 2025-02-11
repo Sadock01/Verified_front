@@ -99,7 +99,9 @@ class _NewDocumentScreenState extends State<NewDocumentScreen> {
                       ),
                       labelStyle: Theme.of(context).textTheme.labelSmall),
                   onChanged: (value) => reponse4 = value,
-                ),
+                ),SizedBox(height: 15),
+                
+                
               ],
             ),
             actions: [
@@ -156,6 +158,7 @@ class _NewDocumentScreenState extends State<NewDocumentScreen> {
                           name: _newTypeController.text,
                         ));
                   }
+                   Navigator.of(context).pop();
                 },
                 child: Text("Ajouter"),
               ),
@@ -420,12 +423,17 @@ class _NewDocumentScreenState extends State<NewDocumentScreen> {
                                                 },
                                               ),
                                             ),
-                                            OutlinedButton(
-                                              style: OutlinedButton.styleFrom(
-                                                  shape: RoundedRectangleBorder(
-                                                      borderRadius:
-                                                          BorderRadius.circular(
-                                                              5))),
+                                            ElevatedButton(
+                                              style: ElevatedButton.styleFrom(
+                                                backgroundColor:
+                                                    Theme.of(context)
+                                                        .colorScheme
+                                                        .primary,
+                                                shape: RoundedRectangleBorder(
+                                                  borderRadius:
+                                                      BorderRadius.circular(5),
+                                                ),
+                                              ),
                                               onPressed: () {
                                                 showAddTypeDialog(context);
                                               },
@@ -433,7 +441,7 @@ class _NewDocumentScreenState extends State<NewDocumentScreen> {
                                                 "Nouveau type",
                                                 style: Theme.of(context)
                                                     .textTheme
-                                                    .labelMedium,
+                                                    .labelMedium!.copyWith(color: Colors.white),
                                               ),
                                             ),
                                           ],

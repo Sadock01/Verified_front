@@ -1,3 +1,4 @@
+import 'package:doc_authentificator/const/const.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 
@@ -49,8 +50,8 @@ class BipartiteChartWidget extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.all(16.0),
       child: SizedBox(
-        width: MediaQuery.of(context).size.width * 0.8,
-        height: 300,
+        width: Const.screenHeight(context),
+        height: Const.screenHeight(context)*0.5,
         child: BarChart(
           BarChartData(
             maxY: _getMaxY(),

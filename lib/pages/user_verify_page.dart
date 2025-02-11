@@ -168,8 +168,8 @@ class _UserVerifyPageState extends State<UserVerifyPage> {
                       } else if (state.documentStatus ==
                           DocumentStatus.sucess) {
                         return Container(
-                          width: Const.screenWidth(context) * 0.3,
-                          height: Const.screenHeight(context) * 0.5,
+                          width: Const.screenWidth(context) * 0.5,
+                          height: Const.screenHeight(context) * 0.35,
                           decoration: BoxDecoration(
                             color: Colors.white,
                             borderRadius: BorderRadius.circular(10),
@@ -186,21 +186,21 @@ class _UserVerifyPageState extends State<UserVerifyPage> {
                           ),
                           child: Column(
                             children: [
-                              Image.asset(
-                                'assets/images/Verified_original.png',
-                                width: 75,
-                                height: 30,
-                              ),
+                             SizedBox(height: 10),
                               Center(
                                 child: Column(
                                   children: [
+                                    Image.asset('assets/images/Verified_Badge.svg.png'),
+                                    SizedBox(height: 15
+                                            ),
                                     Text(state.apiResponse.toString(),
                                         style: Theme.of(context)
                                             .textTheme
                                             .displayMedium!
                                             .copyWith(
                                               fontSize: 15,
-                                            )),
+                                            )),SizedBox(height: 15
+                                            ), Container(width: Const.screenWidth(context)*0.1,height: 75,decoration: BoxDecoration(image: DecorationImage(fit: BoxFit.cover,image: AssetImage('assets/images/Verified_Badge.svg.png'))),)
                                   ],
                                 ),
                               ),
