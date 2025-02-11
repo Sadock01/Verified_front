@@ -32,6 +32,7 @@ class _NewDocumentScreenState extends State<NewDocumentScreen> {
 
   // Stocker le type sélectionné
   TypeDocModel? _selectedType;
+  bool _isAutoDescription = false;
   @override
   void dispose() {
     _identifierController.dispose();
@@ -42,7 +43,87 @@ class _NewDocumentScreenState extends State<NewDocumentScreen> {
 
   @override
   Widget build(BuildContext context) {
-    void _showAddTypeDialog(BuildContext context) {
+    void showDescriptionDialog() {
+      String? reponse1, reponse2, reponse4, reponse3;
+
+      showDialog(
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+            title: Text(
+              "Génération automatique de la description",
+              style: Theme.of(context).textTheme.labelMedium,
+            ),
+            content: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                TextField(
+                  style: Theme.of(context).textTheme.labelSmall,
+                  decoration: InputDecoration(
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(5),
+                      ),
+                      labelText: "Quel est le type du document ?",
+                      labelStyle: Theme.of(context).textTheme.labelSmall),
+                  onChanged: (value) => reponse1 = value,
+                ),
+                SizedBox(height: 5),
+                TextField(
+                  style: Theme.of(context).textTheme.labelSmall,
+                  decoration: InputDecoration(
+                      labelText: "À qui est destiné ce document ?",
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(5),
+                      ),
+                      labelStyle: Theme.of(context).textTheme.labelSmall),
+                  onChanged: (value) => reponse2 = value,
+                ),
+                SizedBox(height: 5),
+                TextField(
+                  style: Theme.of(context).textTheme.labelSmall,
+                  decoration: InputDecoration(
+                      labelText: "Quel organisme a délivré le documment?",
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(5),
+                      ),
+                      labelStyle: Theme.of(context).textTheme.labelSmall),
+                  onChanged: (value) => reponse3 = value,
+                ),
+                SizedBox(height: 5),
+                TextField(
+                  style: Theme.of(context).textTheme.labelSmall,
+                  decoration: InputDecoration(
+                      labelText: "Informations supplémentaires ?",
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(5),
+                      ),
+                      labelStyle: Theme.of(context).textTheme.labelSmall),
+                  onChanged: (value) => reponse4 = value,
+                ),
+              ],
+            ),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(context),
+                child: Text("Annuler"),
+              ),
+              TextButton(
+                onPressed: () {
+                  setState(() {
+                    _descriptionController.text =
+                        " Type: $reponse1\n\n Délivré à: $reponse2\n\n Délivré par: $reponse3\n\n Informations supplémentaires : $reponse4.";
+                  });
+                  Navigator.pop(context);
+                },
+                child: Text("Générer"),
+              ),
+            ],
+          );
+        },
+      );
+    }
+
+    void showAddTypeDialog(BuildContext context) {
       showDialog(
         context: context,
         builder: (BuildContext context) {
@@ -87,10 +168,9 @@ class _NewDocumentScreenState extends State<NewDocumentScreen> {
     return BlocListener<DocumentCubit, DocumentState>(
       listener: (context, state) {
         if (state.documentStatus == DocumentStatus.sucess) {
+          log("il est ici: ${state.documentStatus}");
           ElegantNotification.success(
             notificationMargin: 10,
-            background: Theme.of(context).colorScheme.primary,
-            width: Const.screenWidth(context) * 0.2,
             description: Text(state.errorMessage,
                 style: Theme.of(context).textTheme.labelSmall),
             position: Alignment.topRight,
@@ -108,6 +188,7 @@ class _NewDocumentScreenState extends State<NewDocumentScreen> {
           });
         }
         if (state.documentStatus == DocumentStatus.error) {
+          log("il est ici: ${state.documentStatus}");
           ElegantNotification.error(
             notificationMargin: 10,
             description: Text(state.errorMessage,
@@ -172,7 +253,7 @@ class _NewDocumentScreenState extends State<NewDocumentScreen> {
                         padding: const EdgeInsets.all(10),
                         width: Const.screenWidth(context),
                         decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(25),
+                          borderRadius: BorderRadius.circular(15),
                           color: Colors.white,
                           boxShadow: [
                             BoxShadow(
@@ -188,43 +269,93 @@ class _NewDocumentScreenState extends State<NewDocumentScreen> {
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              TextFormField(
-                                controller: _identifierController,
-                                decoration: InputDecoration(
-                                  labelText: "Identifiant",
-                                  labelStyle:
-                                      Theme.of(context).textTheme.labelMedium,
-                                  border: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(10),
+                              SizedBox(
+                                width: Const.screenWidth(context) * 0.25,
+                                height: 40,
+                                child: TextFormField(
+                                  controller: _identifierController,
+                                  decoration: InputDecoration(
+                                    labelText: "Identifiant",
+                                    labelStyle:
+                                        Theme.of(context).textTheme.labelMedium,
+                                    border: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(5),
+                                    ),
                                   ),
+                                  validator: (value) {
+                                    if (value == null || value.isEmpty) {
+                                      return "Veuillez entrer l'identifiant du document.";
+                                    }
+                                    return null;
+                                  },
                                 ),
-                                validator: (value) {
-                                  if (value == null || value.isEmpty) {
-                                    return "Veuillez entrer l'identifiant du document.";
-                                  }
-                                  return null;
-                                },
                               ),
                               const SizedBox(height: 10),
-                              TextFormField(
-                                controller: _descriptionController,
-                                maxLines: 3,
-                                decoration: InputDecoration(
-                                  labelText: "Description",
-                                  labelStyle:
-                                      Theme.of(context).textTheme.labelMedium,
-                                  border: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(10),
+                              Row(
+                                children: [
+                                  Radio(
+                                    value: false,
+                                    groupValue: _isAutoDescription,
+                                    onChanged: (value) => setState(
+                                        () => _isAutoDescription = value!),
                                   ),
-                                ),
-                                validator: (value) {
-                                  if (value == null || value.isEmpty) {
-                                    return "La description pour ce document est requise.";
-                                  }
-                                  return null;
-                                },
+                                  Text(
+                                    "Saisie manuelle",
+                                    style:
+                                        Theme.of(context).textTheme.labelSmall,
+                                  ),
+                                  Radio(
+                                    value: true,
+                                    groupValue: _isAutoDescription,
+                                    onChanged: (value) => setState(
+                                        () => _isAutoDescription = value!),
+                                  ),
+                                  Text(
+                                    "Génération automatique",
+                                    style:
+                                        Theme.of(context).textTheme.labelSmall,
+                                  ),
+                                ],
                               ),
-                              const SizedBox(height: 10),
+                              if (_isAutoDescription)
+                                Container(
+                                  margin: EdgeInsets.only(bottom: 10),
+                                  child: ElevatedButton(
+                                    style: ElevatedButton.styleFrom(
+                                        backgroundColor: Theme.of(context)
+                                            .colorScheme
+                                            .primary,
+                                        shape: RoundedRectangleBorder(
+                                            borderRadius:
+                                                BorderRadius.circular(5))),
+                                    onPressed: showDescriptionDialog,
+                                    child: Text(
+                                      "Générer une description",
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .labelSmall!
+                                          .copyWith(color: Colors.white),
+                                    ),
+                                  ),
+                                )
+                              else
+                                TextFormField(
+                                  controller: _descriptionController,
+                                  maxLines: 3,
+                                  decoration: InputDecoration(
+                                    labelText: "Description",
+                                    labelStyle:
+                                        Theme.of(context).textTheme.labelMedium,
+                                    border: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(5),
+                                    ),
+                                  ),
+                                  validator: (value) => value!.isEmpty
+                                      ? "Veuillez entrer une description"
+                                      : null,
+                                ),
+                              if (!_isAutoDescription)
+                                const SizedBox(height: 10),
                               state.typeStatus == TypeStatus.loading
                                   ? const Center(
                                       child:
@@ -254,6 +385,8 @@ class _NewDocumentScreenState extends State<NewDocumentScreen> {
                                                       .textTheme
                                                       .labelMedium,
                                                 ),
+                                                borderRadius:
+                                                    BorderRadius.circular(2),
                                                 decoration: InputDecoration(
                                                   border: OutlineInputBorder(
                                                     borderRadius:
@@ -294,7 +427,7 @@ class _NewDocumentScreenState extends State<NewDocumentScreen> {
                                                           BorderRadius.circular(
                                                               5))),
                                               onPressed: () {
-                                                _showAddTypeDialog(context);
+                                                showAddTypeDialog(context);
                                               },
                                               child: Text(
                                                 "Nouveau type",
@@ -311,7 +444,7 @@ class _NewDocumentScreenState extends State<NewDocumentScreen> {
                                   backgroundColor:
                                       Theme.of(context).colorScheme.primary,
                                   shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(10),
+                                    borderRadius: BorderRadius.circular(5),
                                   ),
                                 ),
                                 onPressed: () {

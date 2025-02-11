@@ -33,13 +33,15 @@ class DocumentRepository {
       if (response['status_code'] == 200) {
         log("voici ma response: ${response['message']}");
         return {
+          'status_code': response['status_code'],
           'message': response['message'],
           'data': response['data'],
         };
       } else {
         return {
-          'message': response['message'],
           'status_code': response['status_code'],
+          'message': response['message'],
+          
         };
       }
     } catch (e) {

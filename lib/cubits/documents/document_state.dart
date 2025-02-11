@@ -6,11 +6,13 @@ enum DocumentStatus {
   loading,
   loaded,
 sucess,
+failed,
   error,
 }
 
 class DocumentState extends Equatable {
   final DocumentStatus documentStatus;
+  final DocumentStatus documentStatus1;
   final List<DocumentsModel> listDocuments;
   final String? apiResponse;
   final DocumentsModel? selectedDocument;
@@ -22,6 +24,7 @@ class DocumentState extends Equatable {
 
   const DocumentState({
     required this.documentStatus,
+    required this.documentStatus1,
     required this.listDocuments,
     required this.errorMessage,
     required this.apiResponse,
@@ -34,6 +37,7 @@ class DocumentState extends Equatable {
   factory DocumentState.initial() {
     return DocumentState(
       documentStatus: DocumentStatus.initial,
+      documentStatus1: DocumentStatus.initial,
       listDocuments: [],
       selectedDocument: null,
       currentPage: 1,
@@ -46,6 +50,7 @@ class DocumentState extends Equatable {
 
   DocumentState copyWith({
     DocumentStatus? documentStatus,
+    DocumentStatus? documentStatus1,
     List<DocumentsModel>? listDocuments,
     String? apiresponse,
     DocumentsModel? selectedDocument,
@@ -56,6 +61,7 @@ class DocumentState extends Equatable {
   }) {
     return DocumentState(
       documentStatus: documentStatus ?? this.documentStatus,
+      documentStatus1: documentStatus1 ?? this.documentStatus1,
       listDocuments: listDocuments ?? this.listDocuments,
       apiResponse: apiresponse ?? this.apiResponse,
       selectedDocument: selectedDocument ?? this.selectedDocument,

@@ -1,6 +1,8 @@
 import 'package:doc_authentificator/const/const.dart';
 import 'package:doc_authentificator/cubits/login/login_cubit.dart';
 import 'package:doc_authentificator/cubits/login/login_state.dart';
+import 'package:elegant_notification/elegant_notification.dart';
+import 'package:elegant_notification/resources/arrays.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -23,30 +25,35 @@ class _LoginPageState extends State<LoginPage> {
     return BlocListener<LoginCubit, LoginState>(
       listener: (context, state) {
         if (state.loginStatus == LoginStatus.error) {
-          showDialog(
-            context: context,
-            builder: (context) {
-              return AlertDialog(
-                content: Text(
-                  state.errorMessage,
-                  style: Theme.of(context).textTheme.labelLarge,
-                ),
-                actions: [
-                  TextButton(
-                    onPressed: () {
-                      Navigator.of(context).pop();
-                    },
-                    child: Text(
-                      "Valider",
-                      style: Theme.of(context).textTheme.labelSmall,
-                    ),
-                  ),
-                ],
-              );
-            },
-          );
+          ElegantNotification.error(
+            notificationMargin: 10,
+            description: Text(state.errorMessage,
+                style: Theme.of(context).textTheme.labelSmall),
+            position: Alignment.topRight,
+            animation: AnimationType.fromRight,
+            icon: const Icon(
+              Icons.error_outline,
+              color: Colors.red,
+            ),
+          ).show(context);
         } else if (state.loginStatus == LoginStatus.loaded) {
-          context.go('/dashboard');
+          ElegantNotification.success(
+            notificationMargin: 10,
+            description: Text(state.errorMessage,
+                style: Theme.of(context).textTheme.labelSmall),
+            position: Alignment.topRight,
+            animation: AnimationType.fromRight,
+            icon: const Icon(
+              Icons.check_circle_outline,
+              color: Colors.green,
+            ),
+          ).show(context);
+
+          Future.delayed(Duration(milliseconds: 300), () {
+            if (mounted) {
+              context.go('/dashboard');
+            }
+          });
         }
       },
       child: Builder(

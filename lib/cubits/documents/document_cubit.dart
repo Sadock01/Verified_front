@@ -36,6 +36,7 @@ class DocumentCubit extends Cubit<DocumentState> {
       emit(state.copyWith(
           documentStatus: DocumentStatus.loading, errorMessage: ""));
       final response = await documentRepository.addDocument(documentsModel);
+      log("${response['status_code']}");
       if (response['status_code'] == 200) {
         log("État actuel: ${state.documentStatus}");
         emit(state.copyWith(
@@ -87,12 +88,13 @@ class DocumentCubit extends Cubit<DocumentState> {
 
       if (response['success']) {
         emit(state.copyWith(
-            documentStatus: DocumentStatus.loaded,
+            documentStatus: DocumentStatus.sucess,
+            documentStatus1: DocumentStatus.loaded,
             apiresponse: response['data']['description'].toString(),
             errorMessage: ""));
       } else {
         emit(state.copyWith(
-          documentStatus: DocumentStatus.error,
+          documentStatus: DocumentStatus.failed,
           errorMessage: response['message'],
         ));
       }

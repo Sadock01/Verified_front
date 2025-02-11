@@ -86,7 +86,7 @@ class _ListDocumentScreenState extends State<ListDocumentScreen> {
                                   style: Theme.of(context).textTheme.labelMedium,
                                 ),
                               )
-                            else if (state.documentStatus == DocumentStatus.loaded)
+                            else if (state.documentStatus == DocumentStatus.loaded || state.documentStatus == DocumentStatus.sucess)
                               Column(
                                 mainAxisSize: MainAxisSize.max,
                                 children: [

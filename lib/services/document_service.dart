@@ -48,7 +48,7 @@ class DocumentService {
     // log("$response");
     if (response.statusCode == 200 || response.statusCode == 201) {
       return {
-        'status_code': response.statusCode,
+        'status_code': response.data['status_code'],
         'message': response.data['message'] ?? "Document ajouté avec succès",
         'data': response.data['data'] ?? {},
       };

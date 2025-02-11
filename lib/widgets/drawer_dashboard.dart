@@ -69,12 +69,19 @@ class DrawerDashboard extends StatelessWidget {
                 decoration: BoxDecoration(
                   color: context.read<SwitchPageCubit>().state.selectedPage == 1
                       ? Theme.of(context).colorScheme.primary
-                      : Colors.white,
+                      : context.read<SwitchPageCubit>().state.selectedPage == 2
+                          ? Theme.of(context).colorScheme.primary
+                          : context
+                                      .read<SwitchPageCubit>()
+                                      .state
+                                      .selectedPage ==
+                                  5
+                              ? Theme.of(context).colorScheme.primary
+                              : Colors.white,
                 ),
                 child: TextButton(
                   onPressed: () {
                     context.read<SwitchPageCubit>().switchPage(1);
-                    context.go('/document/List_document');
                   },
                   child: Row(
                     children: [
@@ -106,51 +113,110 @@ class DrawerDashboard extends StatelessWidget {
                   ),
                 ),
               ),
-              Container(
-                padding: EdgeInsets.symmetric(vertical: 10),
-                width: Const.screenWidth(context) * 0.19,
-                height: 35,
-                decoration: BoxDecoration(
-                  color: context.read<SwitchPageCubit>().state.selectedPage == 2
-                      ? Theme.of(context).colorScheme.primary
-                      : Colors.white,
-                ),
-                child: TextButton(
-                  onPressed: () {
-                    context.read<SwitchPageCubit>().switchPage(2);
-                    context.go('/document/nouveau_document');
-                  },
-                  child: Row(
-                    children: [
-                      Icon(
-                        Icons.add,
-                        color: context
-                                    .read<SwitchPageCubit>()
-                                    .state
-                                    .selectedPage ==
-                                2
-                            ? Colors.white
-                            : Colors.grey.withValues(alpha: 0.2),
+              context.read<SwitchPageCubit>().state.selectedPage == 1
+                  ? Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 10),
+                      child: Column(
+                        children: [
+                          Container(
+                            padding: EdgeInsets.symmetric(vertical: 10),
+                            width: Const.screenWidth(context) * 0.19,
+                            height: 35,
+                            decoration: BoxDecoration(
+                              color: context
+                                          .read<SwitchPageCubit>()
+                                          .state
+                                          .selectedPage ==
+                                      5
+                                  ? Theme.of(context).colorScheme.primary
+                                  : Colors.white,
+                            ),
+                            child: TextButton(
+                              onPressed: () {
+                                context.read<SwitchPageCubit>().switchPage(5);
+                                context.go('/document/List_document');
+                              },
+                              child: Row(
+                                children: [
+                                  Icon(
+                                    Icons.subdirectory_arrow_right,
+                                    color: Colors.grey.withValues(alpha: 0.2),
+                                  ),
+                                  SizedBox(width: 5),
+                                  SizedBox(
+                                    width: Const.screenWidth(context)*0.1,
+                                    child: Text(
+                                      'List Document',
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .displayMedium
+                                          ?.copyWith(
+                                            color: context
+                                                        .read<SwitchPageCubit>()
+                                                        .state
+                                                        .selectedPage ==
+                                                    5
+                                                ? Colors.white
+                                                : Colors.black,
+                                          ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                          Container(
+                            padding: EdgeInsets.symmetric(vertical: 10),
+                            width: Const.screenWidth(context) * 0.19,
+                            height: 35,
+                            decoration: BoxDecoration(
+                              color: context
+                                          .read<SwitchPageCubit>()
+                                          .state
+                                          .selectedPage ==
+                                      2
+                                  ? Theme.of(context).colorScheme.primary
+                                  : Colors.white,
+                            ),
+                            child: TextButton(
+                              onPressed: () {
+                                context.read<SwitchPageCubit>().switchPage(2);
+                                context.go('/document/nouveau_document');
+                              },
+                              child: Row(
+                                children: [
+                                  Icon(
+                                    Icons.subdirectory_arrow_right,
+                                    color: Colors.grey.withValues(alpha: 0.2),
+                                  ),
+                                  SizedBox(width: 5),
+                                  SizedBox(
+                                    width: Const.screenWidth(context) * 0.1,
+                                    child: Text(
+                                      'Nouveau Document',
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .displayMedium!
+                                          .copyWith(
+                                            overflow: TextOverflow.ellipsis,
+                                            color: context
+                                                        .read<SwitchPageCubit>()
+                                                        .state
+                                                        .selectedPage ==
+                                                    2
+                                                ? Colors.white
+                                                : Colors.black,
+                                          ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ],
                       ),
-                      SizedBox(width: 5),
-                      Text(
-                        'Nouveau Document',
-                        style:
-                            Theme.of(context).textTheme.displayMedium!.copyWith(
-                                  overflow: TextOverflow.ellipsis,
-                                  color: context
-                                              .read<SwitchPageCubit>()
-                                              .state
-                                              .selectedPage ==
-                                          2
-                                      ? Colors.white
-                                      : Colors.black,
-                                ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
+                    )
+                  : SizedBox(),
               Container(
                 padding: EdgeInsets.symmetric(vertical: 10),
                 width: Const.screenWidth(context) * 0.19,
@@ -222,18 +288,21 @@ class DrawerDashboard extends StatelessWidget {
                             : Colors.grey.withValues(alpha: 0.2),
                       ),
                       SizedBox(width: 5),
-                      Text(
-                        'Collaborateurs',
-                        style:
-                            Theme.of(context).textTheme.displayMedium!.copyWith(
-                                  color: context
-                                              .read<SwitchPageCubit>()
-                                              .state
-                                              .selectedPage ==
-                                          4
-                                      ? Colors.white
-                                      : Colors.black,
-                                ),
+                      SizedBox(
+                        width: Const.screenWidth(context)*0.1,
+                        child: Text(
+                          'Collaborateurs',
+                          style:
+                              Theme.of(context).textTheme.displayMedium!.copyWith(
+                                    color: context
+                                                .read<SwitchPageCubit>()
+                                                .state
+                                                .selectedPage ==
+                                            4
+                                        ? Colors.white
+                                        : Colors.black,
+                                  ),
+                        ),
                       ),
                     ],
                   ),

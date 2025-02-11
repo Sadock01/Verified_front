@@ -77,8 +77,7 @@ class _UserVerifyPageState extends State<UserVerifyPage> {
                   Container(
                     width: Const.screenWidth(context),
                     height: Const.screenHeight(context) * 0.2,
-                    decoration: BoxDecoration(
-                        color: Theme.of(context).colorScheme.primary),
+                    decoration: BoxDecoration(color: Colors.black54),
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
@@ -165,16 +164,50 @@ class _UserVerifyPageState extends State<UserVerifyPage> {
                         return const SizedBox();
                       } else if (state.documentStatus ==
                           DocumentStatus.loaded) {
-                        return Center(
-                          child: Text(state.apiResponse.toString(),
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .displayMedium!
-                                  .copyWith(
-                                      fontSize: 15,
-                                      fontWeight: FontWeight.bold)),
+                        return SizedBox();
+                      } else if (state.documentStatus ==
+                          DocumentStatus.sucess) {
+                        return Container(
+                          width: Const.screenWidth(context) * 0.3,
+                          height: Const.screenHeight(context) * 0.5,
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(10),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.grey.withValues(
+                                    alpha: 0.2), // Couleur de l'ombre
+                                spreadRadius: 10, // Étalement de l'ombre
+                                blurRadius: 10, // Flou de l'ombre
+                                offset: Offset(0,
+                                    3), // Décalage horizontal et vertical de l'ombre
+                              ),
+                            ],
+                          ),
+                          child: Column(
+                            children: [
+                              Image.asset(
+                                'assets/images/Verified_original.png',
+                                width: 75,
+                                height: 30,
+                              ),
+                              Center(
+                                child: Column(
+                                  children: [
+                                    Text(state.apiResponse.toString(),
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .displayMedium!
+                                            .copyWith(
+                                              fontSize: 15,
+                                            )),
+                                  ],
+                                ),
+                              ),
+                            ],
+                          ),
                         );
-                      } else if (state.documentStatus == DocumentStatus.error) {
+                      } else if (state.documentStatus == DocumentStatus.failed) {
                         return Center(
                           child: Column(
                             children: [
@@ -192,10 +225,7 @@ class _UserVerifyPageState extends State<UserVerifyPage> {
                           ),
                         );
                       } else {
-                        return Text(
-                          "Erreur Inattendue",
-                          style: Theme.of(context).textTheme.displayMedium,
-                        );
+                        return SizedBox();
                       }
                     },
                   ),

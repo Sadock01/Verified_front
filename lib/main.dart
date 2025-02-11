@@ -38,7 +38,7 @@ final GoRouter _router = GoRouter(
   initialLocation: '/',
   routes: [
     GoRoute(
-      path: '/',
+      path: '/login',
       builder: (BuildContext context, GoRouterState state) {
         return const LoginPage();
       },
@@ -87,7 +87,7 @@ final GoRouter _router = GoRouter(
       },
     ),
     GoRoute(
-      path: '/verify_document',
+      path: '/',
       builder: (BuildContext context, GoRouterState state) {
         return const UserVerifyPage();
       },
