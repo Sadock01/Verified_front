@@ -186,28 +186,36 @@ class _UserVerifyPageState extends State<UserVerifyPage> {
                           ),
                           child: Column(
                             children: [
-                             SizedBox(height: 10),
+                              SizedBox(height: 10),
                               Center(
                                 child: Column(
                                   children: [
-                                    Image.asset('assets/images/Verified_Badge.svg.png'),
-                                    SizedBox(height: 15
-                                            ),
+                                    SizedBox(height: 15),
                                     Text(state.apiResponse.toString(),
                                         style: Theme.of(context)
                                             .textTheme
                                             .displayMedium!
                                             .copyWith(
                                               fontSize: 15,
-                                            )),SizedBox(height: 15
-                                            ), Container(width: Const.screenWidth(context)*0.1,height: 75,decoration: BoxDecoration(image: DecorationImage(fit: BoxFit.cover,image: AssetImage('assets/images/Verified_Badge.svg.png'))),)
+                                            )),
+                                    SizedBox(height: 15),
+                                    Container(
+                                      width: Const.screenWidth(context) * 0.15,
+                                      height:Const.screenHeight(context)*0.1,
+                                      decoration: BoxDecoration(
+                                          image: DecorationImage(
+                                              fit: BoxFit.contain,
+                                              image: AssetImage(
+                                                  'assets/images/Verified_Badge.svg.png'))),
+                                    )
                                   ],
                                 ),
                               ),
                             ],
                           ),
                         );
-                      } else if (state.documentStatus == DocumentStatus.failed) {
+                      } else if (state.documentStatus ==
+                          DocumentStatus.failed) {
                         return Center(
                           child: Column(
                             children: [
