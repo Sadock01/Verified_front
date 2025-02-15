@@ -1,13 +1,13 @@
 import 'package:doc_authentificator/cubits/switch_page/switch_page_cubit.dart';
 import 'package:doc_authentificator/cubits/switch_page/switch_page_state.dart';
-import 'package:doc_authentificator/pages/screens/collaborateur_screen.dart';
-
+import 'package:doc_authentificator/pages/screens/Rapports_screen.dart';
 
 import 'package:doc_authentificator/pages/screens/history_screen.dart';
+import 'package:doc_authentificator/pages/screens/list_collaborateur_screen.dart';
 import 'package:doc_authentificator/pages/screens/list_document_screen.dart';
+import 'package:doc_authentificator/pages/screens/new_collaborateur_screen.dart';
 import 'package:doc_authentificator/pages/screens/new_document_screen.dart';
 import 'package:doc_authentificator/pages/statistiques_screen.dart';
-
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -39,8 +39,13 @@ class _DashboardHomeScreenState extends State<DashboardHomeScreen> {
         } else if (state.selectedPage == 3) {
           return HistoryScreen();
         } else if (state.selectedPage == 4) {
-          return CollaborateurScreen();
-        }else {
+          return RapportsScreen();
+        } 
+        else if (state.selectedPage == 7) {
+          return ListCollaborateurScreen();
+        } else if (state.selectedPage == 8) {
+          return NewCollaborateurScreen();
+        } else {
           return Center(
             child: Text("Page not found",
                 style: Theme.of(context).textTheme.labelMedium),

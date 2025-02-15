@@ -77,7 +77,13 @@ class DrawerDashboard extends StatelessWidget {
                                       .selectedPage ==
                                   5
                               ? Theme.of(context).colorScheme.primary
-                              : Colors.white,
+                              : context
+                                          .read<SwitchPageCubit>()
+                                          .state
+                                          .selectedPage ==
+                                      5
+                                  ? Theme.of(context).colorScheme.primary
+                                  : Colors.white,
                 ),
                 child: TextButton(
                   onPressed: () {
@@ -144,7 +150,7 @@ class DrawerDashboard extends StatelessWidget {
                                   ),
                                   SizedBox(width: 5),
                                   SizedBox(
-                                    width: Const.screenWidth(context)*0.1,
+                                    width: Const.screenWidth(context) * 0.1,
                                     child: Text(
                                       'List Document',
                                       style: Theme.of(context)
@@ -273,12 +279,12 @@ class DrawerDashboard extends StatelessWidget {
                 child: TextButton(
                   onPressed: () {
                     context.read<SwitchPageCubit>().switchPage(4);
-                    context.go('/collaborateurs');
+                    context.go('/rapports');
                   },
                   child: Row(
                     children: [
                       Icon(
-                        Icons.group,
+                        Icons.history,
                         color: context
                                     .read<SwitchPageCubit>()
                                     .state
@@ -288,26 +294,178 @@ class DrawerDashboard extends StatelessWidget {
                             : Colors.grey.withValues(alpha: 0.2),
                       ),
                       SizedBox(width: 5),
+                      Text(
+                        'Rapports',
+                        style:
+                            Theme.of(context).textTheme.displayMedium!.copyWith(
+                                  color: context
+                                              .read<SwitchPageCubit>()
+                                              .state
+                                              .selectedPage ==
+                                          4
+                                      ? Colors.white
+                                      : Colors.black,
+                                ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              Container(
+                padding: EdgeInsets.symmetric(vertical: 10),
+                width: Const.screenWidth(context) * 0.19,
+                height: 35,
+                decoration: BoxDecoration(
+                  color: context.read<SwitchPageCubit>().state.selectedPage == 6
+                      ? Theme.of(context).colorScheme.primary
+                      : Colors.white,
+                ),
+                child: TextButton(
+                  onPressed: () {
+                    context.read<SwitchPageCubit>().switchPage(6);
+                    
+                  },
+                  child: Row(
+                    children: [
+                      Icon(
+                        Icons.group,
+                        color: context
+                                    .read<SwitchPageCubit>()
+                                    .state
+                                    .selectedPage ==
+                                6
+                            ? Colors.white
+                            : Colors.grey.withValues(alpha: 0.2),
+                      ),
+                      SizedBox(width: 5),
                       SizedBox(
-                        width: Const.screenWidth(context)*0.1,
+                        width: Const.screenWidth(context) * 0.1,
                         child: Text(
                           'Collaborateurs',
-                          style:
-                              Theme.of(context).textTheme.displayMedium!.copyWith(
-                                    color: context
-                                                .read<SwitchPageCubit>()
-                                                .state
-                                                .selectedPage ==
-                                            4
-                                        ? Colors.white
-                                        : Colors.black,
-                                  ),
+                          style: Theme.of(context)
+                              .textTheme
+                              .displayMedium!
+                              .copyWith(
+                                color: context
+                                            .read<SwitchPageCubit>()
+                                            .state
+                                            .selectedPage ==
+                                        6
+                                    ? Colors.white
+                                    : Colors.black,
+                              ),
                         ),
                       ),
                     ],
                   ),
                 ),
               ),
+              context.read<SwitchPageCubit>().state.selectedPage == 6
+                  ? Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 10),
+                      child: Column(
+                        children: [
+                          Container(
+                            padding: EdgeInsets.symmetric(vertical: 10),
+                            width: Const.screenWidth(context) * 0.19,
+                            height: 35,
+                            decoration: BoxDecoration(
+                              color: context
+                                          .read<SwitchPageCubit>()
+                                          .state
+                                          .selectedPage ==
+                                      7
+                                  ? Theme.of(context).colorScheme.primary
+                                  : Colors.white,
+                            ),
+                            child: TextButton(
+                              onPressed: () {
+                                context.read<SwitchPageCubit>().switchPage(7);
+                                context
+                                    .go('/collaborateur/List_collaborateurs');
+                              },
+                              child: Row(
+                                children: [
+                                  Icon(
+                                    Icons.subdirectory_arrow_right,
+                                    color: Colors.grey.withValues(alpha: 0.2),
+                                  ),
+                                  SizedBox(width: 5),
+                                  SizedBox(
+                                    width: Const.screenWidth(context) * 0.1,
+                                    child: Text(
+                                      'List Document',
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .displayMedium
+                                          ?.copyWith(
+                                            color: context
+                                                        .read<SwitchPageCubit>()
+                                                        .state
+                                                        .selectedPage ==
+                                                    7
+                                                ? Colors.white
+                                                : Colors.black,
+                                          ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                          Container(
+                            padding: EdgeInsets.symmetric(vertical: 10),
+                            width: Const.screenWidth(context) * 0.19,
+                            height: 35,
+                            decoration: BoxDecoration(
+                              color: context
+                                          .read<SwitchPageCubit>()
+                                          .state
+                                          .selectedPage ==
+                                      8
+                                  ? Theme.of(context).colorScheme.primary
+                                  : Colors.white,
+                            ),
+                            child: TextButton(
+                              onPressed: () {
+                                context.read<SwitchPageCubit>().switchPage(8);
+                                context
+                                    .go('/collaborateur/nouveau_collaborateur');
+                              },
+                              child: Row(
+                                children: [
+                                  Icon(
+                                    Icons.subdirectory_arrow_right,
+                                    color: Colors.grey.withValues(alpha: 0.2),
+                                  ),
+                                  SizedBox(width: 5),
+                                  SizedBox(
+                                    width: Const.screenWidth(context) * 0.1,
+                                    child: Text(
+                                      'Nouveau Document',
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .displayMedium!
+                                          .copyWith(
+                                            overflow: TextOverflow.ellipsis,
+                                            color: context
+                                                        .read<SwitchPageCubit>()
+                                                        .state
+                                                        .selectedPage ==
+                                                    8
+                                                ? Colors.white
+                                                : Colors.black,
+                                          ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    )
+                  : SizedBox(),
             ],
           )),
     );

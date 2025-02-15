@@ -3,7 +3,7 @@ import 'package:dio/dio.dart';
 class ApiConfig {
   static api() {
     final options = BaseOptions(
-      baseUrl: 'https://b93a-41-216-54-183.ngrok-free.app/api/',
+      baseUrl: 'http://http://ee70-41-85-163-225.ngrok-free.app/api/',
       connectTimeout: const Duration(seconds: 30),
       receiveTimeout: const Duration(seconds: 30),
       validateStatus: (status) {
@@ -13,7 +13,7 @@ class ApiConfig {
       headers: {
         'Accept': 'application/json',
         'Content-Type': 'application/json',
-         'ngrok-skip-browser-warning': 'true'
+        'ngrok-skip-browser-warning': 'true'
       },
     );
 

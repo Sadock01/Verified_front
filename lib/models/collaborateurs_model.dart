@@ -58,6 +58,16 @@ class CollaborateursModel extends Equatable {
     };
   }
 
+  Map<String, dynamic> toJson() {
+  return {
+    "firstname": _firstName, // Utilisez "firstname" au lieu de "firstName"
+    "lastname": _lastName,   // Utilisez "lastname" au lieu de "lastName"
+    "email": _email,
+    "password": "password", // Ajoutez un mot de passe par défaut
+    "role_id": _roleId,            // Utilisez "role_id" au lieu de "roleId"
+  };
+}
+
   CollaborateursModel copyWith({
     int? id,
     String? firstName,

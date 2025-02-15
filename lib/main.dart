@@ -1,6 +1,7 @@
 import 'package:doc_authentificator/cubits/collaborateurs/collaborateurs_cubit.dart';
 import 'package:doc_authentificator/cubits/documents/document_cubit.dart';
 import 'package:doc_authentificator/cubits/login/login_cubit.dart';
+import 'package:doc_authentificator/cubits/rapports/report_cubit.dart';
 import 'package:doc_authentificator/cubits/switch_page/switch_page_cubit.dart';
 import 'package:doc_authentificator/cubits/types/type_doc_cubit.dart';
 import 'package:doc_authentificator/cubits/verification/verification_cubit.dart';
@@ -8,10 +9,11 @@ import 'package:doc_authentificator/cubits/verification/verification_cubit.dart'
 import 'package:doc_authentificator/pages/dashboard_home_screen.dart';
 import 'package:doc_authentificator/pages/login_page.dart';
 import 'package:doc_authentificator/pages/screens/Rapports_screen.dart';
-import 'package:doc_authentificator/pages/screens/collaborateur_screen.dart';
 
 import 'package:doc_authentificator/pages/screens/history_screen.dart';
+import 'package:doc_authentificator/pages/screens/list_collaborateur_screen.dart';
 import 'package:doc_authentificator/pages/screens/list_document_screen.dart';
+import 'package:doc_authentificator/pages/screens/new_collaborateur_screen.dart';
 import 'package:doc_authentificator/pages/screens/new_document_screen.dart';
 import 'package:doc_authentificator/pages/screens/update_document_screen.dart';
 import 'package:doc_authentificator/pages/statistiques_screen.dart';
@@ -19,6 +21,7 @@ import 'package:doc_authentificator/pages/user_verify_page.dart';
 import 'package:doc_authentificator/repositories/auth_repository.dart';
 import 'package:doc_authentificator/repositories/collaborateur_repository.dart';
 import 'package:doc_authentificator/repositories/document_repository.dart';
+import 'package:doc_authentificator/repositories/report_repository.dart';
 import 'package:doc_authentificator/repositories/type_doc_repository.dart';
 import 'package:doc_authentificator/repositories/verification_repository.dart';
 
@@ -78,12 +81,30 @@ final GoRouter _router = GoRouter(
       },
     ),
     GoRoute(
-      path: '/collaborateurs',
+      path: '/collaborateur/List_collaborateurs',
+      builder: (BuildContext context, GoRouterState state) {
+        context
+            .read<SwitchPageCubit>()
+            .switchPage(7); // Sélectionner la page Liste des documents
+        return ListCollaborateurScreen();
+      },
+    ),
+    GoRoute(
+      path: '/collaborateur/nouveau_collaborateur',
+      builder: (BuildContext context, GoRouterState state) {
+        context
+            .read<SwitchPageCubit>()
+            .switchPage(8); // Sélectionner la page Nouveau document
+        return const NewCollaborateurScreen();
+      },
+    ),
+    GoRoute(
+      path: '/rapports',
       builder: (BuildContext context, GoRouterState state) {
         context
             .read<SwitchPageCubit>()
             .switchPage(4); // Sélectionner la page Rapports
-        return const CollaborateurScreen();
+        return const RapportsScreen();
       },
     ),
     GoRoute(
@@ -130,8 +151,10 @@ class MyApp extends StatelessWidget {
             create: (context) => AuthRepository()),
         RepositoryProvider<VerificationRepository>(
             create: (context) => VerificationRepository()),
-            RepositoryProvider<CollaborateurRepository>(
-            create: (context) => CollaborateurRepository())
+        RepositoryProvider<CollaborateurRepository>(
+            create: (context) => CollaborateurRepository()),
+        RepositoryProvider<ReportRepository>(
+            create: (context) => ReportRepository())
       ],
       child: MultiBlocProvider(
           providers: [
@@ -159,10 +182,17 @@ class MyApp extends StatelessWidget {
               create: (context) => VerificationCubit(
                 verificationRepository: context.read<VerificationRepository>(),
               )..getAllVerification(1),
-            ), BlocProvider<CollaborateursCubit>(
+            ),
+            BlocProvider<CollaborateursCubit>(
               create: (context) => CollaborateursCubit(
-                collaborateurRepository: context.read<CollaborateurRepository>(),
+                collaborateurRepository:
+                    context.read<CollaborateurRepository>(),
               )..getAllCollaborateur(1),
+            ),
+            BlocProvider<ReportCubit>(
+              create: (context) => ReportCubit(
+                reportRepository: context.read<ReportRepository>(),
+              )..getAllReports(1),
             )
           ],
           child: Builder(builder: (context) {

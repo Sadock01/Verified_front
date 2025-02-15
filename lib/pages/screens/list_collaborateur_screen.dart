@@ -1,24 +1,24 @@
 import 'package:doc_authentificator/const/const.dart';
-import 'package:doc_authentificator/cubits/rapports/report_cubit.dart';
-import 'package:doc_authentificator/cubits/rapports/report_state.dart';
-import 'package:doc_authentificator/cubits/verification/verification_cubit.dart';
+import 'package:doc_authentificator/cubits/collaborateurs/collaborateurs_cubit.dart';
+import 'package:doc_authentificator/cubits/collaborateurs/collaborateurs_state.dart';
+import 'package:doc_authentificator/widgets/appbar_dashboard.dart';
 import 'package:doc_authentificator/widgets/drawer_dashboard.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 
-import '../../widgets/appbar_dashboard.dart';
-
-class RapportsScreen extends StatefulWidget {
-  const RapportsScreen({super.key});
+class ListCollaborateurScreen extends StatefulWidget {
+  const ListCollaborateurScreen({super.key});
 
   @override
-  State<RapportsScreen> createState() => _RapportsScreenState();
+  State<ListCollaborateurScreen> createState() => _ListCollaborateurScreenState();
 }
 
-class _RapportsScreenState extends State<RapportsScreen> {
+class _ListCollaborateurScreenState extends State<ListCollaborateurScreen> {
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<ReportCubit, ReportState>(builder: (context, state) {
+    return BlocBuilder<CollaborateursCubit, CollaborateursState>(
+        builder: (context, state) {
       return Scaffold(
         body: Row(
           children: [
@@ -50,19 +50,41 @@ class _RapportsScreenState extends State<RapportsScreen> {
                           ),
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.center,
-                            children: [],
+                            children: [
+                              SizedBox(height: 5),
+                              OutlinedButton(
+                                style: OutlinedButton.styleFrom(
+                                  shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(5)),
+                                  side: BorderSide(
+                                      color: Theme.of(context)
+                                          .colorScheme
+                                          .primary),
+                                ),
+                                onPressed: () {
+                                  context.go('/document/nouveau_document');
+                                },
+                                child: Text(
+                                  "Nouveau Document +",
+                                  style:
+                                      Theme.of(context).textTheme.displayMedium,
+                                ),
+                              )
+                            ],
                           ),
                         ),
                         SizedBox(width: 10),
                         Column(
                           children: [
-                            if (state.reportStatus == ReportStatus.loading)
+                            if (state.collaborateurStatus ==
+                                CollaborateurStatus.loading)
                               const Center(
                                 child: CircularProgressIndicator(
                                   strokeWidth: 3.0,
                                 ),
                               )
-                            else if (state.reportStatus == ReportStatus.error)
+                            else if (state.collaborateurStatus ==
+                                CollaborateurStatus.error)
                               Center(
                                 child: Text(
                                   state.errorMessage,
@@ -70,7 +92,8 @@ class _RapportsScreenState extends State<RapportsScreen> {
                                       Theme.of(context).textTheme.labelMedium,
                                 ),
                               )
-                            else if (state.reportStatus == ReportStatus.loaded)
+                            else if (state.collaborateurStatus ==
+                                CollaborateurStatus.loaded)
                               Column(
                                 mainAxisSize: MainAxisSize.max,
                                 children: [
@@ -102,8 +125,8 @@ class _RapportsScreenState extends State<RapportsScreen> {
                                         DataColumn(
                                           label: SizedBox(
                                             width: Const.screenWidth(context) *
-                                                0.05,
-                                            child: Text("nom",
+                                                0.25,
+                                            child: Text("Nom",
                                                 style: Theme.of(context)
                                                     .textTheme
                                                     .displayMedium),
@@ -112,8 +135,8 @@ class _RapportsScreenState extends State<RapportsScreen> {
                                         DataColumn(
                                           label: SizedBox(
                                             width: Const.screenWidth(context) *
-                                                0.15,
-                                            child: Text("Ancienne valeur",
+                                                0.1,
+                                            child: Text("Email",
                                                 style: Theme.of(context)
                                                     .textTheme
                                                     .displayMedium),
@@ -122,8 +145,8 @@ class _RapportsScreenState extends State<RapportsScreen> {
                                         DataColumn(
                                           label: SizedBox(
                                             width: Const.screenWidth(context) *
-                                                0.15,
-                                            child: Text("Nouvelle Valeur",
+                                                0.1,
+                                            child: Text("Status",
                                                 style: Theme.of(context)
                                                     .textTheme
                                                     .displayMedium),
@@ -133,22 +156,22 @@ class _RapportsScreenState extends State<RapportsScreen> {
                                           label: SizedBox(
                                             width: Const.screenWidth(context) *
                                                 0.12,
-                                            child: Text("Date de modification",
+                                            child: Text("Action",
                                                 style: Theme.of(context)
                                                     .textTheme
                                                     .displayMedium),
                                           ),
                                         ),
                                       ],
-                                      rows: state.listReports
-                                          .map((report) => DataRow(
+                                      rows: state.listCollaborateurs
+                                          .map((collaborateur) => DataRow(
                                                 cells: [
                                                   DataCell(SizedBox(
                                                     width: Const.screenWidth(
                                                             context) *
                                                         0.1,
                                                     child: Text(
-                                                      report.firstName
+                                                      collaborateur.firstName
                                                           .toString(),
                                                       style: Theme.of(context)
                                                           .textTheme
@@ -162,8 +185,7 @@ class _RapportsScreenState extends State<RapportsScreen> {
                                                             context) *
                                                         0.1,
                                                     child: Text(
-                                                      report.lastName
-                                                          .toString(),
+                                                      collaborateur.lastName,
                                                       style: Theme.of(context)
                                                           .textTheme
                                                           .labelSmall,
@@ -174,12 +196,9 @@ class _RapportsScreenState extends State<RapportsScreen> {
                                                   DataCell(SizedBox(
                                                     width: Const.screenWidth(
                                                             context) *
-                                                        0.15,
+                                                        0.1,
                                                     child: Text(
-                                                      report.changes.isNotEmpty
-                                                          ? report.changes[0]
-                                                              .oldValue
-                                                          : "N/A",
+                                                      collaborateur.email,
                                                       style: Theme.of(context)
                                                           .textTheme
                                                           .displayMedium,
@@ -188,27 +207,87 @@ class _RapportsScreenState extends State<RapportsScreen> {
                                                   DataCell(SizedBox(
                                                     width: Const.screenWidth(
                                                             context) *
-                                                        0.15,
-                                                    child: Text(
-                                                      report.changes.isNotEmpty
-                                                          ? report.changes[0]
-                                                              .newValue
-                                                          : "N/A",
-                                                      style: Theme.of(context)
-                                                          .textTheme
-                                                          .displayMedium,
+                                                        0.1,
+                                                    child: Container(
+                                                      padding: EdgeInsets.symmetric(horizontal: 12),
+                                                      decoration: BoxDecoration(
+                                                          borderRadius:
+                                                              BorderRadius
+                                                                  .circular(10),
+                                                          color: collaborateur
+                                                                      .status ==
+                                                                  1
+                                                              ? Colors.green
+                                                                  .withValues(
+                                                                      alpha:
+                                                                          0.2)
+                                                              : Colors.red
+                                                                  .withValues(
+                                                                      alpha:
+                                                                          0.2)),
+                                                      child: Text(
+                                                        collaborateur.status ==
+                                                                1
+                                                            ? 'activer'
+                                                            : "desactiver",
+                                                        style: Theme.of(context)
+                                                            .textTheme
+                                                            .displayMedium,
+                                                      ),
                                                     ),
                                                   )),
-                                                  DataCell(SizedBox(
-                                                    width: Const.screenWidth(
-                                                            context) *
-                                                        0.12,
-                                                    child: Text(
-                                                      report.modifiedAt
-                                                          .toString(),
-                                                      style: Theme.of(context)
-                                                          .textTheme
-                                                          .displayMedium,
+                                                  DataCell(
+                                                      PopupMenuButton<String>(
+                                                    onSelected: (value) {
+                                                      // if (value == "edit") {
+                                                      //   context.go(
+                                                      //       '/document/update/${document.id}');
+                                                      // } else if (value ==
+                                                      //     "view") {
+                                                      //   context.go(
+                                                      //       '/document/view/${document.identifier}');
+                                                      // }
+                                                    },
+                                                    itemBuilder: (context) => [
+                                                      PopupMenuItem(
+                                                          value: "edit",
+                                                          child: Text(
+                                                              "Modifier document")),
+                                                      PopupMenuItem(
+                                                          value: "view",
+                                                          child: Text(
+                                                              "Afficher document")),
+                                                    ],
+                                                    child: MouseRegion(
+                                                      cursor: SystemMouseCursors
+                                                          .click,
+                                                      child: Container(
+                                                        padding:
+                                                            const EdgeInsets
+                                                                .symmetric(
+                                                                horizontal: 8,
+                                                                vertical: 5),
+                                                        decoration:
+                                                            BoxDecoration(
+                                                          color:
+                                                              Theme.of(context)
+                                                                  .colorScheme
+                                                                  .primary,
+                                                          borderRadius:
+                                                              BorderRadius
+                                                                  .circular(5),
+                                                        ),
+                                                        child: Text(
+                                                          "Option",
+                                                          style: Theme.of(
+                                                                  context)
+                                                              .textTheme
+                                                              .labelMedium!
+                                                              .copyWith(
+                                                                  color: Colors
+                                                                      .white),
+                                                        ),
+                                                      ),
                                                     ),
                                                   )),
                                                 ],
@@ -223,7 +302,7 @@ class _RapportsScreenState extends State<RapportsScreen> {
                                       InkWell(
                                         onTap: state.currentPage > 1
                                             ? () => context
-                                                .read<VerificationCubit>()
+                                                .read<CollaborateursCubit>()
                                                 .goToPreviousPage()
                                             : null,
                                         child: Container(
@@ -244,7 +323,7 @@ class _RapportsScreenState extends State<RapportsScreen> {
                                         onTap:
                                             state.currentPage < state.lastPage
                                                 ? () => context
-                                                    .read<VerificationCubit>()
+                                                    .read<CollaborateursCubit>()
                                                     .goToNextPage()
                                                 : null,
                                         child: Container(
