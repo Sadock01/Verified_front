@@ -8,6 +8,7 @@ import 'package:doc_authentificator/cubits/types/type_doc_state.dart';
 
 import 'package:doc_authentificator/models/documents_model.dart';
 import 'package:doc_authentificator/models/type_doc_model.dart';
+import 'package:doc_authentificator/pages/screens/widgets/pdf_uploader_widget.dart';
 import 'package:doc_authentificator/widgets/appbar_dashboard.dart';
 import 'package:doc_authentificator/widgets/drawer_dashboard.dart';
 import 'package:elegant_notification/elegant_notification.dart';
@@ -478,6 +479,10 @@ class _NewDocumentScreenState extends State<NewDocumentScreen> {
                                       ),
                                 ),
                               ),
+                              if (_identifierController.text.isNotEmpty)
+                              PdfUploaderWidget(
+                                documentId: _identifierController.text,
+                              )
                             ],
                           ),
                         ),

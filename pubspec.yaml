@@ -45,6 +45,8 @@ dependencies:
   charts_painter: ^3.1.1
   fl_chart: ^0.70.2
   file_picker: ^8.3.5
+  path_provider: ^2.1.5
+  open_file: ^3.5.10
 
 dev_dependencies:
   flutter_test:
