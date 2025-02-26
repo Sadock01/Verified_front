@@ -201,7 +201,7 @@ class _UserVerifyPageState extends State<UserVerifyPage> {
                                     SizedBox(height: 15),
                                     Container(
                                       width: Const.screenWidth(context) * 0.15,
-                                      height:Const.screenHeight(context)*0.1,
+                                      height: Const.screenHeight(context) * 0.1,
                                       decoration: BoxDecoration(
                                           image: DecorationImage(
                                               fit: BoxFit.contain,
@@ -233,11 +233,140 @@ class _UserVerifyPageState extends State<UserVerifyPage> {
                           ),
                         );
                       } else {
-                        return SizedBox();
+                        return Container(
+                          margin: EdgeInsets.all(10),
+                          width: Const.screenWidth(context),
+                          height: Const.screenHeight(context) * 0.5,
+                          decoration: BoxDecoration(
+                              color: Colors.white,
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.grey.withValues(alpha: 0.2),
+                                  spreadRadius: 10,
+                                  blurRadius: 10,
+                                  offset: Offset(0, 3),
+                                )
+                              ],
+                              borderRadius: BorderRadius.circular(15)),
+                          child: Column(
+                            children: [
+                              Container(
+                                // margin: EdgeInsets.only(top: 5),
+                                width: Const.screenWidth(context),
+                                padding: EdgeInsets.symmetric(
+                                    horizontal:
+                                        Const.screenWidth(context) * 0.1),
+                                decoration: BoxDecoration(
+                                    color: Colors.black54,
+                                    borderRadius: BorderRadius.only(
+                                        topLeft: Radius.circular(15),
+                                        topRight: Radius.circular(15))),
+
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Text(
+                                      "Procédure de vérification d'authenticité d'un document",
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .headlineSmall,
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              Container(
+                                padding: EdgeInsets.all(5),
+                                decoration: BoxDecoration(
+                                    shape: BoxShape.circle,
+                                    border: Border.all(color: Colors.black)),
+                                child: Text(
+                                  "1",
+                                  style: Theme.of(context).textTheme.labelLarge,
+                                ),
+                              ),
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Text(
+                                    "Entrez l'identifiant du document dont vous voulez verifier l'authenticité dans le champ ci-dessus",
+                                    style:
+                                        Theme.of(context).textTheme.labelSmall,
+                                  ),
+                                ],
+                              ),
+                              Container(
+                                padding: EdgeInsets.all(5),
+                                decoration: BoxDecoration(
+                                    shape: BoxShape.circle,
+                                    border: Border.all(color: Colors.black)),
+                                child: Text(
+                                  "2",
+                                  style: Theme.of(context).textTheme.labelLarge,
+                                ),
+                              ),
+                              Text(
+                                "Lancer la recherche en appuyant sur le boutton rechercher",
+                                style: Theme.of(context).textTheme.labelSmall,
+                              ),
+                              Container(
+                                padding: EdgeInsets.all(5),
+                                decoration: BoxDecoration(
+                                    shape: BoxShape.circle,
+                                    border: Border.all(color: Colors.black)),
+                                child: Text(
+                                  "3",
+                                  style: Theme.of(context).textTheme.labelLarge,
+                                ),
+                              ),
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  SizedBox(width: 10),
+                                  Text(
+                                    "Si l'identifiant du document entré existe vous verrez les details des informations que porte le document",
+                                    style:
+                                        Theme.of(context).textTheme.labelSmall,
+                                  ),
+                                ],
+                              ),
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  SizedBox(width: 20),
+                                  Text(
+                                    " le document original dans le cas contraire il vous sera affiché le message avec la mention ",
+                                    style:
+                                        Theme.of(context).textTheme.labelSmall,
+                                  ),
+                                ],
+                              ),
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Text(
+                                    "'Le document avec cet identifiant n'existe pas'.",
+                                    style:
+                                        Theme.of(context).textTheme.labelSmall,
+                                  ),
+                                ],
+                              ),
+                              Container(
+                                margin: EdgeInsets.all(24),
+                                width: Const.screenWidth(context) * 0.15,
+                                height: Const.screenHeight(context) * 0.1,
+                                decoration: BoxDecoration(
+                                    image: DecorationImage(
+                                        fit: BoxFit.contain,
+                                        image: AssetImage(
+                                            'assets/images/Verified_Badge.svg.png'))),
+                              )
+                            ],
+                          ),
+                        );
                       }
                     },
                   ),
-                  SizedBox(height: Const.screenHeight(context) * 0.35),
+                  SizedBox(height: Const.screenHeight(context) * 0.25),
                   Container(
                     width: Const.screenWidth(context),
                     height: Const.screenHeight(context) * 0.3,
