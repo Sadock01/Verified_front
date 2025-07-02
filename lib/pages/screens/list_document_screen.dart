@@ -81,10 +81,7 @@ class _ListDocumentScreenState extends State<ListDocumentScreen> {
                               )
                             else if (state.documentStatus == DocumentStatus.error)
                               Center(
-                                child: Text(
-                                  state.errorMessage,
-                                  style: Theme.of(context).textTheme.labelMedium,
-                                ),
+                                child: SizedBox()
                               )
                             else if (state.documentStatus == DocumentStatus.loaded || state.documentStatus == DocumentStatus.sucess)
                               Column(

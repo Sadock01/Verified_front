@@ -24,6 +24,7 @@ import 'package:doc_authentificator/repositories/document_repository.dart';
 import 'package:doc_authentificator/repositories/report_repository.dart';
 import 'package:doc_authentificator/repositories/type_doc_repository.dart';
 import 'package:doc_authentificator/repositories/verification_repository.dart';
+import 'package:doc_authentificator/utils/shared_preferences_utils.dart';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -33,6 +34,7 @@ import 'package:url_strategy/url_strategy.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await SharedPreferencesUtils.init();
   setPathUrlStrategy();
   runApp(const MyApp());
 }

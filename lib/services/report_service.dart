@@ -3,11 +3,14 @@ import 'package:dio/dio.dart';
 import 'package:doc_authentificator/const/api_const.dart';
 import 'package:doc_authentificator/models/report_model.dart';
 
+import '../utils/shared_preferences_utils.dart';
+
 class ReportService {
   static Dio api = ApiConfig.api();
 
  static Future<Map<String, dynamic>> getAllReports(int page) async {
-  api.options.headers['AUTHORIZATION'] = 'Bearer 10|hmRWGfAMQ9fkodYhg96joyiPpFz5jBDV9U4bqJVza47c0b53';
+   final token = SharedPreferencesUtils.getString('auth_token');
+  api.options.headers['AUTHORIZATION'] = 'Bearer $token';
 
   final response = await api.get("dashboard/reports", queryParameters: {
     'page': page,

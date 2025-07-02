@@ -86,11 +86,7 @@ class _ListCollaborateurScreenState extends State<ListCollaborateurScreen> {
                             else if (state.collaborateurStatus ==
                                 CollaborateurStatus.error)
                               Center(
-                                child: Text(
-                                  state.errorMessage,
-                                  style:
-                                      Theme.of(context).textTheme.labelMedium,
-                                ),
+                                child: SizedBox()
                               )
                             else if (state.collaborateurStatus ==
                                 CollaborateurStatus.loaded)

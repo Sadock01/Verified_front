@@ -4,15 +4,21 @@ import 'package:dio/dio.dart';
 import 'package:doc_authentificator/const/api_const.dart';
 import 'package:doc_authentificator/models/documents_model.dart';
 
+import '../utils/shared_preferences_utils.dart';
+
 
 class DocumentService {
   static Dio api = ApiConfig.api();
 
   static Future<Map<String, dynamic>> getAllDocument(int page) async {
-    
-    api.options.headers['AUTHORIZATION'] = 'Bearer 10|hmRWGfAMQ9fkodYhg96joyiPpFz5jBDV9U4bqJVza47c0b53';
+    final token = SharedPreferencesUtils.getString('auth_token');
+    api.options.headers['AUTHORIZATION'] = '$token';
 
-    final response = await api.get("documents", queryParameters: {
+    final response = await api.get("documents",  options: Options(
+      headers: {
+        'Authorization': 'Bearer $token',
+      },
+    ),queryParameters: {
       'page': page,
       'per_page': 10,
     });
@@ -39,8 +45,9 @@ class DocumentService {
 
   static Future<Map<String, dynamic>> addDocument(
       DocumentsModel documentsModel) async {
+    final token = SharedPreferencesUtils.getString('auth_token');
     api.options.headers['AUTHORIZATION'] =
-        'Bearer 10|hmRWGfAMQ9fkodYhg96joyiPpFz5jBDV9U4bqJVza47c0b53';
+        'Bearer $token';
     log("il est la?? ${documentsModel.toJson()}");
     final response =
         await api.post("/documents/create", data: documentsModel.toJson());
@@ -61,8 +68,9 @@ class DocumentService {
 
   static Future<Map<String, dynamic>> updateDocument(
       int documentId, DocumentsModel documentsModel) async {
+    final token = SharedPreferencesUtils.getString('auth_token');
     api.options.headers['AUTHORIZATION'] =
-        'Bearer 7|3JtLwLxvJtkVlnRvTgKln1XZIXHPNRP8mhlF42Mt32d8c745';
+        'Bearer $token';
 
     final response = await api.put("documents/edit/document/$documentId",
         data: documentsModel.toJson());
@@ -80,8 +88,9 @@ class DocumentService {
   }
 
   static Future<Map<String, dynamic>> verifyDocument(String? identifier) async {
+    final token = SharedPreferencesUtils.getString('auth_token');
     api.options.headers['AUTHORIZATION'] =
-        '10|hmRWGfAMQ9fkodYhg96joyiPpFz5jBDV9U4bqJVza47c0b53';
+        'Bearer $token';
 
     try {
       final response = await api
@@ -113,8 +122,9 @@ class DocumentService {
   }
 
   static Future<Map<String, dynamic>> getDocumentById(int documentId) async {
+    final token = SharedPreferencesUtils.getString('auth_token');
     api.options.headers['AUTHORIZATION'] =
-        'Bearer 10|hmRWGfAMQ9fkodYhg96joyiPpFz5jBDV9U4bqJVza47c0b53';
+        'Bearer $token';
 
     try {
       log("Début de récupération du document ID: $documentId");

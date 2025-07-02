@@ -83,11 +83,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
                             else if (state.verificationStatus ==
                                 VerificationStatus.error)
                               Center(
-                                child: Text(
-                                  state.errorMessage,
-                                  style:
-                                      Theme.of(context).textTheme.labelMedium,
-                                ),
+                                child: SizedBox()
                               )
                             else if (state.verificationStatus ==
                                 VerificationStatus.loaded)

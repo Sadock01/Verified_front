@@ -1,12 +1,15 @@
 import 'package:dio/dio.dart';
 import 'package:doc_authentificator/const/api_const.dart';
 
+import '../utils/shared_preferences_utils.dart';
+
 class UtilsServices {
   static Dio api = ApiConfig.api();
 
   static Future<Map<String, dynamic>> statistiquesByDays() async {
+    final token = SharedPreferencesUtils.getString('auth_token');
     api.options.headers['AUTHORIZATION'] =
-        'Bearer 10|hmRWGfAMQ9fkodYhg96joyiPpFz5jBDV9U4bqJVza47c0b53';
+        'Bearer $token';
     final response = await api.get("dashboard/stats");
     if (response.statusCode == 200 || response.statusCode == 201) {
       return {
@@ -20,8 +23,9 @@ class UtilsServices {
   }
 
   static Future<Map<String, dynamic>> totalVerifications() async {
+    final token = SharedPreferencesUtils.getString('auth_token');
     api.options.headers['AUTHORIZATION'] =
-        'Bearer 10|hmRWGfAMQ9fkodYhg96joyiPpFz5jBDV9U4bqJVza47c0b53';
+        'Bearer $token';
     final response = await api.get("dashboard/total-verifications");
     if (response.statusCode == 200 || response.statusCode == 201) {
       return {
@@ -34,8 +38,9 @@ class UtilsServices {
   }
 
   static Future<Map<String, dynamic>> totalDocuments() async {
+    final token = SharedPreferencesUtils.getString('auth_token');
     api.options.headers['AUTHORIZATION'] =
-        'Bearer 10|hmRWGfAMQ9fkodYhg96joyiPpFz5jBDV9U4bqJVza47c0b53';
+        'Bearer $token';
     final response = await api.get("dashboard/total-documents");
     if (response.statusCode == 200 || response.statusCode == 201) {
       return {
@@ -48,8 +53,9 @@ class UtilsServices {
   }
 
   static Future<Map<String, dynamic>> statistiquesByVerificationStatus() async {
+    final token = SharedPreferencesUtils.getString('auth_token');
     api.options.headers['AUTHORIZATION'] =
-        'Bearer 10|hmRWGfAMQ9fkodYhg96joyiPpFz5jBDV9U4bqJVza47c0b53';
+        'Bearer $token';
     final response = await api.get("verifications/stats");
     if (response.statusCode == 200 || response.statusCode == 201) {
       return {

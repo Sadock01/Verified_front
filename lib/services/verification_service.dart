@@ -6,12 +6,15 @@ import 'package:doc_authentificator/const/api_const.dart';
 import 'package:http_parser/http_parser.dart';
 import 'dart:typed_data';
 
+import '../utils/shared_preferences_utils.dart';
+
 class VerificationService {
   static Dio api = ApiConfig.api();
 
   static Future<Map<String, dynamic>> getAllVerification(int page) async {
-    
-    api.options.headers['AUTHORIZATION'] = 'Bearer 10|hmRWGfAMQ9fkodYhg96joyiPpFz5jBDV9U4bqJVza47c0b53';
+
+    final token = SharedPreferencesUtils.getString('auth_token');
+    api.options.headers['AUTHORIZATION'] = 'Bearer $token';
 
     final response = await api.get("dashboard/recent-verifications", queryParameters: {
       'page': page,

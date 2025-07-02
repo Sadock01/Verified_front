@@ -4,6 +4,8 @@ import 'package:dio/dio.dart';
 import 'package:doc_authentificator/const/api_const.dart';
 import 'package:doc_authentificator/utils/flutter_storaage_secure.dart';
 
+import '../utils/shared_preferences_utils.dart';
+
 class AuthentificationService {
   static Dio api = ApiConfig.api();
   static Future<Map<String, dynamic>> login(
@@ -18,10 +20,9 @@ class AuthentificationService {
           response.data['status_code'] == 201) {
         log("Connexion réussie : $response");
         final token = response.data['access_token'];
-        await FlutterStorageSecure.saveToken(token);
-        String? savedToken = await FlutterStorageSecure.getToken();
-        
-        log("$savedToken");
+        await SharedPreferencesUtils.setString('auth_token', token);
+        final me = SharedPreferencesUtils.getString('auth_token');
+        log("SharedPreferencesUtils.getString:$me");
         return {
           'status_code': response.data['status_code'],
           'acess_token': token,
@@ -40,7 +41,8 @@ class AuthentificationService {
   }
 
   static Future<String> logout() async {
-    String? token = await FlutterStorageSecure.getToken();
+    final token = SharedPreferencesUtils.getString('auth_token');
+    log("mon token de connexion : $token");
     api.options.headers['Authorization'] = 'Bearer $token';
 
     final response = await api.post("logout");

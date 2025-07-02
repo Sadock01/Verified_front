@@ -4,12 +4,15 @@ import 'package:dio/dio.dart';
 import 'package:doc_authentificator/const/api_const.dart';
 import 'package:doc_authentificator/models/type_doc_model.dart';
 
+import '../utils/shared_preferences_utils.dart';
+
 class TypeService {
   static Dio api = ApiConfig.api();
 
   static Future<List<TypeDocModel>> getAllType() async {
+    final token = SharedPreferencesUtils.getString('auth_token');
     api.options.headers['AUTHORIZATION'] =
-        'Bearer 7|3JtLwLxvJtkVlnRvTgKln1XZIXHPNRP8mhlF42Mt32d8c745';
+        'Bearer $token';
     final response = await api.get("types", queryParameters: {"page": 1});
     log("Il a commencé à récupérer les types");
     if (response.statusCode == 200 || response.statusCode == 201) {
@@ -26,8 +29,9 @@ class TypeService {
   }
 
   static Future<Map<String, dynamic>> addType(TypeDocModel typeDocModel) async {
+    final token = SharedPreferencesUtils.getString('auth_token');
     api.options.headers['AUTHORIZATION'] =
-        'Bearer 10|hmRWGfAMQ9fkodYhg96joyiPpFz5jBDV9U4bqJVza47c0b53';
+        'Bearer $token';
     log("il est la?? ${typeDocModel.toJson()}");
     final response =
         await api.post("/types/create", data: typeDocModel.toJson());
