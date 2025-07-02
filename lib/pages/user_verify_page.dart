@@ -1,10 +1,13 @@
 import 'dart:io';
+import 'dart:typed_data';
 
 import 'package:doc_authentificator/pages/pdf_drop_zone_widget.dart';
+import 'package:doc_authentificator/services/verification_service.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 
 import '../const/const.dart';
+import '../utils/utils.dart';
 import 'hover_step_widget.dart';
 
 class UserVerifyPage extends StatefulWidget {
@@ -16,7 +19,12 @@ class UserVerifyPage extends StatefulWidget {
 
 class _UserVerifyPageState extends State<UserVerifyPage> with TickerProviderStateMixin {
   final TextEditingController _identifierController = TextEditingController();
-  File? _selectedFile;
+
+  Uint8List? _selectedFileBytes;
+  String? _selectedFileName;
+  bool _isLoading = false;
+
+  final _formKey = GlobalKey<FormState>();
 
   late AnimationController _step1Controller;
   late AnimationController _step2Controller;
@@ -62,87 +70,19 @@ class _UserVerifyPageState extends State<UserVerifyPage> with TickerProviderStat
     FilePickerResult? result = await FilePicker.platform.pickFiles(
       type: FileType.custom,
       allowedExtensions: ['pdf'],
+      withData: true, // Important : récupère les bytes !
     );
 
-    if (result != null && result.files.single.path != null) {
+    if (result != null && result.files.single.bytes != null) {
       setState(() {
-        _selectedFile = File(result.files.single.path!);
+        _selectedFileBytes = result.files.single.bytes!;
+        _selectedFileName = result.files.single.name;
       });
     }
   }
 
-  void _verifyDocument() {
-    final identifier = _identifierController.text.trim();
-    if (identifier.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text("Veuillez entrer un identifiant.")),
-      );
-      return;
-    }
 
-    if (_selectedFile == null) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text("Veuillez sélectionner un fichier PDF.")),
-      );
-      return;
-    }
 
-    // Ici on enverra l’identifiant + fichier PDF vers la logique métier (API, Bloc, etc.)
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text("Vérification en cours...")),
-    );
-  }
-
-  // Widget _buildAnimatedStep(Animation<double> animation, int number, String title, String desc, Color color, IconData icon) {
-  //   return ScaleTransition(
-  //     scale: animation,
-  //     child: Container(
-  //       width: 280,
-  //       padding: EdgeInsets.all(24),
-  //       margin: EdgeInsets.symmetric(vertical: 12, horizontal: 8),
-  //       decoration: BoxDecoration(
-  //         color: Colors.white,
-  //         borderRadius: BorderRadius.circular(20),
-  //         boxShadow: [
-  //           BoxShadow(
-  //             color: color.withOpacity(0.2),
-  //             blurRadius: 25,
-  //             offset: Offset(0, 10),
-  //           ),
-  //         ],
-  //         border: Border.all(color: color.withOpacity(0.3), width: 2),
-  //       ),
-  //       child: Column(
-  //         mainAxisSize: MainAxisSize.min,
-  //         children: [
-  //           CircleAvatar(
-  //             backgroundColor: color,
-  //             radius: 30,
-  //             child: Icon(icon, size: 32, color: Colors.white),
-  //           ),
-  //           SizedBox(height: 16),
-  //           Text(
-  //             "Étape $number",
-  //             style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18, color: color),
-  //           ),
-  //           SizedBox(height: 8),
-  //           Text(
-  //             title,
-  //             textAlign: TextAlign.center,
-  //             style: TextStyle(fontWeight: FontWeight.w600, fontSize: 16),
-  //           ),
-  //           SizedBox(height: 6),
-  //           Text(
-  //             desc,
-  //             textAlign: TextAlign.center,
-  //             style: TextStyle(color: Colors.grey[700], fontSize: 14),
-  //           )
-  //         ],
-  //       ),
-  //     ),
-  //   );
-  // }
-  //
   Widget _buildFooter() {
     return Container(
       color: Colors.deepPurple.shade700,
@@ -173,16 +113,16 @@ class _UserVerifyPageState extends State<UserVerifyPage> with TickerProviderStat
                 icon: Icon(Icons.facebook, color: Colors.white),
                 tooltip: "Facebook",
               ),
-              IconButton(
-                onPressed: () {},
-                icon: Icon(Icons.mail, color: Colors.white),
-                tooltip: "Twitter",
-              ),
-              IconButton(
-                onPressed: () {},
-                icon: Icon(Icons.mail, color: Colors.white),
-                tooltip: "LinkedIn",
-              ),
+              // IconButton(
+              //   onPressed: () {},
+              //   icon: Icon(Icons.mail, color: Colors.white),
+              //   tooltip: "Twitter",
+              // ),
+              // IconButton(
+              //   onPressed: () {},
+              //   icon: Icon(Icons.mail, color: Colors.white),
+              //   tooltip: "LinkedIn",
+              // ),
               IconButton(
                 onPressed: () {},
                 icon: Icon(Icons.email, color: Colors.white),
@@ -290,57 +230,191 @@ class _UserVerifyPageState extends State<UserVerifyPage> with TickerProviderStat
                     SizedBox(height: 50),
 
                     // Formulaire
-                    Container(
-                      constraints: BoxConstraints(maxWidth: 600),
-                      padding: EdgeInsets.all(24),
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(20),
-                        boxShadow: [
-                          BoxShadow(color: Colors.grey.withOpacity(0.2), blurRadius: 20, offset: Offset(0, 8)),
-                        ],
-                      ),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.stretch,
-                        children: [
-                          Text(
-                            "Entrez l'identifiant du document",
-                            style: Theme.of(context).textTheme.labelSmall!.copyWith(fontWeight: FontWeight.bold),
-                          ),
-                          SizedBox(height: 8),
-                          TextField(
-                            controller: _identifierController,
-                            decoration: InputDecoration(
-                              border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
-                              hintText: "Identifiant unique du document",
+                    Form(
+                      key: _formKey,
+                      child: Container(
+                        constraints: BoxConstraints(maxWidth: 600),
+                        padding: EdgeInsets.all(24),
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(10),
+                          boxShadow: [
+                            BoxShadow(color: Colors.grey.withOpacity(0.2), blurRadius: 20, offset: Offset(0, 8)),
+                          ],
+                        ),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.stretch,
+                          children: [
+                            Text(
+                              "Entrez l'identifiant du document",
+                              style: Theme.of(context).textTheme.labelSmall!.copyWith(fontWeight: FontWeight.bold),
                             ),
-                          ),
-                          SizedBox(height: 24),
-                          Text(
-                            "Téléversez votre fichier PDF",
-                            style: Theme.of(context).textTheme.labelSmall!.copyWith(fontWeight: FontWeight.bold),
-                          ),
-                          SizedBox(height: 8),
-                          PdfDropZone(
-                            selectedFile: _selectedFile,
-                            onFilePicked: (file) {
-                              setState(() {
-                                _selectedFile = file;
-                              });
-                            },
-                          ),
-                          SizedBox(height: 32),
-                          ElevatedButton(
-                            onPressed: _verifyDocument,
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: Theme.of(context).colorScheme.primary,
-                              padding: EdgeInsets.symmetric(vertical: 16),
-                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)),
+                            SizedBox(height: 8),
+                            TextFormField(
+                              controller: _identifierController,
+                              validator: (value) {
+                                if (value == null || value.isEmpty) {
+                                  return "Veuillez entrer l'identifiant unique du document";
+                                }
+                                return null;
+                              },
+                              style: Theme.of(context).textTheme.displaySmall,
+                              decoration: InputDecoration(
+
+                                enabledBorder: OutlineInputBorder(
+                                  borderSide: BorderSide(
+                                      color: Theme.of(context).colorScheme.primary),
+                                  borderRadius: BorderRadius.circular(10),
+                                ),
+                                focusedBorder: OutlineInputBorder(
+                                  borderSide: BorderSide(
+                                      color: Theme.of(context).colorScheme.primary),
+                                  borderRadius: BorderRadius.circular(10),
+                                ),
+                                errorBorder: OutlineInputBorder(
+                                  borderSide: BorderSide(color: Colors.red),
+                                  borderRadius: BorderRadius.circular(10),
+                                ),
+                                hintText: "Identifiant unique du document",
+                                hintStyle: Theme.of(context).textTheme.displaySmall,
+                              ),
                             ),
-                            child: Text("Vérifier l'authenticité",
-                                style: Theme.of(context).textTheme.labelSmall!.copyWith(fontSize: 18, color: Colors.white)),
-                          ),
-                        ],
+
+                            SizedBox(height: 24),
+                            Text(
+                              "Téléversez votre fichier PDF",
+                              style: Theme.of(context).textTheme.labelSmall!.copyWith(fontWeight: FontWeight.bold),
+                            ),
+                            SizedBox(height: 8),
+                            SizedBox(height: 8),
+                            _selectedFileBytes == null
+                                ? PdfDropZone(
+                              selectedFileBytes: _selectedFileBytes,
+                              selectedFileName: _selectedFileName,
+                              onFilePicked: (bytes, name) {
+                                setState(() {
+                                  _selectedFileBytes = bytes;
+                                  _selectedFileName = name;
+                                });
+                              },
+                            )
+                                : Container(
+                              padding: EdgeInsets.all(12),
+                              decoration: BoxDecoration(
+                                color: Colors.green.shade100,
+                                borderRadius: BorderRadius.circular(8),
+                                border: Border.all(color: Colors.green.shade700),
+                              ),
+                              child: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Icon(Icons.check_circle, color: Colors.green.shade700),
+                                  SizedBox(width: 8),
+                                  Flexible(
+                                    child: Text(
+                                      _selectedFileName ?? 'Fichier sélectionné',
+                                      style: TextStyle(
+                                        color: Colors.green.shade700,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
+                                  ),
+                                  SizedBox(width: 8),
+                                  IconButton(
+                                    icon: Icon(Icons.close, color: Colors.green.shade700),
+                                    onPressed: () {
+                                      setState(() {
+                                        _selectedFileBytes = null;
+                                        _selectedFileName = null;
+                                      });
+                                    },
+                                  ),
+                                ],
+                              ),
+                            ),
+
+                            SizedBox(height: 32),
+                            ElevatedButton(
+                              onPressed: () async {
+                                if (_formKey.currentState?.validate() ?? false) {
+                                  if (_selectedFileBytes == null) {
+                                    Utils.showVerificationModal(
+                                      context: context,
+                                      isSuccess: false,
+                                      title: "Fichier manquant",
+                                      message: "Veuillez téléverser un fichier PDF pour lancer la vérification.",
+                                    );
+                                    return;
+                                  }
+
+                                  setState(() {
+                                    _isLoading = true;
+                                  });
+
+                                  try {
+                                    final identifier = _identifierController.text;
+                                    final response = await VerificationService.verifyDocumentWithFile(
+                                      identifier,
+                                      _selectedFileBytes!,
+                                      filename: _selectedFileName ?? 'document.pdf',
+                                    );
+
+                                    if (response['success'] == true && response['status'] == 'authentic') {
+                                      Utils.showVerificationModal(
+                                        context: context,
+                                        isSuccess: true,
+                                        title: "Document Vérifié",
+                                        message: response['data']['message'] ?? "Le document est authentique.",
+                                        document: Map<String, dynamic>.from(response['data']['document'] ?? {}),
+                                      );
+                                    } else {
+                                      Utils.showVerificationModal(
+                                        context: context,
+                                        isSuccess: false,
+                                        title: "Échec de Vérification",
+                                        message: response['message'] ?? "Le document n'a pas pu être vérifié.",
+                                        reasons: Map<String, dynamic>.from(response['data']['reasons'] ?? {}),
+                                      );
+                                    }
+
+                                  } catch (e) {
+                                    Utils.showVerificationModal(
+                                      context: context,
+                                      isSuccess: false,
+                                      title: "Erreur",
+                                      message: "Une erreur est survenue : $e",
+                                    );
+                                  } finally {
+                                    setState(() {
+                                      _isLoading = false;
+                                    });
+                                  }
+                                }
+                              },
+
+
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: Theme.of(context).colorScheme.primary,
+                                padding: EdgeInsets.symmetric(vertical: 16),
+                                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)),
+                              ),
+                              child: _isLoading
+                                  ? SizedBox(
+                                height: 24,
+                                width: 24,
+                                child: CircularProgressIndicator(
+                                  color: Colors.white,
+                                  strokeWidth: 3,
+                                ),
+                              )
+                                  : Text(
+                                "Vérifier l'authenticité",
+                                style: Theme.of(context).textTheme.labelSmall!.copyWith(fontSize: 18, color: Colors.white),
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
                     ),
                   ],

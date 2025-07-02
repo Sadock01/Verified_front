@@ -1,7 +1,10 @@
 import 'dart:developer';
+import 'dart:io';
 
 import 'package:dio/dio.dart';
 import 'package:doc_authentificator/const/api_const.dart';
+import 'package:http_parser/http_parser.dart';
+import 'dart:typed_data';
 
 class VerificationService {
   static Dio api = ApiConfig.api();
@@ -34,4 +37,46 @@ class VerificationService {
       throw Exception("Echec lors de la recuperation des verifications");
     }
   }
+
+  static Future<Map<String, dynamic>> verifyDocumentWithFile(
+      String identifier,
+      Uint8List pdfBytes, {
+        String filename = 'document.pdf',
+      }) async {
+
+    try {
+      final formData = FormData.fromMap({
+        'identifier': identifier,
+        'file': MultipartFile.fromBytes(
+          pdfBytes,
+          filename: filename,
+          contentType: MediaType('application', 'pdf'),
+        ),
+      });
+
+      final response = await api.post('/documents/verify', data: formData);
+      log("Voici la response de la requête: ${response}");
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        return {
+          'success': true,
+          'status': response.data['status'],
+          'data': response.data,
+        };
+      } else {
+        return {
+          'success': false,
+          'message': response.data['message'],
+        };
+      }
+    } catch (e) {
+      log("Erreur lors de l’envoi : $e");
+      return {
+        'success': false,
+        'message': 'Erreur lors de l’envoi : $e',
+      };
+    }
+  }
+
+
 }
