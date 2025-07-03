@@ -81,8 +81,6 @@ class _UserVerifyPageState extends State<UserVerifyPage> with TickerProviderStat
     }
   }
 
-
-
   Widget _buildFooter() {
     return Container(
       color: Colors.deepPurple.shade700,
@@ -237,7 +235,7 @@ class _UserVerifyPageState extends State<UserVerifyPage> with TickerProviderStat
                         padding: EdgeInsets.all(24),
                         decoration: BoxDecoration(
                           color: Colors.white,
-                          borderRadius: BorderRadius.circular(10),
+                          borderRadius: BorderRadius.circular(5),
                           boxShadow: [
                             BoxShadow(color: Colors.grey.withOpacity(0.2), blurRadius: 20, offset: Offset(0, 8)),
                           ],
@@ -260,15 +258,12 @@ class _UserVerifyPageState extends State<UserVerifyPage> with TickerProviderStat
                               },
                               style: Theme.of(context).textTheme.displaySmall,
                               decoration: InputDecoration(
-
                                 enabledBorder: OutlineInputBorder(
-                                  borderSide: BorderSide(
-                                      color: Theme.of(context).colorScheme.primary),
+                                  borderSide: BorderSide(color: Theme.of(context).colorScheme.primary),
                                   borderRadius: BorderRadius.circular(10),
                                 ),
                                 focusedBorder: OutlineInputBorder(
-                                  borderSide: BorderSide(
-                                      color: Theme.of(context).colorScheme.primary),
+                                  borderSide: BorderSide(color: Theme.of(context).colorScheme.primary),
                                   borderRadius: BorderRadius.circular(10),
                                 ),
                                 errorBorder: OutlineInputBorder(
@@ -279,7 +274,6 @@ class _UserVerifyPageState extends State<UserVerifyPage> with TickerProviderStat
                                 hintStyle: Theme.of(context).textTheme.displaySmall,
                               ),
                             ),
-
                             SizedBox(height: 24),
                             Text(
                               "Téléversez votre fichier PDF",
@@ -289,51 +283,50 @@ class _UserVerifyPageState extends State<UserVerifyPage> with TickerProviderStat
                             SizedBox(height: 8),
                             _selectedFileBytes == null
                                 ? PdfDropZone(
-                              selectedFileBytes: _selectedFileBytes,
-                              selectedFileName: _selectedFileName,
-                              onFilePicked: (bytes, name) {
-                                setState(() {
-                                  _selectedFileBytes = bytes;
-                                  _selectedFileName = name;
-                                });
-                              },
-                            )
-                                : Container(
-                              padding: EdgeInsets.all(12),
-                              decoration: BoxDecoration(
-                                color: Colors.green.shade100,
-                                borderRadius: BorderRadius.circular(8),
-                                border: Border.all(color: Colors.green.shade700),
-                              ),
-                              child: Row(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  Icon(Icons.check_circle, color: Colors.green.shade700),
-                                  SizedBox(width: 8),
-                                  Flexible(
-                                    child: Text(
-                                      _selectedFileName ?? 'Fichier sélectionné',
-                                      style: TextStyle(
-                                        color: Colors.green.shade700,
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                      overflow: TextOverflow.ellipsis,
-                                    ),
-                                  ),
-                                  SizedBox(width: 8),
-                                  IconButton(
-                                    icon: Icon(Icons.close, color: Colors.green.shade700),
-                                    onPressed: () {
+                                    selectedFileBytes: _selectedFileBytes,
+                                    selectedFileName: _selectedFileName,
+                                    onFilePicked: (bytes, name) {
                                       setState(() {
-                                        _selectedFileBytes = null;
-                                        _selectedFileName = null;
+                                        _selectedFileBytes = bytes;
+                                        _selectedFileName = name;
                                       });
                                     },
+                                  )
+                                : Container(
+                                    padding: EdgeInsets.all(12),
+                                    decoration: BoxDecoration(
+                                      color: Colors.green.shade100,
+                                      borderRadius: BorderRadius.circular(8),
+                                      border: Border.all(color: Colors.green.shade700),
+                                    ),
+                                    child: Row(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        Icon(Icons.check_circle, color: Colors.green.shade700),
+                                        SizedBox(width: 8),
+                                        Flexible(
+                                          child: Text(
+                                            _selectedFileName ?? 'Fichier sélectionné',
+                                            style: TextStyle(
+                                              color: Colors.green.shade700,
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                            overflow: TextOverflow.ellipsis,
+                                          ),
+                                        ),
+                                        SizedBox(width: 8),
+                                        IconButton(
+                                          icon: Icon(Icons.close, color: Colors.green.shade700),
+                                          onPressed: () {
+                                            setState(() {
+                                              _selectedFileBytes = null;
+                                              _selectedFileName = null;
+                                            });
+                                          },
+                                        ),
+                                      ],
+                                    ),
                                   ),
-                                ],
-                              ),
-                            ),
-
                             SizedBox(height: 32),
                             ElevatedButton(
                               onPressed: () async {
@@ -377,7 +370,6 @@ class _UserVerifyPageState extends State<UserVerifyPage> with TickerProviderStat
                                         reasons: Map<String, dynamic>.from(response['data']['reasons'] ?? {}),
                                       );
                                     }
-
                                   } catch (e) {
                                     Utils.showVerificationModal(
                                       context: context,
@@ -392,8 +384,6 @@ class _UserVerifyPageState extends State<UserVerifyPage> with TickerProviderStat
                                   }
                                 }
                               },
-
-
                               style: ElevatedButton.styleFrom(
                                 backgroundColor: Theme.of(context).colorScheme.primary,
                                 padding: EdgeInsets.symmetric(vertical: 16),
@@ -401,17 +391,17 @@ class _UserVerifyPageState extends State<UserVerifyPage> with TickerProviderStat
                               ),
                               child: _isLoading
                                   ? SizedBox(
-                                height: 24,
-                                width: 24,
-                                child: CircularProgressIndicator(
-                                  color: Colors.white,
-                                  strokeWidth: 3,
-                                ),
-                              )
+                                      height: 24,
+                                      width: 24,
+                                      child: CircularProgressIndicator(
+                                        color: Colors.white,
+                                        strokeWidth: 3,
+                                      ),
+                                    )
                                   : Text(
-                                "Vérifier l'authenticité",
-                                style: Theme.of(context).textTheme.labelSmall!.copyWith(fontSize: 18, color: Colors.white),
-                              ),
+                                      "Vérifier l'authenticité",
+                                      style: Theme.of(context).textTheme.labelSmall!.copyWith(fontSize: 18, color: Colors.white),
+                                    ),
                             ),
                           ],
                         ),

@@ -54,7 +54,7 @@ class _PdfDropZoneState extends State<PdfDropZone> {
             padding: EdgeInsets.all(15),
             decoration: BoxDecoration(
               color: _dragging ? Colors.deepPurple.withOpacity(0.1) : Colors.grey[100],
-              borderRadius: BorderRadius.circular(16),
+              borderRadius: BorderRadius.circular(5),
               border: Border.all(
                 color: _dragging ? Colors.deepPurple : Colors.transparent,
                 width: 3,
@@ -65,42 +65,41 @@ class _PdfDropZoneState extends State<PdfDropZone> {
             child: Center(
               child: widget.selectedFileBytes == null
                   ? Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Icon(Icons.cloud_upload, size: 48, color: Colors.deepPurple),
-                  SizedBox(height: 12),
-                  Text(
-                    "Glissez-déposez votre fichier PDF ici,\nou cliquez pour sélectionner",
-                    textAlign: TextAlign.center,
-                    style: Theme.of(context).textTheme.labelSmall!.copyWith(
-                      fontSize: 16,
-                      color: Colors.deepPurple,
-                    ),
-                  ),
-                ],
-              )
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Icon(Icons.cloud_upload_outlined, size: 48, color: Colors.grey[400]),
+                        SizedBox(height: 12),
+                        Text(
+                          "Glissez-déposez votre fichier PDF ici,\nou cliquez pour sélectionner",
+                          textAlign: TextAlign.center,
+                          style: Theme.of(context).textTheme.labelSmall!.copyWith(
+                                color: Colors.grey[400],
+                              ),
+                        ),
+                      ],
+                    )
                   : Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Icon(Icons.picture_as_pdf, size: 48, color: Colors.redAccent),
-                  SizedBox(height: 12),
-                  Text(
-                    "Fichier sélectionné :\n${widget.selectedFileName ?? 'Inconnu'}",
-                    textAlign: TextAlign.center,
-                    style: Theme.of(context).textTheme.labelSmall!.copyWith(
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Icon(Icons.picture_as_pdf, size: 48, color: Colors.redAccent),
+                        SizedBox(height: 12),
+                        Text(
+                          "Fichier sélectionné :\n${widget.selectedFileName ?? 'Inconnu'}",
+                          textAlign: TextAlign.center,
+                          style: Theme.of(context).textTheme.labelSmall!.copyWith(
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
+                              ),
+                        ),
+                        TextButton(
+                          onPressed: () => widget.onFilePicked(null, null), // Reset
+                          child: Text(
+                            "Supprimer",
+                            style: Theme.of(context).textTheme.labelSmall,
+                          ),
+                        ),
+                      ],
                     ),
-                  ),
-                  TextButton(
-                    onPressed: () => widget.onFilePicked(null, null), // Reset
-                    child: Text(
-                      "Supprimer",
-                      style: Theme.of(context).textTheme.labelSmall,
-                    ),
-                  ),
-                ],
-              ),
             ),
           ),
         );

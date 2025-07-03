@@ -6,8 +6,8 @@ class Utils {
     required bool isSuccess,
     required String title,
     required String message,
-    Map<String, dynamic>? reasons,    // Optionnel : détails erreurs
-    Map<String, dynamic>? document,   // Optionnel : infos document
+    Map<String, dynamic>? reasons, // Optionnel : détails erreurs
+    Map<String, dynamic>? document, // Optionnel : infos document
   }) {
     return showDialog(
       context: context,
@@ -32,14 +32,12 @@ class Utils {
               children: [
                 Text(message, style: theme.textTheme.bodyMedium),
                 SizedBox(height: 16),
-
                 if (reasons != null && reasons.isNotEmpty) ...[
                   Text("Raisons :", style: theme.textTheme.titleMedium!.copyWith(fontWeight: FontWeight.bold)),
                   SizedBox(height: 8),
                   ...reasons.entries.map((entry) => Text("- ${entry.key}: ${entry.value}")),
                   SizedBox(height: 16),
                 ],
-
                 if (document != null && document.isNotEmpty) ...[
                   Text("Détails du document :", style: theme.textTheme.titleMedium!.copyWith(fontWeight: FontWeight.bold)),
                   SizedBox(height: 8),
