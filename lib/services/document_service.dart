@@ -3,9 +3,10 @@ import 'dart:developer';
 import 'package:dio/dio.dart';
 import 'package:doc_authentificator/const/api_const.dart';
 import 'package:doc_authentificator/models/documents_model.dart';
+import 'package:http_parser/http_parser.dart';
+import 'dart:typed_data';
 
 import '../utils/shared_preferences_utils.dart';
-
 
 class DocumentService {
   static Dio api = ApiConfig.api();
@@ -14,16 +15,18 @@ class DocumentService {
     final token = SharedPreferencesUtils.getString('auth_token');
     api.options.headers['AUTHORIZATION'] = '$token';
 
-    final response = await api.get("documents",  options: Options(
-      headers: {
-        'Authorization': 'Bearer $token',
-      },
-    ),queryParameters: {
-      'page': page,
-      'per_page': 10,
-    });
+    final response = await api.get("documents",
+        options: Options(
+          headers: {
+            'Authorization': 'Bearer $token',
+          },
+        ),
+        queryParameters: {
+          'page': page,
+          'per_page': 10,
+        });
     log("Il a commencé à récupérer les documents");
-    
+
     if (response.statusCode == 200 || response.statusCode == 201) {
       log("Voici la response de la requête: ${response.data}");
       List<dynamic> allDocumentMap = response.data['data'];
@@ -43,14 +46,11 @@ class DocumentService {
     }
   }
 
-  static Future<Map<String, dynamic>> addDocument(
-      DocumentsModel documentsModel) async {
+  static Future<Map<String, dynamic>> addDocument(DocumentsModel documentsModel) async {
     final token = SharedPreferencesUtils.getString('auth_token');
-    api.options.headers['AUTHORIZATION'] =
-        'Bearer $token';
+    api.options.headers['AUTHORIZATION'] = 'Bearer $token';
     log("il est la?? ${documentsModel.toJson()}");
-    final response =
-        await api.post("/documents/create", data: documentsModel.toJson());
+    final response = await api.post("/documents/create", data: documentsModel.toJson());
     log("Il a commencé à ajouter un document");
     // log("$response");
     if (response.statusCode == 200 || response.statusCode == 201) {
@@ -66,20 +66,64 @@ class DocumentService {
     }
   }
 
-  static Future<Map<String, dynamic>> updateDocument(
-      int documentId, DocumentsModel documentsModel) async {
-    final token = SharedPreferencesUtils.getString('auth_token');
-    api.options.headers['AUTHORIZATION'] =
-        'Bearer $token';
+  static Future<Map<String, dynamic>> createDocumentWithFile(
+    String identifier,
+    Uint8List pdfBytes, {
+    String filename = 'document.pdf',
+  }) async {
+    try {
+      final formData = FormData.fromMap({
+        'identifier': identifier,
+        'file': MultipartFile.fromBytes(
+          pdfBytes,
+          filename: filename,
+          contentType: MediaType('application', 'pdf'),
+        ),
+      });
+      final token = SharedPreferencesUtils.getString('auth_token');
+      api.options.headers['AUTHORIZATION'] = 'Bearer $token';
+      final response = await api.post(
+        '/documents/auto/create', // Remplace par ton endpoint complet si nécessaire
+        data: formData,
+        options: Options(
+          contentType: 'multipart/form-data',
+        ),
+      );
 
-    final response = await api.put("documents/edit/document/$documentId",
-        data: documentsModel.toJson());
+      log("Réponse de création document: ${response.data}");
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        return {
+          'success': true,
+          'message': response.data['message'],
+          'data': response.data['data'],
+        };
+      } else {
+        return {
+          'success': false,
+          'message': response.data['message'] ?? 'Erreur inconnue',
+        };
+      }
+    } catch (e) {
+      log("Erreur lors de la création du document : $e");
+      return {
+        'success': false,
+        'message': 'Erreur lors de la création du document : $e',
+      };
+    }
+  }
+
+  static Future<Map<String, dynamic>> updateDocument(int documentId, DocumentsModel documentsModel) async {
+    final token = SharedPreferencesUtils.getString('auth_token');
+    api.options.headers['AUTHORIZATION'] = 'Bearer $token';
+
+    final response = await api.put("documents/edit/document/$documentId", data: documentsModel.toJson());
     log("$response");
     log("Il a commencé à mettre à jour un document");
     if (response.statusCode == 200 || response.statusCode == 201) {
       log("${response.data['message']}");
       return {
-         'status_code': response.data['status_code'],
+        'status_code': response.data['status_code'],
         'message': response.data['message'],
       };
     } else {
@@ -89,12 +133,10 @@ class DocumentService {
 
   static Future<Map<String, dynamic>> verifyDocument(String? identifier) async {
     final token = SharedPreferencesUtils.getString('auth_token');
-    api.options.headers['AUTHORIZATION'] =
-        'Bearer $token';
+    api.options.headers['AUTHORIZATION'] = 'Bearer $token';
 
     try {
-      final response = await api
-          .post("documents/verify-document", data: {'identifier': identifier});
+      final response = await api.post("documents/verify-document", data: {'identifier': identifier});
       log('voici la response: ${response.data}');
 
       if (response.statusCode == 200 || response.statusCode == 201) {
@@ -123,8 +165,7 @@ class DocumentService {
 
   static Future<Map<String, dynamic>> getDocumentById(int documentId) async {
     final token = SharedPreferencesUtils.getString('auth_token');
-    api.options.headers['AUTHORIZATION'] =
-        'Bearer $token';
+    api.options.headers['AUTHORIZATION'] = 'Bearer $token';
 
     try {
       log("Début de récupération du document ID: $documentId");

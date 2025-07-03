@@ -23,9 +23,7 @@ class DrawerDashboard extends StatelessWidget {
                 width: Const.screenWidth(context) * 0.19,
                 height: 35,
                 decoration: BoxDecoration(
-                  color: context.read<SwitchPageCubit>().state.selectedPage == 0
-                      ? Theme.of(context).colorScheme.primary
-                      : Colors.white,
+                  color: context.read<SwitchPageCubit>().state.selectedPage == 0 ? Theme.of(context).colorScheme.primary : Colors.white,
                 ),
                 child: TextButton(
                   onPressed: () {
@@ -36,27 +34,14 @@ class DrawerDashboard extends StatelessWidget {
                     children: [
                       Icon(
                         Icons.bar_chart,
-                        color: context
-                                    .read<SwitchPageCubit>()
-                                    .state
-                                    .selectedPage ==
-                                0
-                            ? Colors.white
-                            : Colors.grey.withValues(alpha: 0.2),
+                        color: context.read<SwitchPageCubit>().state.selectedPage == 0 ? Colors.white : Colors.grey.withValues(alpha: 0.2),
                       ),
                       SizedBox(width: 5),
                       Text(
                         'Dashboard',
-                        style:
-                            Theme.of(context).textTheme.displayMedium?.copyWith(
-                                  color: context
-                                              .read<SwitchPageCubit>()
-                                              .state
-                                              .selectedPage ==
-                                          0
-                                      ? Colors.white
-                                      : Colors.black,
-                                ),
+                        style: Theme.of(context).textTheme.displayMedium?.copyWith(
+                              color: context.read<SwitchPageCubit>().state.selectedPage == 0 ? Colors.white : Colors.black,
+                            ),
                       ),
                     ],
                   ),
@@ -71,17 +56,9 @@ class DrawerDashboard extends StatelessWidget {
                       ? Theme.of(context).colorScheme.primary
                       : context.read<SwitchPageCubit>().state.selectedPage == 2
                           ? Theme.of(context).colorScheme.primary
-                          : context
-                                      .read<SwitchPageCubit>()
-                                      .state
-                                      .selectedPage ==
-                                  5
+                          : context.read<SwitchPageCubit>().state.selectedPage == 5
                               ? Theme.of(context).colorScheme.primary
-                              : context
-                                          .read<SwitchPageCubit>()
-                                          .state
-                                          .selectedPage ==
-                                      5
+                              : context.read<SwitchPageCubit>().state.selectedPage == 5
                                   ? Theme.of(context).colorScheme.primary
                                   : Colors.white,
                 ),
@@ -93,27 +70,14 @@ class DrawerDashboard extends StatelessWidget {
                     children: [
                       Icon(
                         Icons.folder,
-                        color: context
-                                    .read<SwitchPageCubit>()
-                                    .state
-                                    .selectedPage ==
-                                1
-                            ? Colors.white
-                            : Colors.grey.withValues(alpha: 0.2),
+                        color: context.read<SwitchPageCubit>().state.selectedPage == 1 ? Colors.white : Colors.grey.withValues(alpha: 0.2),
                       ),
                       SizedBox(width: 5),
                       Text(
                         'Documents',
-                        style:
-                            Theme.of(context).textTheme.displayMedium?.copyWith(
-                                  color: context
-                                              .read<SwitchPageCubit>()
-                                              .state
-                                              .selectedPage ==
-                                          1
-                                      ? Colors.white
-                                      : Colors.black,
-                                ),
+                        style: Theme.of(context).textTheme.displayMedium?.copyWith(
+                              color: context.read<SwitchPageCubit>().state.selectedPage == 1 ? Colors.white : Colors.black,
+                            ),
                       ),
                     ],
                   ),
@@ -129,13 +93,7 @@ class DrawerDashboard extends StatelessWidget {
                             width: Const.screenWidth(context) * 0.19,
                             height: 35,
                             decoration: BoxDecoration(
-                              color: context
-                                          .read<SwitchPageCubit>()
-                                          .state
-                                          .selectedPage ==
-                                      5
-                                  ? Theme.of(context).colorScheme.primary
-                                  : Colors.white,
+                              color: context.read<SwitchPageCubit>().state.selectedPage == 5 ? Theme.of(context).colorScheme.primary : Colors.white,
                             ),
                             child: TextButton(
                               onPressed: () {
@@ -153,17 +111,8 @@ class DrawerDashboard extends StatelessWidget {
                                     width: Const.screenWidth(context) * 0.1,
                                     child: Text(
                                       'List Document',
-                                      style: Theme.of(context)
-                                          .textTheme
-                                          .displayMedium
-                                          ?.copyWith(
-                                            color: context
-                                                        .read<SwitchPageCubit>()
-                                                        .state
-                                                        .selectedPage ==
-                                                    5
-                                                ? Colors.white
-                                                : Colors.black,
+                                      style: Theme.of(context).textTheme.displayMedium?.copyWith(
+                                            color: context.read<SwitchPageCubit>().state.selectedPage == 5 ? Colors.white : Colors.black,
                                           ),
                                     ),
                                   ),
@@ -176,13 +125,7 @@ class DrawerDashboard extends StatelessWidget {
                             width: Const.screenWidth(context) * 0.19,
                             height: 35,
                             decoration: BoxDecoration(
-                              color: context
-                                          .read<SwitchPageCubit>()
-                                          .state
-                                          .selectedPage ==
-                                      2
-                                  ? Theme.of(context).colorScheme.primary
-                                  : Colors.white,
+                              color: context.read<SwitchPageCubit>().state.selectedPage == 2 ? Theme.of(context).colorScheme.primary : Colors.white,
                             ),
                             child: TextButton(
                               onPressed: () {
@@ -200,18 +143,9 @@ class DrawerDashboard extends StatelessWidget {
                                     width: Const.screenWidth(context) * 0.1,
                                     child: Text(
                                       'Nouveau Document',
-                                      style: Theme.of(context)
-                                          .textTheme
-                                          .displayMedium!
-                                          .copyWith(
+                                      style: Theme.of(context).textTheme.displayMedium!.copyWith(
                                             overflow: TextOverflow.ellipsis,
-                                            color: context
-                                                        .read<SwitchPageCubit>()
-                                                        .state
-                                                        .selectedPage ==
-                                                    2
-                                                ? Colors.white
-                                                : Colors.black,
+                                            color: context.read<SwitchPageCubit>().state.selectedPage == 2 ? Colors.white : Colors.black,
                                           ),
                                     ),
                                   ),
@@ -228,9 +162,7 @@ class DrawerDashboard extends StatelessWidget {
                 width: Const.screenWidth(context) * 0.19,
                 height: 35,
                 decoration: BoxDecoration(
-                  color: context.read<SwitchPageCubit>().state.selectedPage == 3
-                      ? Theme.of(context).colorScheme.primary
-                      : Colors.white,
+                  color: context.read<SwitchPageCubit>().state.selectedPage == 3 ? Theme.of(context).colorScheme.primary : Colors.white,
                 ),
                 child: TextButton(
                   onPressed: () {
@@ -241,27 +173,14 @@ class DrawerDashboard extends StatelessWidget {
                     children: [
                       Icon(
                         Icons.history,
-                        color: context
-                                    .read<SwitchPageCubit>()
-                                    .state
-                                    .selectedPage ==
-                                3
-                            ? Colors.white
-                            : Colors.grey.withValues(alpha: 0.2),
+                        color: context.read<SwitchPageCubit>().state.selectedPage == 3 ? Colors.white : Colors.grey.withValues(alpha: 0.2),
                       ),
                       SizedBox(width: 5),
                       Text(
                         'Historiques',
-                        style:
-                            Theme.of(context).textTheme.displayMedium!.copyWith(
-                                  color: context
-                                              .read<SwitchPageCubit>()
-                                              .state
-                                              .selectedPage ==
-                                          3
-                                      ? Colors.white
-                                      : Colors.black,
-                                ),
+                        style: Theme.of(context).textTheme.displayMedium!.copyWith(
+                              color: context.read<SwitchPageCubit>().state.selectedPage == 3 ? Colors.white : Colors.black,
+                            ),
                       ),
                     ],
                   ),
@@ -272,9 +191,7 @@ class DrawerDashboard extends StatelessWidget {
                 width: Const.screenWidth(context) * 0.19,
                 height: 35,
                 decoration: BoxDecoration(
-                  color: context.read<SwitchPageCubit>().state.selectedPage == 4
-                      ? Theme.of(context).colorScheme.primary
-                      : Colors.white,
+                  color: context.read<SwitchPageCubit>().state.selectedPage == 4 ? Theme.of(context).colorScheme.primary : Colors.white,
                 ),
                 child: TextButton(
                   onPressed: () {
@@ -285,27 +202,14 @@ class DrawerDashboard extends StatelessWidget {
                     children: [
                       Icon(
                         Icons.history,
-                        color: context
-                                    .read<SwitchPageCubit>()
-                                    .state
-                                    .selectedPage ==
-                                4
-                            ? Colors.white
-                            : Colors.grey.withValues(alpha: 0.2),
+                        color: context.read<SwitchPageCubit>().state.selectedPage == 4 ? Colors.white : Colors.grey.withValues(alpha: 0.2),
                       ),
                       SizedBox(width: 5),
                       Text(
                         'Rapports',
-                        style:
-                            Theme.of(context).textTheme.displayMedium!.copyWith(
-                                  color: context
-                                              .read<SwitchPageCubit>()
-                                              .state
-                                              .selectedPage ==
-                                          4
-                                      ? Colors.white
-                                      : Colors.black,
-                                ),
+                        style: Theme.of(context).textTheme.displayMedium!.copyWith(
+                              color: context.read<SwitchPageCubit>().state.selectedPage == 4 ? Colors.white : Colors.black,
+                            ),
                       ),
                     ],
                   ),
@@ -316,43 +220,25 @@ class DrawerDashboard extends StatelessWidget {
                 width: Const.screenWidth(context) * 0.19,
                 height: 35,
                 decoration: BoxDecoration(
-                  color: context.read<SwitchPageCubit>().state.selectedPage == 6
-                      ? Theme.of(context).colorScheme.primary
-                      : Colors.white,
+                  color: context.read<SwitchPageCubit>().state.selectedPage == 6 ? Theme.of(context).colorScheme.primary : Colors.white,
                 ),
                 child: TextButton(
                   onPressed: () {
                     context.read<SwitchPageCubit>().switchPage(6);
-                    
                   },
                   child: Row(
                     children: [
                       Icon(
                         Icons.group,
-                        color: context
-                                    .read<SwitchPageCubit>()
-                                    .state
-                                    .selectedPage ==
-                                6
-                            ? Colors.white
-                            : Colors.grey.withValues(alpha: 0.2),
+                        color: context.read<SwitchPageCubit>().state.selectedPage == 6 ? Colors.white : Colors.grey.withValues(alpha: 0.2),
                       ),
                       SizedBox(width: 5),
                       SizedBox(
                         width: Const.screenWidth(context) * 0.1,
                         child: Text(
                           'Collaborateurs',
-                          style: Theme.of(context)
-                              .textTheme
-                              .displayMedium!
-                              .copyWith(
-                                color: context
-                                            .read<SwitchPageCubit>()
-                                            .state
-                                            .selectedPage ==
-                                        6
-                                    ? Colors.white
-                                    : Colors.black,
+                          style: Theme.of(context).textTheme.displayMedium!.copyWith(
+                                color: context.read<SwitchPageCubit>().state.selectedPage == 6 ? Colors.white : Colors.black,
                               ),
                         ),
                       ),
@@ -370,19 +256,12 @@ class DrawerDashboard extends StatelessWidget {
                             width: Const.screenWidth(context) * 0.19,
                             height: 35,
                             decoration: BoxDecoration(
-                              color: context
-                                          .read<SwitchPageCubit>()
-                                          .state
-                                          .selectedPage ==
-                                      7
-                                  ? Theme.of(context).colorScheme.primary
-                                  : Colors.white,
+                              color: context.read<SwitchPageCubit>().state.selectedPage == 7 ? Theme.of(context).colorScheme.primary : Colors.white,
                             ),
                             child: TextButton(
                               onPressed: () {
                                 context.read<SwitchPageCubit>().switchPage(7);
-                                context
-                                    .go('/collaborateur/List_collaborateurs');
+                                context.go('/collaborateur/List_collaborateurs');
                               },
                               child: Row(
                                 children: [
@@ -395,17 +274,8 @@ class DrawerDashboard extends StatelessWidget {
                                     width: Const.screenWidth(context) * 0.1,
                                     child: Text(
                                       'List Document',
-                                      style: Theme.of(context)
-                                          .textTheme
-                                          .displayMedium
-                                          ?.copyWith(
-                                            color: context
-                                                        .read<SwitchPageCubit>()
-                                                        .state
-                                                        .selectedPage ==
-                                                    7
-                                                ? Colors.white
-                                                : Colors.black,
+                                      style: Theme.of(context).textTheme.displayMedium?.copyWith(
+                                            color: context.read<SwitchPageCubit>().state.selectedPage == 7 ? Colors.white : Colors.black,
                                           ),
                                     ),
                                   ),
@@ -418,19 +288,12 @@ class DrawerDashboard extends StatelessWidget {
                             width: Const.screenWidth(context) * 0.19,
                             height: 35,
                             decoration: BoxDecoration(
-                              color: context
-                                          .read<SwitchPageCubit>()
-                                          .state
-                                          .selectedPage ==
-                                      8
-                                  ? Theme.of(context).colorScheme.primary
-                                  : Colors.white,
+                              color: context.read<SwitchPageCubit>().state.selectedPage == 8 ? Theme.of(context).colorScheme.primary : Colors.white,
                             ),
                             child: TextButton(
                               onPressed: () {
                                 context.read<SwitchPageCubit>().switchPage(8);
-                                context
-                                    .go('/collaborateur/nouveau_collaborateur');
+                                context.go('/collaborateur/nouveau_collaborateur');
                               },
                               child: Row(
                                 children: [
@@ -443,18 +306,9 @@ class DrawerDashboard extends StatelessWidget {
                                     width: Const.screenWidth(context) * 0.1,
                                     child: Text(
                                       'Nouveau Document',
-                                      style: Theme.of(context)
-                                          .textTheme
-                                          .displayMedium!
-                                          .copyWith(
+                                      style: Theme.of(context).textTheme.displayMedium!.copyWith(
                                             overflow: TextOverflow.ellipsis,
-                                            color: context
-                                                        .read<SwitchPageCubit>()
-                                                        .state
-                                                        .selectedPage ==
-                                                    8
-                                                ? Colors.white
-                                                : Colors.black,
+                                            color: context.read<SwitchPageCubit>().state.selectedPage == 8 ? Colors.white : Colors.black,
                                           ),
                                     ),
                                   ),

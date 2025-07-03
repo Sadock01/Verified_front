@@ -1,4 +1,5 @@
 import 'dart:developer';
+import 'package:doc_authentificator/services/document_service.dart';
 import 'package:file_picker/file_picker.dart'; // Pour le fichier
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -667,7 +668,7 @@ class _NewDocumentScreenState extends State<NewDocumentScreen> with SingleTicker
                 Icons.save_alt,
                 color: Colors.white,
               ),
-              onPressed: () {
+              onPressed: () async {
                 if (_selectedFileBytes == null) {
                   ElegantNotification.error(
                     description: Text(
@@ -687,15 +688,36 @@ class _NewDocumentScreenState extends State<NewDocumentScreen> with SingleTicker
                   return;
                 }
 
-                // Ici, envoyer le fichier + données à l'API
-                context.read<DocumentCubit>().addDocument(
-                      DocumentsModel(
-                        identifier: _identifierController.text,
-                        descriptionDocument: "Document uploadé : ${_selectedFile!.name}",
-                        typeId: _selectedType!.id,
-                        // Ajoute une logique API ou fichier ici
-                      ),
-                    );
+                try {
+                  final identifier = _identifierController.text;
+                  await DocumentService.createDocumentWithFile(
+                    identifier,
+                    _selectedFileBytes!,
+                    filename: _selectedFileName ?? 'document.pdf',
+                  );
+
+                  ElegantNotification.success(
+                    description: Text(
+                      "Document créé avec succès.",
+                      style: Theme.of(context).textTheme.labelSmall,
+                    ),
+                  ).show(context);
+                  Future.delayed(Duration(milliseconds: 300), () {
+                    if (mounted) context.go('/document/List_document');
+                  });
+                  setState(() {
+                    _identifierController.clear();
+                    _selectedFileBytes = null;
+                    _selectedFileName = null;
+                  });
+                } catch (e) {
+                  ElegantNotification.error(
+                    description: Text(
+                      "Erreur lors de l'envoi : ${e.toString()}",
+                      style: Theme.of(context).textTheme.labelSmall,
+                    ),
+                  ).show(context);
+                }
               },
               label: Text(
                 "Uploader et enregistrer",

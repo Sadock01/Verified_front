@@ -256,11 +256,11 @@ class _UserVerifyPageState extends State<UserVerifyPage> with TickerProviderStat
                                 }
                                 return null;
                               },
-                              style: Theme.of(context).textTheme.displaySmall,
+                              style: Theme.of(context).textTheme.labelSmall,
                               decoration: InputDecoration(
                                 enabledBorder: OutlineInputBorder(
                                   borderSide: BorderSide(color: Theme.of(context).colorScheme.primary),
-                                  borderRadius: BorderRadius.circular(10),
+                                  borderRadius: BorderRadius.circular(5),
                                 ),
                                 focusedBorder: OutlineInputBorder(
                                   borderSide: BorderSide(color: Theme.of(context).colorScheme.primary),

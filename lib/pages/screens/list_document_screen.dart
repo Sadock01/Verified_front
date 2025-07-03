@@ -17,6 +17,14 @@ class ListDocumentScreen extends StatefulWidget {
 
 class _ListDocumentScreenState extends State<ListDocumentScreen> {
   @override
+  void initState() {
+    super.initState();
+    Future.delayed(Duration.zero, () {
+      context.read<DocumentCubit>().getAllDocument(1);
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
     return BlocBuilder<DocumentCubit, DocumentState>(builder: (context, state) {
       return Scaffold(
@@ -32,8 +40,7 @@ class _ListDocumentScreenState extends State<ListDocumentScreen> {
                     child: SingleChildScrollView(
                       child: Column(children: [
                         Container(
-                          margin:
-                              EdgeInsets.symmetric(vertical: 10, horizontal: 10),
+                          margin: EdgeInsets.symmetric(vertical: 10, horizontal: 10),
                           width: Const.screenWidth(context),
                           height: Const.screenHeight(context) * 0.2,
                           decoration: BoxDecoration(
@@ -54,10 +61,8 @@ class _ListDocumentScreenState extends State<ListDocumentScreen> {
                               SizedBox(height: 5),
                               OutlinedButton(
                                 style: OutlinedButton.styleFrom(
-                                  shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(5)),
-                                  side: BorderSide(
-                                      color: Theme.of(context).colorScheme.primary),
+                                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)),
+                                  side: BorderSide(color: Theme.of(context).colorScheme.primary),
                                 ),
                                 onPressed: () {
                                   context.go('/document/nouveau_document');
@@ -80,16 +85,13 @@ class _ListDocumentScreenState extends State<ListDocumentScreen> {
                                 ),
                               )
                             else if (state.documentStatus == DocumentStatus.error)
-                              Center(
-                                child: SizedBox()
-                              )
+                              Center(child: SizedBox())
                             else if (state.documentStatus == DocumentStatus.loaded || state.documentStatus == DocumentStatus.sucess)
                               Column(
                                 mainAxisSize: MainAxisSize.max,
                                 children: [
                                   Container(
-                                    margin: const EdgeInsets.symmetric(
-                                        horizontal: 10, vertical: 10),
+                                    margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
                                     width: Const.screenWidth(context),
                                     decoration: const BoxDecoration(
                                       borderRadius: BorderRadius.only(
@@ -104,41 +106,26 @@ class _ListDocumentScreenState extends State<ListDocumentScreen> {
                                       columns: [
                                         DataColumn(
                                           label: SizedBox(
-                                            width: Const.screenWidth(context) *
-                                                0.1, // Largeur définie pour éviter l'overflow
-                                            child: Text("Identifiant",
-                                                style: Theme.of(context)
-                                                    .textTheme
-                                                    .displayMedium),
+                                            width: Const.screenWidth(context) * 0.1, // Largeur définie pour éviter l'overflow
+                                            child: Text("Identifiant", style: Theme.of(context).textTheme.displayMedium),
                                           ),
                                         ),
                                         DataColumn(
                                           label: SizedBox(
-                                            width:
-                                                Const.screenWidth(context) * 0.25,
-                                            child: Text("Description",
-                                                style: Theme.of(context)
-                                                    .textTheme
-                                                    .displayMedium),
+                                            width: Const.screenWidth(context) * 0.25,
+                                            child: Text("Description", style: Theme.of(context).textTheme.displayMedium),
                                           ),
                                         ),
                                         DataColumn(
                                           label: SizedBox(
                                             width: Const.screenWidth(context) * 0.1,
-                                            child: Text("Type",
-                                                style: Theme.of(context)
-                                                    .textTheme
-                                                    .displayMedium),
+                                            child: Text("Type", style: Theme.of(context).textTheme.displayMedium),
                                           ),
                                         ),
                                         DataColumn(
                                           label: SizedBox(
-                                            width:
-                                                Const.screenWidth(context) * 0.12,
-                                            child: Text("Action",
-                                                style: Theme.of(context)
-                                                    .textTheme
-                                                    .displayMedium),
+                                            width: Const.screenWidth(context) * 0.12,
+                                            child: Text("Action", style: Theme.of(context).textTheme.displayMedium),
                                           ),
                                         ),
                                       ],
@@ -146,90 +133,52 @@ class _ListDocumentScreenState extends State<ListDocumentScreen> {
                                           .map((document) => DataRow(
                                                 cells: [
                                                   DataCell(SizedBox(
-                                                    width:
-                                                        Const.screenWidth(context) *
-                                                            0.1,
+                                                    width: Const.screenWidth(context) * 0.1,
                                                     child: Text(
-                                                      document.identifier
-                                                          .toString(),
-                                                      style: Theme.of(context)
-                                                          .textTheme
-                                                          .displayMedium,
-                                                      overflow:
-                                                          TextOverflow.ellipsis,
+                                                      document.identifier.toString(),
+                                                      style: Theme.of(context).textTheme.displayMedium,
+                                                      overflow: TextOverflow.ellipsis,
                                                     ),
                                                   )),
                                                   DataCell(SizedBox(
-                                                    width:
-                                                        Const.screenWidth(context) *
-                                                            0.25,
-                                                    height: Const.screenHeight(
-                                                            context) *
-                                                        0.05,
+                                                    width: Const.screenWidth(context) * 0.25,
+                                                    height: Const.screenHeight(context) * 0.05,
                                                     child: Text(
                                                       document.descriptionDocument,
-                                                      style: Theme.of(context)
-                                                          .textTheme
-                                                          .labelSmall,
-                                                      overflow:
-                                                          TextOverflow.ellipsis,
+                                                      style: Theme.of(context).textTheme.labelSmall,
+                                                      overflow: TextOverflow.ellipsis,
                                                     ),
                                                   )),
                                                   DataCell(SizedBox(
-                                                    width:
-                                                        Const.screenWidth(context) *
-                                                            0.1,
+                                                    width: Const.screenWidth(context) * 0.1,
                                                     child: Text(
                                                       document.typeName.toString(),
-                                                      style: Theme.of(context)
-                                                          .textTheme
-                                                          .displayMedium,
+                                                      style: Theme.of(context).textTheme.displayMedium,
                                                     ),
                                                   )),
                                                   DataCell(PopupMenuButton<String>(
                                                     onSelected: (value) {
                                                       if (value == "edit") {
-                                                        context.go(
-                                                            '/document/update/${document.id}');
+                                                        context.go('/document/update/${document.id}');
                                                       } else if (value == "view") {
-                                                        context.go(
-                                                            '/document/view/${document.identifier}');
+                                                        context.go('/document/view/${document.identifier}');
                                                       }
                                                     },
                                                     itemBuilder: (context) => [
-                                                      PopupMenuItem(
-                                                          value: "edit",
-                                                          child: Text(
-                                                              "Modifier document")),
-                                                      PopupMenuItem(
-                                                          value: "view",
-                                                          child: Text(
-                                                              "Afficher document")),
+                                                      PopupMenuItem(value: "edit", child: Text("Modifier document")),
+                                                      PopupMenuItem(value: "view", child: Text("Afficher document")),
                                                     ],
                                                     child: MouseRegion(
-                                                      cursor:
-                                                          SystemMouseCursors.click,
+                                                      cursor: SystemMouseCursors.click,
                                                       child: Container(
-                                                        padding: const EdgeInsets
-                                                            .symmetric(
-                                                            horizontal: 8,
-                                                            vertical: 5),
+                                                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 5),
                                                         decoration: BoxDecoration(
-                                                          color: Theme.of(context)
-                                                              .colorScheme
-                                                              .primary,
-                                                          borderRadius:
-                                                              BorderRadius.circular(
-                                                                  5),
+                                                          color: Theme.of(context).colorScheme.primary,
+                                                          borderRadius: BorderRadius.circular(5),
                                                         ),
                                                         child: Text(
                                                           "Option",
-                                                          style: Theme.of(context)
-                                                              .textTheme
-                                                              .labelMedium!
-                                                              .copyWith(
-                                                                  color:
-                                                                      Colors.white),
+                                                          style: Theme.of(context).textTheme.labelMedium!.copyWith(color: Colors.white),
                                                         ),
                                                       ),
                                                     ),
@@ -244,36 +193,21 @@ class _ListDocumentScreenState extends State<ListDocumentScreen> {
                                     mainAxisAlignment: MainAxisAlignment.center,
                                     children: [
                                       InkWell(
-                                        onTap: state.currentPage > 1
-                                            ? () => context
-                                                .read<DocumentCubit>()
-                                                .goToPreviousPage()
-                                            : null,
+                                        onTap: state.currentPage > 1 ? () => context.read<DocumentCubit>().goToPreviousPage() : null,
                                         child: Container(
-                                            decoration: BoxDecoration(
-                                                color: Colors.grey
-                                                    .withValues(alpha: 0.2),
-                                                borderRadius:
-                                                    BorderRadius.circular(3)),
+                                            decoration:
+                                                BoxDecoration(color: Colors.grey.withValues(alpha: 0.2), borderRadius: BorderRadius.circular(3)),
                                             child: Icon(Icons.arrow_back_ios)),
                                       ),
                                       Text(
                                         '${state.currentPage} sur ${state.lastPage}',
-                                        style:
-                                            Theme.of(context).textTheme.labelSmall,
+                                        style: Theme.of(context).textTheme.labelSmall,
                                       ),
                                       InkWell(
-                                        onTap: state.currentPage < state.lastPage
-                                            ? () => context
-                                                .read<DocumentCubit>()
-                                                .goToNextPage()
-                                            : null,
+                                        onTap: state.currentPage < state.lastPage ? () => context.read<DocumentCubit>().goToNextPage() : null,
                                         child: Container(
-                                            decoration: BoxDecoration(
-                                                color: Colors.grey
-                                                  ..withValues(alpha: 0.2),
-                                                borderRadius:
-                                                    BorderRadius.circular(3)),
+                                            decoration:
+                                                BoxDecoration(color: Colors.grey..withValues(alpha: 0.2), borderRadius: BorderRadius.circular(3)),
                                             child: Icon(Icons.arrow_forward_ios)),
                                       ),
                                     ],
