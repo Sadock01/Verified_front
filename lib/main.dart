@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:doc_authentificator/cubits/collaborateurs/collaborateurs_cubit.dart';
 import 'package:doc_authentificator/cubits/documents/document_cubit.dart';
 import 'package:doc_authentificator/cubits/login/login_cubit.dart';
@@ -34,6 +36,10 @@ import 'package:url_strategy/url_strategy.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  FlutterError.onError = (FlutterErrorDetails details) {
+    FlutterError.presentError(details);
+    log('💥 Flutter error: ${details.exception}');
+  };
   await SharedPreferencesUtils.init();
   setPathUrlStrategy();
   runApp(const MyApp());
@@ -58,54 +64,42 @@ final GoRouter _router = GoRouter(
     GoRoute(
       path: '/document/List_document',
       builder: (BuildContext context, GoRouterState state) {
-        context
-            .read<SwitchPageCubit>()
-            .switchPage(1); // Sélectionner la page Liste des documents
+        context.read<SwitchPageCubit>().switchPage(1); // Sélectionner la page Liste des documents
         return ListDocumentScreen();
       },
     ),
     GoRoute(
       path: '/document/nouveau_document',
       builder: (BuildContext context, GoRouterState state) {
-        context
-            .read<SwitchPageCubit>()
-            .switchPage(2); // Sélectionner la page Nouveau document
+        context.read<SwitchPageCubit>().switchPage(2); // Sélectionner la page Nouveau document
         return const NewDocumentScreen();
       },
     ),
     GoRoute(
       path: '/historiques',
       builder: (BuildContext context, GoRouterState state) {
-        context
-            .read<SwitchPageCubit>()
-            .switchPage(3); // Sélectionner la page Collaborateurs
+        context.read<SwitchPageCubit>().switchPage(3); // Sélectionner la page Collaborateurs
         return DashboardHomeScreen(widget: const HistoryScreen());
       },
     ),
     GoRoute(
       path: '/collaborateur/List_collaborateurs',
       builder: (BuildContext context, GoRouterState state) {
-        context
-            .read<SwitchPageCubit>()
-            .switchPage(7); // Sélectionner la page Liste des documents
+        context.read<SwitchPageCubit>().switchPage(7); // Sélectionner la page Liste des documents
         return ListCollaborateurScreen();
       },
     ),
     GoRoute(
       path: '/collaborateur/nouveau_collaborateur',
       builder: (BuildContext context, GoRouterState state) {
-        context
-            .read<SwitchPageCubit>()
-            .switchPage(8); // Sélectionner la page Nouveau document
+        context.read<SwitchPageCubit>().switchPage(8); // Sélectionner la page Nouveau document
         return const NewCollaborateurScreen();
       },
     ),
     GoRoute(
       path: '/rapports',
       builder: (BuildContext context, GoRouterState state) {
-        context
-            .read<SwitchPageCubit>()
-            .switchPage(4); // Sélectionner la page Rapports
+        context.read<SwitchPageCubit>().switchPage(4); // Sélectionner la page Rapports
         return const RapportsScreen();
       },
     ),
@@ -149,14 +143,10 @@ class MyApp extends StatelessWidget {
         RepositoryProvider<TypeDocRepository>(
           create: (context) => TypeDocRepository(),
         ),
-        RepositoryProvider<AuthRepository>(
-            create: (context) => AuthRepository()),
-        RepositoryProvider<VerificationRepository>(
-            create: (context) => VerificationRepository()),
-        RepositoryProvider<CollaborateurRepository>(
-            create: (context) => CollaborateurRepository()),
-        RepositoryProvider<ReportRepository>(
-            create: (context) => ReportRepository())
+        RepositoryProvider<AuthRepository>(create: (context) => AuthRepository()),
+        RepositoryProvider<VerificationRepository>(create: (context) => VerificationRepository()),
+        RepositoryProvider<CollaborateurRepository>(create: (context) => CollaborateurRepository()),
+        RepositoryProvider<ReportRepository>(create: (context) => ReportRepository())
       ],
       child: MultiBlocProvider(
           providers: [
@@ -187,8 +177,7 @@ class MyApp extends StatelessWidget {
             ),
             BlocProvider<CollaborateursCubit>(
               create: (context) => CollaborateursCubit(
-                collaborateurRepository:
-                    context.read<CollaborateurRepository>(),
+                collaborateurRepository: context.read<CollaborateurRepository>(),
               )..getAllCollaborateur(1),
             ),
             BlocProvider<ReportCubit>(

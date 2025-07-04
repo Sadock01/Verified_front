@@ -12,7 +12,6 @@ class VerificationService {
   static Dio api = ApiConfig.api();
 
   static Future<Map<String, dynamic>> getAllVerification(int page) async {
-
     final token = SharedPreferencesUtils.getString('auth_token');
     api.options.headers['AUTHORIZATION'] = 'Bearer $token';
 
@@ -21,7 +20,7 @@ class VerificationService {
       'per_page': 10,
     });
     log("Il a commencé à récupérer les documents");
-    
+
     if (response.statusCode == 200 || response.statusCode == 201) {
       log("Voici la response de la requête: ${response.data}");
       List<dynamic> allVerificationMap = response.data['data'];
@@ -42,11 +41,10 @@ class VerificationService {
   }
 
   static Future<Map<String, dynamic>> verifyDocumentWithFile(
-      String identifier,
-      Uint8List pdfBytes, {
-        String filename = 'document.pdf',
-      }) async {
-
+    String identifier,
+    Uint8List pdfBytes, {
+    String filename = 'document.pdf',
+  }) async {
     try {
       final formData = FormData.fromMap({
         'identifier': identifier,
@@ -69,6 +67,7 @@ class VerificationService {
       } else {
         return {
           'success': false,
+          'status': response.data['status'],
           'message': response.data['message'],
         };
       }
@@ -80,6 +79,4 @@ class VerificationService {
       };
     }
   }
-
-
 }

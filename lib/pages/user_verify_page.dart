@@ -1,3 +1,4 @@
+import 'dart:developer';
 import 'dart:io';
 import 'dart:typed_data';
 
@@ -37,7 +38,7 @@ class _UserVerifyPageState extends State<UserVerifyPage> with TickerProviderStat
   @override
   void initState() {
     super.initState();
-
+    log("je suis ici");
     _step1Controller = AnimationController(vsync: this, duration: Duration(milliseconds: 700));
     _step2Controller = AnimationController(vsync: this, duration: Duration(milliseconds: 700));
     _step3Controller = AnimationController(vsync: this, duration: Duration(milliseconds: 700));
@@ -352,6 +353,7 @@ class _UserVerifyPageState extends State<UserVerifyPage> with TickerProviderStat
                                       _selectedFileBytes!,
                                       filename: _selectedFileName ?? 'document.pdf',
                                     );
+                                    log('🔍 STATUS: ${response['status']}');
 
                                     if (response['success'] == true && response['status'] == 'authentic') {
                                       Utils.showVerificationModal(
@@ -360,6 +362,13 @@ class _UserVerifyPageState extends State<UserVerifyPage> with TickerProviderStat
                                         title: "Document Vérifié",
                                         message: response['data']['message'] ?? "Le document est authentique.",
                                         document: Map<String, dynamic>.from(response['data']['document'] ?? {}),
+                                      );
+                                    } else if (response['status'] == 'invalid') {
+                                      Utils.showVerificationModal(
+                                        context: context,
+                                        isSuccess: false,
+                                        title: "Échec de Vérification",
+                                        message: response['message'] ?? "Le document n'a pas pu être vérifié.",
                                       );
                                     } else {
                                       Utils.showVerificationModal(
@@ -374,7 +383,7 @@ class _UserVerifyPageState extends State<UserVerifyPage> with TickerProviderStat
                                     Utils.showVerificationModal(
                                       context: context,
                                       isSuccess: false,
-                                      title: "Erreur",
+                                      title: "Échec de Vérification",
                                       message: "Une erreur est survenue : $e",
                                     );
                                   } finally {
