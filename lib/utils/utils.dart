@@ -91,16 +91,50 @@ class Utils {
                       alignment: Alignment.centerLeft,
                       child: Text(
                         "Détails du document :",
-                        style: Theme.of(context).textTheme.labelMedium?.copyWith(fontWeight: FontWeight.bold),
+                        style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 16,
+                            ),
                       ),
                     ),
-                    const SizedBox(height: 8),
-                    ...document.entries.map((entry) => Align(
-                          alignment: Alignment.centerLeft,
-                          child: Text("${_capitalize(entry.key)} : ${entry.value}"),
-                        )),
+                    const SizedBox(height: 12),
+                    Container(
+                      width: double.infinity,
+                      padding: const EdgeInsets.all(16),
+                      decoration: BoxDecoration(
+                        color: Colors.grey.shade100,
+                        borderRadius: BorderRadius.circular(12),
+                        border: Border.all(color: Colors.grey.shade300),
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: document.entries.map((entry) {
+                          return Padding(
+                            padding: const EdgeInsets.symmetric(vertical: 6),
+                            child: RichText(
+                              text: TextSpan(
+                                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                                      fontSize: 14,
+                                      color: Colors.black,
+                                    ),
+                                children: [
+                                  TextSpan(
+                                    text: "${_capitalize(entry.key)} : ",
+                                    style: const TextStyle(fontWeight: FontWeight.bold),
+                                  ),
+                                  TextSpan(
+                                    text: "${entry.value}",
+                                  ),
+                                ],
+                              ),
+                            ),
+                          );
+                        }).toList(),
+                      ),
+                    ),
                     const SizedBox(height: 16),
                   ],
+
                   // Bouton
                   Align(
                     alignment: Alignment.center,
