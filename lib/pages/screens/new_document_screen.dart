@@ -39,6 +39,8 @@ class _NewDocumentScreenState extends State<NewDocumentScreen> with SingleTicker
   PlatformFile? _selectedFile;
   late TabController _tabController;
   bool _isDescriptionReady = false;
+  Map<String, dynamic>? extractedEntities;
+  bool _isUploading = false;
 
   @override
   void initState() {
@@ -291,6 +293,35 @@ class _NewDocumentScreenState extends State<NewDocumentScreen> with SingleTicker
     );
   }
 
+  Widget _buildLabeledField({
+    required String label,
+    required TextEditingController controller,
+    int maxLines = 1,
+  }) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 20),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(label, style: Theme.of(context).textTheme.labelSmall),
+          const SizedBox(height: 8),
+          TextFormField(
+            controller: controller,
+            maxLines: maxLines,
+            style: Theme.of(context).textTheme.labelSmall,
+            decoration: InputDecoration(
+              hintText: 'Modifier si nécessaire...',
+              hintStyle: Theme.of(context).textTheme.labelSmall,
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(5),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return BlocListener<DocumentCubit, DocumentState>(
@@ -351,7 +382,16 @@ class _NewDocumentScreenState extends State<NewDocumentScreen> with SingleTicker
                           controller: _tabController,
                           children: [
                             _buildManualForm(context, state),
-                            _buildUploadForm(context, state),
+                            extractedEntities != null
+                                ? buildExtractedDataReviewForm(extractedEntities!, () {
+                                    ElegantNotification.info(
+                                      description: Text(
+                                        "Fonction de soumission non encore implémentée.",
+                                        style: Theme.of(context).textTheme.labelSmall,
+                                      ),
+                                    ).show(context);
+                                  })
+                                : _buildUploadForm(context, state)
                           ],
                         ),
                       ),
@@ -401,15 +441,38 @@ class _NewDocumentScreenState extends State<NewDocumentScreen> with SingleTicker
             // Identifiant
             Text("Identifiant du document", style: theme.textTheme.labelSmall),
             const SizedBox(height: 8),
-            TextFormField(
-              controller: _identifierController,
-              style: Theme.of(context).textTheme.labelSmall,
-              decoration: InputDecoration(
-                hintStyle: theme.textTheme.labelSmall,
-                hintText: "Ex: DOC-2025-XYZ",
-                border: OutlineInputBorder(borderRadius: BorderRadius.circular(5)),
-              ),
-              validator: (value) => value == null || value.isEmpty ? "Veuillez entrer l'identifiant." : null,
+            Row(
+              children: [
+                Expanded(
+                  flex: 2,
+                  child: TextFormField(
+                    controller: _identifierController,
+                    style: Theme.of(context).textTheme.labelSmall,
+                    decoration: InputDecoration(
+                      hintStyle: theme.textTheme.labelSmall,
+                      hintText: "Ex: DOC-2025-XYZ",
+                      border: OutlineInputBorder(borderRadius: BorderRadius.circular(5)),
+                    ),
+                    validator: (value) => value == null || value.isEmpty ? "Veuillez entrer l'identifiant." : null,
+                  ),
+                ),
+                SizedBox(
+                  width: 10,
+                ),
+                Expanded(
+                  flex: 2,
+                  child: TextFormField(
+                    controller: _identifierController,
+                    style: Theme.of(context).textTheme.labelSmall,
+                    decoration: InputDecoration(
+                      hintStyle: theme.textTheme.labelSmall,
+                      hintText: "Ex: John Doe",
+                      border: OutlineInputBorder(borderRadius: BorderRadius.circular(5)),
+                    ),
+                    // validator: (value) => value == null || value.isEmpty ? "Veuillez renseigner le Beneficiaire." : null,
+                  ),
+                ),
+              ],
             ),
 
             const SizedBox(height: 24),
@@ -440,7 +503,7 @@ class _NewDocumentScreenState extends State<NewDocumentScreen> with SingleTicker
                   onChanged: (val) => setState(() => _isAutoDescription = val!),
                 ),
                 Text(
-                  "Génération automatique",
+                  "Génération guidée",
                   style: theme.textTheme.labelSmall,
                 ),
               ],
@@ -663,54 +726,36 @@ class _NewDocumentScreenState extends State<NewDocumentScreen> with SingleTicker
                     ),
                   ),
             const SizedBox(height: 35),
-            ElevatedButton.icon(
-              icon: Icon(
-                Icons.save_alt,
-                color: Colors.white,
-              ),
+            ElevatedButton(
               onPressed: () async {
-                if (_selectedFileBytes == null) {
+                if (_selectedFileBytes == null || _identifierController.text.isEmpty) {
                   ElegantNotification.error(
                     description: Text(
-                      "Veuillez sélectionner un fichier.",
-                      style: Theme.of(context).textTheme.labelSmall,
-                    ),
-                  ).show(context);
-                  return;
-                }
-                if (_identifierController.text.isEmpty) {
-                  ElegantNotification.error(
-                    description: Text(
-                      "Complétez tous les champs.",
+                      "Veuillez compléter tous les champs.",
                       style: Theme.of(context).textTheme.labelSmall,
                     ),
                   ).show(context);
                   return;
                 }
 
+                setState(() => _isUploading = true); // ⏳ Démarre le chargement
+
                 try {
                   final identifier = _identifierController.text;
-                  await DocumentService.createDocumentWithFile(
+                  final response = await DocumentService.uploadDocumentWithFile(
                     identifier,
                     _selectedFileBytes!,
                     filename: _selectedFileName ?? 'document.pdf',
                   );
 
-                  ElegantNotification.success(
-                    description: Text(
-                      "Document créé avec succès.",
-                      style: Theme.of(context).textTheme.labelSmall,
-                    ),
-                  ).show(context);
-                  Future.delayed(Duration(milliseconds: 300), () {
-                    if (mounted) context.go('/document/List_document');
-                  });
+                  final extracted = response['data']?[0]['entities'];
+
                   setState(() {
-                    _identifierController.clear();
-                    _selectedFileBytes = null;
-                    _selectedFileName = null;
+                    extractedEntities = extracted;
+                    _isUploading = false; // ✅ Fin du chargement
                   });
                 } catch (e) {
+                  setState(() => _isUploading = false);
                   ElegantNotification.error(
                     description: Text(
                       "Erreur lors de l'envoi : ${e.toString()}",
@@ -719,10 +764,6 @@ class _NewDocumentScreenState extends State<NewDocumentScreen> with SingleTicker
                   ).show(context);
                 }
               },
-              label: Text(
-                "Uploader et enregistrer",
-                style: Theme.of(context).textTheme.labelMedium!.copyWith(color: Colors.white),
-              ),
               style: ElevatedButton.styleFrom(
                 backgroundColor: Theme.of(context).colorScheme.primary,
                 foregroundColor: Colors.white,
@@ -731,8 +772,106 @@ class _NewDocumentScreenState extends State<NewDocumentScreen> with SingleTicker
                   borderRadius: BorderRadius.circular(5),
                 ),
               ),
+              child: _isUploading
+                  ? SizedBox(
+                      width: 20,
+                      height: 20,
+                      child: CircularProgressIndicator(
+                        strokeWidth: 2.5,
+                        valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                      ),
+                    )
+                  : Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Icon(Icons.save_alt, color: Colors.white),
+                        SizedBox(width: 8),
+                        Text(
+                          "Uploader et enregistrer",
+                          style: Theme.of(context).textTheme.labelMedium!.copyWith(color: Colors.white),
+                        ),
+                      ],
+                    ),
             ),
           ],
+        ),
+      ),
+    );
+  }
+
+  Widget buildExtractedDataReviewForm(
+    Map<String, dynamic> extractedData,
+    VoidCallback onSubmit,
+  ) {
+    final typeController = TextEditingController(text: (extractedData['type_certificat'] as List?)?.join(', ') ?? '');
+    final descriptionController = TextEditingController(text: (extractedData['description'] as List?)?.join(', ') ?? '');
+    final beneficiaireController = TextEditingController(text: (extractedData['beneficiaire'] as List?)?.join(', ') ?? '');
+    // final infoComplementaireController = TextEditingController(text: (extractedData['information_complementaire'] as List?)?.join(', ') ?? '');
+    // final dateInfoController = TextEditingController(text: (extractedData['date_information'] as List?)?.join(', ') ?? '');
+
+    return Center(
+      child: Container(
+        constraints: const BoxConstraints(maxWidth: 900),
+        margin: const EdgeInsets.symmetric(vertical: 30),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(16),
+          boxShadow: const [
+            BoxShadow(
+              color: Colors.black12,
+              blurRadius: 20,
+              offset: Offset(0, 8),
+            ),
+          ],
+        ),
+        child: Padding(
+          padding: const EdgeInsets.all(20),
+          child: Column(
+            children: [
+              Text(
+                "Vérification des données extraites",
+                style: Theme.of(context).textTheme.headlineMedium,
+              ),
+              const SizedBox(height: 25),
+
+              // Champs dans un scrollable
+              Expanded(
+                child: ListView(
+                  padding: EdgeInsets.zero,
+                  children: [
+                    _buildLabeledField(label: "Identifiant du document", controller: typeController),
+                    _buildLabeledField(label: "Type de certificat", controller: typeController),
+                    _buildLabeledField(label: "Description", controller: descriptionController, maxLines: 4),
+                    _buildLabeledField(label: "Bénéficiaire", controller: beneficiaireController),
+                    // _buildLabeledField(label: "Information complémentaire", controller: infoComplementaireController),
+                    // _buildLabeledField(label: "Date d'information", controller: dateInfoController),
+                  ],
+                ),
+              ),
+
+              const SizedBox(height: 20),
+
+              // ✅ Bouton toujours visible
+              SizedBox(
+                width: double.infinity,
+                child: ElevatedButton.icon(
+                  icon: const Icon(Icons.check, color: Colors.white),
+                  onPressed: onSubmit, // callback passé depuis parent
+                  label: Text(
+                    "Valider et enregistrer",
+                    style: Theme.of(context).textTheme.labelMedium!.copyWith(color: Colors.white),
+                  ),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Theme.of(context).colorScheme.primary,
+                    padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 14),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(5),
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );

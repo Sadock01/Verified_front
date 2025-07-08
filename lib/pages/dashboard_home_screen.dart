@@ -28,11 +28,10 @@ class _DashboardHomeScreenState extends State<DashboardHomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(body: Expanded(
-      child: BlocBuilder<SwitchPageCubit, SwitchPageState>(
-          builder: (context, state) {
+      child: BlocBuilder<SwitchPageCubit, SwitchPageState>(builder: (context, state) {
         if (state.selectedPage == 0) {
           return StatistiquesScreen();
-        } else if (state.selectedPage == 1) {
+        } else if (state.selectedPage == 5) {
           return ListDocumentScreen();
         } else if (state.selectedPage == 2) {
           return NewDocumentScreen();
@@ -40,15 +39,13 @@ class _DashboardHomeScreenState extends State<DashboardHomeScreen> {
           return HistoryScreen();
         } else if (state.selectedPage == 4) {
           return RapportsScreen();
-        } 
-        else if (state.selectedPage == 7) {
+        } else if (state.selectedPage == 7) {
           return ListCollaborateurScreen();
         } else if (state.selectedPage == 8) {
           return NewCollaborateurScreen();
         } else {
           return Center(
-            child: Text("Page not found",
-                style: Theme.of(context).textTheme.labelMedium),
+            child: Text("Page not found", style: Theme.of(context).textTheme.labelMedium),
           );
         }
       }),

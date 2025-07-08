@@ -20,8 +20,7 @@ class AppbarDashboard extends StatelessWidget {
               color: Colors.grey.withValues(alpha: 0.2), // Couleur de l'ombre
               spreadRadius: 10, // Étalement de l'ombre
               blurRadius: 10, // Flou de l'ombre
-              offset:
-                  Offset(0, 3), // Décalage horizontal et vertical de l'ombre
+              offset: Offset(0, 3), // Décalage horizontal et vertical de l'ombre
             ),
           ],
         ),
@@ -32,10 +31,7 @@ class AppbarDashboard extends StatelessWidget {
             Container(
               width: Const.screenWidth(context) * 0.1,
               height: 25,
-              decoration: BoxDecoration(
-                  image: DecorationImage(
-                      image:
-                          AssetImage('assets/images/Verified_original.png'))),
+              decoration: BoxDecoration(image: DecorationImage(image: AssetImage('assets/images/Verified_original.png'))),
             ),
             Spacer(),
             InkWell(
@@ -64,8 +60,7 @@ class AppbarDashboard extends StatelessWidget {
                         children: [
                           Icon(Icons.settings),
                           SizedBox(width: 8),
-                          Text('Configuration',
-                              style: Theme.of(context).textTheme.labelSmall),
+                          Text('Configuration', style: Theme.of(context).textTheme.labelSmall),
                         ],
                       ),
                     ),
@@ -75,15 +70,10 @@ class AppbarDashboard extends StatelessWidget {
               child: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Container(
-                    width: 50,
-                    height: 40,
-                    decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        image: DecorationImage(
-                            fit: BoxFit.contain,
-                            image:
-                                AssetImage('assets/images/profile_admin.jpg'))),
+                  Icon(
+                    Icons.account_circle,
+                    size: 45,
+                    color: Colors.grey[300],
                   ),
                   SizedBox(width: 2),
                   Text(

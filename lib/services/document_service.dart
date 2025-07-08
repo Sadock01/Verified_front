@@ -14,7 +14,7 @@ class DocumentService {
   static Future<Map<String, dynamic>> getAllDocument(int page) async {
     final token = SharedPreferencesUtils.getString('auth_token');
     api.options.headers['AUTHORIZATION'] = '$token';
-
+    log("token: $token");
     final response = await api.get("documents",
         options: Options(
           headers: {
@@ -66,15 +66,15 @@ class DocumentService {
     }
   }
 
-  static Future<Map<String, dynamic>> createDocumentWithFile(
+  static Future<Map<String, dynamic>> uploadDocumentWithFile(
     String identifier,
     Uint8List pdfBytes, {
     String filename = 'document.pdf',
   }) async {
     try {
       final formData = FormData.fromMap({
-        'identifier': identifier,
-        'file': MultipartFile.fromBytes(
+        'identifiers': identifier,
+        'files': MultipartFile.fromBytes(
           pdfBytes,
           filename: filename,
           contentType: MediaType('application', 'pdf'),
@@ -83,14 +83,14 @@ class DocumentService {
       final token = SharedPreferencesUtils.getString('auth_token');
       api.options.headers['AUTHORIZATION'] = 'Bearer $token';
       final response = await api.post(
-        '/documents/auto/create', // Remplace par ton endpoint complet si nécessaire
+        '/uploadDocument', // Remplace par ton endpoint complet si nécessaire
         data: formData,
         options: Options(
           contentType: 'multipart/form-data',
         ),
       );
 
-      log("Réponse de création document: ${response.data}");
+      log("Réponse de upload document: ${response.data}");
 
       if (response.statusCode == 200 || response.statusCode == 201) {
         return {
