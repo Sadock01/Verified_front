@@ -11,7 +11,7 @@ class LoginCubit extends Cubit<LoginState> {
     emit(state.copyWith(loginStatus: LoginStatus.loading, errorMessage: ''));
     try {
       final response = await AuthRepository.login(email, password);
-      log("voici la response: ${response}");
+      log("voici la response me: ${response}");
       if (response['status_code'] == 200) {
         emit(state.copyWith(
           loginStatus: LoginStatus.loaded,
