@@ -24,6 +24,13 @@ class _NewCollaborateurScreenState extends State<NewCollaborateurScreen> {
   final TextEditingController _firstNameController = TextEditingController();
   final TextEditingController _lastNameController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
+  int? _selectedRoleId = 2;
+
+  final List<Map<String, dynamic>> roles = [
+    {'id': 1, 'name': 'Administrateur'},
+    {'id': 2, 'name': 'Vérificateur'},
+    {'id': 3, 'name': 'Rédacteur'},
+  ];
 
   @override
   void dispose() {
@@ -33,19 +40,19 @@ class _NewCollaborateurScreenState extends State<NewCollaborateurScreen> {
     super.dispose();
   }
 
-  // @override
-  // void initState() {
-  //   super.initState();
-  //   _checkAuthentication();
-  // }
-  //
-  // void _checkAuthentication() async {
-  //   final token = SharedPreferencesUtils.getString('auth_token');
-  //   if (token == null || token.isEmpty) {
-  //     // Rediriger vers la page de login
-  //     context.go('/login'); // ou Navigator.of(context).pushReplacementNamed('/login');
-  //   }
-  // }
+  @override
+  void initState() {
+    super.initState();
+    _checkAuthentication();
+  }
+
+  void _checkAuthentication() async {
+    final token = SharedPreferencesUtils.getString('auth_token');
+    if (token == null || token.isEmpty) {
+      // Rediriger vers la page de login
+      context.go('/login'); // ou Navigator.of(context).pushReplacementNamed('/login');
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -98,7 +105,7 @@ class _NewCollaborateurScreenState extends State<NewCollaborateurScreen> {
                     padding: const EdgeInsets.symmetric(horizontal: 50, vertical: 10),
                     decoration: BoxDecoration(
                       color: Theme.of(context).colorScheme.primary,
-                      borderRadius: BorderRadius.circular(10),
+                      borderRadius: BorderRadius.circular(5),
                     ),
                     child: Column(
                       children: [
@@ -109,7 +116,7 @@ class _NewCollaborateurScreenState extends State<NewCollaborateurScreen> {
                               color: Colors.white,
                               width: 1,
                             ),
-                            borderRadius: BorderRadius.circular(10),
+                            borderRadius: BorderRadius.circular(5),
                           ),
                           child: Text(
                             "Nouveau Collaborateur",
@@ -124,12 +131,13 @@ class _NewCollaborateurScreenState extends State<NewCollaborateurScreen> {
                     margin: const EdgeInsets.symmetric(vertical: 10, horizontal: 10),
                     padding: const EdgeInsets.all(10),
                     width: Const.screenWidth(context),
+                    height: Const.screenHeight(context) * 0.35,
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(15),
                       color: Colors.white,
                       boxShadow: [
                         BoxShadow(
-                          color: Colors.grey.withOpacity(0.2),
+                          color: Colors.grey.withValues(alpha: 0.2),
                           spreadRadius: 10,
                           blurRadius: 10,
                           offset: const Offset(0, 3),
@@ -139,8 +147,8 @@ class _NewCollaborateurScreenState extends State<NewCollaborateurScreen> {
                     child: Form(
                       key: _formKey,
                       child: Column(
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
                           Row(
                             children: [
@@ -148,63 +156,53 @@ class _NewCollaborateurScreenState extends State<NewCollaborateurScreen> {
                                 flex: 2,
                                 child: TextFormField(
                                   controller: _firstNameController,
+                                  style: Theme.of(context).textTheme.labelSmall,
                                   decoration: InputDecoration(
-                                    labelText: "Prénom",
-                                    labelStyle: Theme.of(context).textTheme.labelMedium,
-                                    border: OutlineInputBorder(
-                                      borderRadius: BorderRadius.circular(5),
-                                    ),
+                                    hintStyle: Theme.of(context).textTheme.labelSmall,
+                                    hintText: "Ex: John",
+                                    border: OutlineInputBorder(borderRadius: BorderRadius.circular(5)),
                                   ),
-                                  validator: (value) {
-                                    if (value == null || value.isEmpty) {
-                                      return "Veuillez entrer le prénom.";
-                                    }
-                                    return null;
-                                  },
+                                  validator: (value) => value == null || value.isEmpty ? "Veuillez entrer nom." : null,
                                 ),
                               ),
-                              const SizedBox(width: 10),
-                              // Champ Nom
+                              SizedBox(
+                                width: 10,
+                              ),
                               Expanded(
                                 flex: 2,
                                 child: TextFormField(
                                   controller: _lastNameController,
+                                  style: Theme.of(context).textTheme.labelSmall,
                                   decoration: InputDecoration(
-                                    labelText: "Nom",
-                                    labelStyle: Theme.of(context).textTheme.labelMedium,
-                                    border: OutlineInputBorder(
-                                      borderRadius: BorderRadius.circular(5),
-                                    ),
+                                    hintStyle: Theme.of(context).textTheme.labelSmall,
+                                    hintText: "Ex: Doe",
+                                    border: OutlineInputBorder(borderRadius: BorderRadius.circular(5)),
                                   ),
-                                  validator: (value) {
-                                    if (value == null || value.isEmpty) {
-                                      return "Veuillez entrer le nom.";
-                                    }
-                                    return null;
-                                  },
+                                  validator: (value) => value == null || value.isEmpty ? "Veuillez entrer Prenom." : null,
                                 ),
                               ),
                             ],
                           ),
-                          SizedBox(
-                            width: 15,
-                          ),
+                          const SizedBox(height: 10),
                           Row(
                             children: [
                               Expanded(
-                                flex: 2,
                                 child: TextFormField(
                                   controller: _emailController,
+                                  style: Theme.of(context).textTheme.labelSmall,
                                   decoration: InputDecoration(
-                                    labelText: "Email",
-                                    labelStyle: Theme.of(context).textTheme.labelMedium,
+                                    hintStyle: Theme.of(context).textTheme.labelSmall,
+                                    hintText: "Ex: exemple@mail.test",
                                     border: OutlineInputBorder(
                                       borderRadius: BorderRadius.circular(5),
                                     ),
                                   ),
                                   validator: (value) {
                                     if (value == null || value.isEmpty) {
-                                      return "Veuillez entrer le nom.";
+                                      return "Veuillez entrer l'email.";
+                                    }
+                                    if (!value.contains('@')) {
+                                      return "Veuillez entrer un email valide.";
                                     }
                                     return null;
                                   },
@@ -213,87 +211,59 @@ class _NewCollaborateurScreenState extends State<NewCollaborateurScreen> {
                               SizedBox(
                                 width: 10,
                               ),
-                              // Expanded(
-                              //   flex: 2,
-                              //   child: DropdownButtonHideUnderline(
-                              //     child: DropdownButtonFormField<TypeDocModel>(
-                              //       value: _selectedType,
-                              //       hint: Text(
-                              //         "Choisir un type",
-                              //         style: Theme.of(context).textTheme.labelSmall?.copyWith(color: Colors.grey.shade600),
-                              //       ),
-                              //       items: state.listType.map((type) {
-                              //         return DropdownMenuItem<TypeDocModel>(
-                              //           value: type,
-                              //           child: Text(
-                              //             type.name,
-                              //             style: theme.textTheme.labelMedium,
-                              //           ),
-                              //         );
-                              //       }).toList(),
-                              //       decoration: const InputDecoration.collapsed(hintText: ""),
-                              //       borderRadius: BorderRadius.circular(12),
-                              //       onChanged: (value) => setState(() => _selectedType = value),
-                              //       validator: (value) => value == null ? "Veuillez sélectionner un type." : null,
-                              //       isExpanded: false,
-                              //       icon: const Icon(Icons.keyboard_arrow_down),
-                              //       dropdownColor: Colors.white,
-                              //     ),
-                              //   ),
-                              // ),
-                            ],
-                          ),
-
-                          const SizedBox(height: 10),
-                          // Champ Email
-                          Expanded(
-                            flex: 2,
-                            child: TextFormField(
-                              controller: _emailController,
-                              decoration: InputDecoration(
-                                labelText: "Email",
-                                labelStyle: Theme.of(context).textTheme.labelMedium,
-                                border: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(5),
+                              Expanded(
+                                child: DropdownButtonFormField<int>(
+                                  value: _selectedRoleId,
+                                  decoration: InputDecoration(
+                                    hintText: "Rôle du collaborateur",
+                                    hintStyle: Theme.of(context).textTheme.labelSmall,
+                                    border: OutlineInputBorder(),
+                                  ),
+                                  items: roles.map<DropdownMenuItem<int>>((role) {
+                                    return DropdownMenuItem<int>(
+                                      value: role['id'] as int,
+                                      child: Text(
+                                        role['name'] as String,
+                                        style: Theme.of(context).textTheme.labelSmall,
+                                      ),
+                                    );
+                                  }).toList(),
+                                  onChanged: (value) => setState(() => _selectedRoleId = value),
+                                  validator: (value) => value == null ? "Veuillez sélectionner un rôle." : null,
                                 ),
                               ),
-                              validator: (value) {
-                                if (value == null || value.isEmpty) {
-                                  return "Veuillez entrer l'email.";
-                                }
-                                if (!value.contains('@')) {
-                                  return "Veuillez entrer un email valide.";
-                                }
-                                return null;
-                              },
-                            ),
+                            ],
                           ),
                           const SizedBox(height: 20),
                           SizedBox(height: 10),
-                          ElevatedButton(
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: Theme.of(context).colorScheme.primary,
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(5),
-                              ),
-                            ),
-                            onPressed: () {
-                              if (_formKey.currentState!.validate()) {
-                                // Créer un nouveau collaborateur
-                                final collaborateur = CollaborateursModel(
-                                  firstName: _firstNameController.text,
-                                  lastName: _lastNameController.text,
-                                  email: _emailController.text,
-                                  roleId: 2, // Par défaut, roleId = 2
-                                );
+                          SizedBox(
+                            width: Const.screenWidth(context) * 0.4,
+                            child: ElevatedButton.icon(
+                              icon: const Icon(Icons.save, color: Colors.white),
+                              onPressed: () {
+                                if (_formKey.currentState!.validate()) {
+                                  // Créer un nouveau collaborateur
+                                  final collaborateur = CollaborateursModel(
+                                    firstName: _firstNameController.text,
+                                    lastName: _lastNameController.text,
+                                    email: _emailController.text,
+                                    roleId: 2, // Par défaut, roleId = 2
+                                  );
 
-                                // Appeler le Cubit pour ajouter le collaborateur
-                                context.read<CollaborateursCubit>().addCollaborateur(collaborateur);
-                              }
-                            },
-                            child: Text(
-                              "Enregistrer",
-                              style: Theme.of(context).textTheme.labelMedium!.copyWith(color: Colors.white),
+                                  // Appeler le Cubit pour ajouter le collaborateur
+                                  context.read<CollaborateursCubit>().addCollaborateur(collaborateur);
+                                }
+                              },
+                              label: Text(
+                                "Enregistrer",
+                                style: Theme.of(context).textTheme.labelSmall!.copyWith(color: Colors.white),
+                              ),
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: Theme.of(context).colorScheme.primary,
+                                foregroundColor: Colors.white,
+                                padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+                                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)),
+                              ),
                             ),
                           ),
                         ],
