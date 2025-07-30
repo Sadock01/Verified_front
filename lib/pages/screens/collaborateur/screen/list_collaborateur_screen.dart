@@ -1,30 +1,26 @@
 import 'package:doc_authentificator/const/const.dart';
-import 'package:doc_authentificator/cubits/documents/document_cubit.dart';
-import 'package:doc_authentificator/cubits/documents/document_state.dart';
+import 'package:doc_authentificator/cubits/collaborateurs/collaborateurs_cubit.dart';
+import 'package:doc_authentificator/cubits/collaborateurs/collaborateurs_state.dart';
 import 'package:doc_authentificator/widgets/appbar_dashboard.dart';
 import 'package:doc_authentificator/widgets/drawer_dashboard.dart';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
-import '../../utils/shared_preferences_utils.dart';
+import '../../../../utils/shared_preferences_utils.dart';
 
-class ListDocumentScreen extends StatefulWidget {
-  const ListDocumentScreen({super.key});
+class ListCollaborateurScreen extends StatefulWidget {
+  const ListCollaborateurScreen({super.key});
 
   @override
-  State<ListDocumentScreen> createState() => _ListDocumentScreenState();
+  State<ListCollaborateurScreen> createState() => _ListCollaborateurScreenState();
 }
 
-class _ListDocumentScreenState extends State<ListDocumentScreen> {
+class _ListCollaborateurScreenState extends State<ListCollaborateurScreen> {
   @override
   void initState() {
     super.initState();
     _checkAuthentication();
-    Future.delayed(Duration.zero, () {
-      context.read<DocumentCubit>().getAllDocument(1);
-    });
   }
 
   void _checkAuthentication() async {
@@ -37,7 +33,7 @@ class _ListDocumentScreenState extends State<ListDocumentScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<DocumentCubit, DocumentState>(builder: (context, state) {
+    return BlocBuilder<CollaborateursCubit, CollaborateursState>(builder: (context, state) {
       return Scaffold(
         body: Row(
           children: [
@@ -89,15 +85,15 @@ class _ListDocumentScreenState extends State<ListDocumentScreen> {
                         SizedBox(width: 10),
                         Column(
                           children: [
-                            if (state.documentStatus == DocumentStatus.loading)
+                            if (state.collaborateurStatus == CollaborateurStatus.loading)
                               const Center(
                                 child: CircularProgressIndicator(
                                   strokeWidth: 3.0,
                                 ),
                               )
-                            else if (state.documentStatus == DocumentStatus.error)
+                            else if (state.collaborateurStatus == CollaborateurStatus.error)
                               Center(child: SizedBox())
-                            else if (state.documentStatus == DocumentStatus.loaded || state.documentStatus == DocumentStatus.sucess)
+                            else if (state.collaborateurStatus == CollaborateurStatus.loaded)
                               Column(
                                 mainAxisSize: MainAxisSize.max,
                                 children: [
@@ -118,19 +114,25 @@ class _ListDocumentScreenState extends State<ListDocumentScreen> {
                                         DataColumn(
                                           label: SizedBox(
                                             width: Const.screenWidth(context) * 0.1, // Largeur définie pour éviter l'overflow
-                                            child: Text("Identifiant", style: Theme.of(context).textTheme.displayMedium),
+                                            child: Text("Prenom", style: Theme.of(context).textTheme.displayMedium),
                                           ),
                                         ),
                                         DataColumn(
                                           label: SizedBox(
                                             width: Const.screenWidth(context) * 0.25,
-                                            child: Text("Description", style: Theme.of(context).textTheme.displayMedium),
+                                            child: Text("Nom", style: Theme.of(context).textTheme.displayMedium),
                                           ),
                                         ),
                                         DataColumn(
                                           label: SizedBox(
                                             width: Const.screenWidth(context) * 0.1,
-                                            child: Text("Type", style: Theme.of(context).textTheme.displayMedium),
+                                            child: Text("Email", style: Theme.of(context).textTheme.displayMedium),
+                                          ),
+                                        ),
+                                        DataColumn(
+                                          label: SizedBox(
+                                            width: Const.screenWidth(context) * 0.1,
+                                            child: Text("Status", style: Theme.of(context).textTheme.displayMedium),
                                           ),
                                         ),
                                         DataColumn(
@@ -140,22 +142,21 @@ class _ListDocumentScreenState extends State<ListDocumentScreen> {
                                           ),
                                         ),
                                       ],
-                                      rows: state.listDocuments
-                                          .map((document) => DataRow(
+                                      rows: state.listCollaborateurs
+                                          .map((collaborateur) => DataRow(
                                                 cells: [
                                                   DataCell(SizedBox(
                                                     width: Const.screenWidth(context) * 0.1,
                                                     child: Text(
-                                                      document.identifier.toString(),
+                                                      collaborateur.firstName.toString(),
                                                       style: Theme.of(context).textTheme.displayMedium,
                                                       overflow: TextOverflow.ellipsis,
                                                     ),
                                                   )),
                                                   DataCell(SizedBox(
-                                                    width: Const.screenWidth(context) * 0.25,
-                                                    height: Const.screenHeight(context) * 0.05,
+                                                    width: Const.screenWidth(context) * 0.1,
                                                     child: Text(
-                                                      document.descriptionDocument,
+                                                      collaborateur.lastName,
                                                       style: Theme.of(context).textTheme.labelSmall,
                                                       overflow: TextOverflow.ellipsis,
                                                     ),
@@ -163,17 +164,35 @@ class _ListDocumentScreenState extends State<ListDocumentScreen> {
                                                   DataCell(SizedBox(
                                                     width: Const.screenWidth(context) * 0.1,
                                                     child: Text(
-                                                      document.typeName.toString(),
+                                                      collaborateur.email,
                                                       style: Theme.of(context).textTheme.displayMedium,
+                                                    ),
+                                                  )),
+                                                  DataCell(SizedBox(
+                                                    width: Const.screenWidth(context) * 0.1,
+                                                    child: Container(
+                                                      padding: EdgeInsets.symmetric(horizontal: 12),
+                                                      decoration: BoxDecoration(
+                                                          borderRadius: BorderRadius.circular(10),
+                                                          color: collaborateur.status == 1
+                                                              ? Colors.green.withValues(alpha: 0.2)
+                                                              : Colors.red.withValues(alpha: 0.2)),
+                                                      child: Text(
+                                                        collaborateur.status == 1 ? 'activer' : "desactiver",
+                                                        style: Theme.of(context).textTheme.displayMedium,
+                                                      ),
                                                     ),
                                                   )),
                                                   DataCell(PopupMenuButton<String>(
                                                     onSelected: (value) {
-                                                      if (value == "edit") {
-                                                        context.go('/document/update/${document.id}');
-                                                      } else if (value == "view") {
-                                                        context.go('/document/view/${document.identifier}');
-                                                      }
+                                                      // if (value == "edit") {
+                                                      //   context.go(
+                                                      //       '/document/update/${document.id}');
+                                                      // } else if (value ==
+                                                      //     "view") {
+                                                      //   context.go(
+                                                      //       '/document/view/${document.identifier}');
+                                                      // }
                                                     },
                                                     itemBuilder: (context) => [
                                                       PopupMenuItem(value: "edit", child: Text("Modifier document")),
@@ -204,7 +223,7 @@ class _ListDocumentScreenState extends State<ListDocumentScreen> {
                                     mainAxisAlignment: MainAxisAlignment.center,
                                     children: [
                                       InkWell(
-                                        onTap: state.currentPage > 1 ? () => context.read<DocumentCubit>().goToPreviousPage() : null,
+                                        onTap: state.currentPage > 1 ? () => context.read<CollaborateursCubit>().goToPreviousPage() : null,
                                         child: Container(
                                             decoration:
                                                 BoxDecoration(color: Colors.grey.withValues(alpha: 0.2), borderRadius: BorderRadius.circular(3)),
@@ -215,7 +234,7 @@ class _ListDocumentScreenState extends State<ListDocumentScreen> {
                                         style: Theme.of(context).textTheme.labelSmall,
                                       ),
                                       InkWell(
-                                        onTap: state.currentPage < state.lastPage ? () => context.read<DocumentCubit>().goToNextPage() : null,
+                                        onTap: state.currentPage < state.lastPage ? () => context.read<CollaborateursCubit>().goToNextPage() : null,
                                         child: Container(
                                             decoration:
                                                 BoxDecoration(color: Colors.grey..withValues(alpha: 0.2), borderRadius: BorderRadius.circular(3)),

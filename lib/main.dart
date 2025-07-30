@@ -9,17 +9,17 @@ import 'package:doc_authentificator/cubits/types/type_doc_cubit.dart';
 import 'package:doc_authentificator/cubits/verification/verification_cubit.dart';
 
 import 'package:doc_authentificator/pages/dashboard_home_screen.dart';
-import 'package:doc_authentificator/pages/login_page.dart';
-import 'package:doc_authentificator/pages/screens/Rapports_screen.dart';
+import 'package:doc_authentificator/pages/screens/authentification/screen/login_page.dart';
+import 'package:doc_authentificator/pages/screens/collaborateur/screen/new_collaborateur_screen.dart';
+import 'package:doc_authentificator/pages/screens/document/screen/list_document_screen.dart';
+import 'package:doc_authentificator/pages/screens/document/screen/new_document_screen.dart';
+import 'package:doc_authentificator/pages/screens/rapport/Rapports_screen.dart';
 
 import 'package:doc_authentificator/pages/screens/history_screen.dart';
-import 'package:doc_authentificator/pages/screens/list_collaborateur_screen.dart';
-import 'package:doc_authentificator/pages/screens/list_document_screen.dart';
-import 'package:doc_authentificator/pages/screens/new_collaborateur_screen.dart';
-import 'package:doc_authentificator/pages/screens/new_document_screen.dart';
-import 'package:doc_authentificator/pages/screens/update_document_screen.dart';
-import 'package:doc_authentificator/pages/statistiques_screen.dart';
-import 'package:doc_authentificator/pages/user_verify_page.dart';
+import 'package:doc_authentificator/pages/screens/collaborateur/screen/list_collaborateur_screen.dart';
+import 'package:doc_authentificator/pages/screens/document/screen/update_document_screen.dart';
+import 'package:doc_authentificator/pages/screens/dashboard/screen/statistiques_screen.dart';
+import 'package:doc_authentificator/pages/screens/verify/screen/user_verify_page.dart';
 import 'package:doc_authentificator/repositories/auth_repository.dart';
 import 'package:doc_authentificator/repositories/collaborateur_repository.dart';
 import 'package:doc_authentificator/repositories/document_repository.dart';

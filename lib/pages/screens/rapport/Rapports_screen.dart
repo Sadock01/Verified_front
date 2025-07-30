@@ -1,22 +1,23 @@
 import 'package:doc_authentificator/const/const.dart';
-import 'package:doc_authentificator/cubits/collaborateurs/collaborateurs_cubit.dart';
-import 'package:doc_authentificator/cubits/collaborateurs/collaborateurs_state.dart';
-import 'package:doc_authentificator/widgets/appbar_dashboard.dart';
+import 'package:doc_authentificator/cubits/rapports/report_cubit.dart';
+import 'package:doc_authentificator/cubits/rapports/report_state.dart';
+import 'package:doc_authentificator/cubits/verification/verification_cubit.dart';
 import 'package:doc_authentificator/widgets/drawer_dashboard.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
-import '../../utils/shared_preferences_utils.dart';
+import '../../../utils/shared_preferences_utils.dart';
+import '../../../widgets/appbar_dashboard.dart';
 
-class ListCollaborateurScreen extends StatefulWidget {
-  const ListCollaborateurScreen({super.key});
+class RapportsScreen extends StatefulWidget {
+  const RapportsScreen({super.key});
 
   @override
-  State<ListCollaborateurScreen> createState() => _ListCollaborateurScreenState();
+  State<RapportsScreen> createState() => _RapportsScreenState();
 }
 
-class _ListCollaborateurScreenState extends State<ListCollaborateurScreen> {
+class _RapportsScreenState extends State<RapportsScreen> {
   @override
   void initState() {
     super.initState();
@@ -33,7 +34,7 @@ class _ListCollaborateurScreenState extends State<ListCollaborateurScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<CollaborateursCubit, CollaborateursState>(builder: (context, state) {
+    return BlocBuilder<ReportCubit, ReportState>(builder: (context, state) {
       return Scaffold(
         body: Row(
           children: [
@@ -64,36 +65,26 @@ class _ListCollaborateurScreenState extends State<ListCollaborateurScreen> {
                           ),
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.center,
-                            children: [
-                              SizedBox(height: 5),
-                              OutlinedButton(
-                                style: OutlinedButton.styleFrom(
-                                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)),
-                                  side: BorderSide(color: Theme.of(context).colorScheme.primary),
-                                ),
-                                onPressed: () {
-                                  context.go('/document/nouveau_document');
-                                },
-                                child: Text(
-                                  "Nouveau Document +",
-                                  style: Theme.of(context).textTheme.displayMedium,
-                                ),
-                              )
-                            ],
+                            children: [],
                           ),
                         ),
                         SizedBox(width: 10),
                         Column(
                           children: [
-                            if (state.collaborateurStatus == CollaborateurStatus.loading)
+                            if (state.reportStatus == ReportStatus.loading)
                               const Center(
                                 child: CircularProgressIndicator(
                                   strokeWidth: 3.0,
                                 ),
                               )
-                            else if (state.collaborateurStatus == CollaborateurStatus.error)
-                              Center(child: SizedBox())
-                            else if (state.collaborateurStatus == CollaborateurStatus.loaded)
+                            else if (state.reportStatus == ReportStatus.error)
+                              Center(
+                                child: Text(
+                                  state.errorMessage,
+                                  style: Theme.of(context).textTheme.labelMedium,
+                                ),
+                              )
+                            else if (state.reportStatus == ReportStatus.loaded)
                               Column(
                                 mainAxisSize: MainAxisSize.max,
                                 children: [
@@ -119,36 +110,36 @@ class _ListCollaborateurScreenState extends State<ListCollaborateurScreen> {
                                         ),
                                         DataColumn(
                                           label: SizedBox(
-                                            width: Const.screenWidth(context) * 0.25,
-                                            child: Text("Nom", style: Theme.of(context).textTheme.displayMedium),
+                                            width: Const.screenWidth(context) * 0.05,
+                                            child: Text("nom", style: Theme.of(context).textTheme.displayMedium),
                                           ),
                                         ),
                                         DataColumn(
                                           label: SizedBox(
-                                            width: Const.screenWidth(context) * 0.1,
-                                            child: Text("Email", style: Theme.of(context).textTheme.displayMedium),
+                                            width: Const.screenWidth(context) * 0.15,
+                                            child: Text("Ancienne valeur", style: Theme.of(context).textTheme.displayMedium),
                                           ),
                                         ),
                                         DataColumn(
                                           label: SizedBox(
-                                            width: Const.screenWidth(context) * 0.1,
-                                            child: Text("Status", style: Theme.of(context).textTheme.displayMedium),
+                                            width: Const.screenWidth(context) * 0.15,
+                                            child: Text("Nouvelle Valeur", style: Theme.of(context).textTheme.displayMedium),
                                           ),
                                         ),
                                         DataColumn(
                                           label: SizedBox(
                                             width: Const.screenWidth(context) * 0.12,
-                                            child: Text("Action", style: Theme.of(context).textTheme.displayMedium),
+                                            child: Text("Date de modification", style: Theme.of(context).textTheme.displayMedium),
                                           ),
                                         ),
                                       ],
-                                      rows: state.listCollaborateurs
-                                          .map((collaborateur) => DataRow(
+                                      rows: state.listReports
+                                          .map((report) => DataRow(
                                                 cells: [
                                                   DataCell(SizedBox(
                                                     width: Const.screenWidth(context) * 0.1,
                                                     child: Text(
-                                                      collaborateur.firstName.toString(),
+                                                      report.firstName.toString(),
                                                       style: Theme.of(context).textTheme.displayMedium,
                                                       overflow: TextOverflow.ellipsis,
                                                     ),
@@ -156,61 +147,30 @@ class _ListCollaborateurScreenState extends State<ListCollaborateurScreen> {
                                                   DataCell(SizedBox(
                                                     width: Const.screenWidth(context) * 0.1,
                                                     child: Text(
-                                                      collaborateur.lastName,
+                                                      report.lastName.toString(),
                                                       style: Theme.of(context).textTheme.labelSmall,
                                                       overflow: TextOverflow.ellipsis,
                                                     ),
                                                   )),
                                                   DataCell(SizedBox(
-                                                    width: Const.screenWidth(context) * 0.1,
+                                                    width: Const.screenWidth(context) * 0.15,
                                                     child: Text(
-                                                      collaborateur.email,
+                                                      report.changes.isNotEmpty ? report.changes[0].oldValue : "N/A",
                                                       style: Theme.of(context).textTheme.displayMedium,
                                                     ),
                                                   )),
                                                   DataCell(SizedBox(
-                                                    width: Const.screenWidth(context) * 0.1,
-                                                    child: Container(
-                                                      padding: EdgeInsets.symmetric(horizontal: 12),
-                                                      decoration: BoxDecoration(
-                                                          borderRadius: BorderRadius.circular(10),
-                                                          color: collaborateur.status == 1
-                                                              ? Colors.green.withValues(alpha: 0.2)
-                                                              : Colors.red.withValues(alpha: 0.2)),
-                                                      child: Text(
-                                                        collaborateur.status == 1 ? 'activer' : "desactiver",
-                                                        style: Theme.of(context).textTheme.displayMedium,
-                                                      ),
+                                                    width: Const.screenWidth(context) * 0.15,
+                                                    child: Text(
+                                                      report.changes.isNotEmpty ? report.changes[0].newValue : "N/A",
+                                                      style: Theme.of(context).textTheme.displayMedium,
                                                     ),
                                                   )),
-                                                  DataCell(PopupMenuButton<String>(
-                                                    onSelected: (value) {
-                                                      // if (value == "edit") {
-                                                      //   context.go(
-                                                      //       '/document/update/${document.id}');
-                                                      // } else if (value ==
-                                                      //     "view") {
-                                                      //   context.go(
-                                                      //       '/document/view/${document.identifier}');
-                                                      // }
-                                                    },
-                                                    itemBuilder: (context) => [
-                                                      PopupMenuItem(value: "edit", child: Text("Modifier document")),
-                                                      PopupMenuItem(value: "view", child: Text("Afficher document")),
-                                                    ],
-                                                    child: MouseRegion(
-                                                      cursor: SystemMouseCursors.click,
-                                                      child: Container(
-                                                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 5),
-                                                        decoration: BoxDecoration(
-                                                          color: Theme.of(context).colorScheme.primary,
-                                                          borderRadius: BorderRadius.circular(5),
-                                                        ),
-                                                        child: Text(
-                                                          "Option",
-                                                          style: Theme.of(context).textTheme.labelMedium!.copyWith(color: Colors.white),
-                                                        ),
-                                                      ),
+                                                  DataCell(SizedBox(
+                                                    width: Const.screenWidth(context) * 0.12,
+                                                    child: Text(
+                                                      report.modifiedAt.toString(),
+                                                      style: Theme.of(context).textTheme.displayMedium,
                                                     ),
                                                   )),
                                                 ],
@@ -223,7 +183,7 @@ class _ListCollaborateurScreenState extends State<ListCollaborateurScreen> {
                                     mainAxisAlignment: MainAxisAlignment.center,
                                     children: [
                                       InkWell(
-                                        onTap: state.currentPage > 1 ? () => context.read<CollaborateursCubit>().goToPreviousPage() : null,
+                                        onTap: state.currentPage > 1 ? () => context.read<VerificationCubit>().goToPreviousPage() : null,
                                         child: Container(
                                             decoration:
                                                 BoxDecoration(color: Colors.grey.withValues(alpha: 0.2), borderRadius: BorderRadius.circular(3)),
@@ -234,7 +194,7 @@ class _ListCollaborateurScreenState extends State<ListCollaborateurScreen> {
                                         style: Theme.of(context).textTheme.labelSmall,
                                       ),
                                       InkWell(
-                                        onTap: state.currentPage < state.lastPage ? () => context.read<CollaborateursCubit>().goToNextPage() : null,
+                                        onTap: state.currentPage < state.lastPage ? () => context.read<VerificationCubit>().goToNextPage() : null,
                                         child: Container(
                                             decoration:
                                                 BoxDecoration(color: Colors.grey..withValues(alpha: 0.2), borderRadius: BorderRadius.circular(3)),

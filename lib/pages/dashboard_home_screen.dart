@@ -1,13 +1,14 @@
 import 'package:doc_authentificator/cubits/switch_page/switch_page_cubit.dart';
 import 'package:doc_authentificator/cubits/switch_page/switch_page_state.dart';
-import 'package:doc_authentificator/pages/screens/Rapports_screen.dart';
+import 'package:doc_authentificator/pages/screens/document/screen/list_document_screen.dart';
+import 'package:doc_authentificator/pages/screens/collaborateur/screen/new_collaborateur_screen.dart';
+import 'package:doc_authentificator/pages/screens/document/screen/new_document_screen.dart';
+import 'package:doc_authentificator/pages/screens/rapport/Rapports_screen.dart';
 
 import 'package:doc_authentificator/pages/screens/history_screen.dart';
-import 'package:doc_authentificator/pages/screens/list_collaborateur_screen.dart';
-import 'package:doc_authentificator/pages/screens/list_document_screen.dart';
-import 'package:doc_authentificator/pages/screens/new_collaborateur_screen.dart';
-import 'package:doc_authentificator/pages/screens/new_document_screen.dart';
-import 'package:doc_authentificator/pages/statistiques_screen.dart';
+import 'package:doc_authentificator/pages/screens/collaborateur/screen/list_collaborateur_screen.dart';
+
+import 'package:doc_authentificator/pages/screens/dashboard/screen/statistiques_screen.dart';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';

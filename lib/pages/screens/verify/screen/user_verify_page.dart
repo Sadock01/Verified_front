@@ -7,9 +7,9 @@ import 'package:doc_authentificator/services/verification_service.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 
-import '../const/const.dart';
-import '../utils/utils.dart';
-import 'hover_step_widget.dart';
+import '../../../../const/const.dart';
+import '../../../../utils/utils.dart';
+import '../../../hover_step_widget.dart';
 
 class UserVerifyPage extends StatefulWidget {
   const UserVerifyPage({super.key});

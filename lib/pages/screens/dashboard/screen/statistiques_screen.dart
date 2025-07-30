@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:go_router/go_router.dart';
 
-import '../const/const.dart';
-import '../utils/shared_preferences_utils.dart';
-import '../widgets/appbar_dashboard.dart';
-import '../widgets/drawer_dashboard.dart';
+import '../../../../const/const.dart';
+import '../../../../utils/shared_preferences_utils.dart';
+import '../../../../widgets/appbar_dashboard.dart';
+import '../../../../widgets/drawer_dashboard.dart';
 
 class StatistiquesScreen extends StatefulWidget {
   const StatistiquesScreen({super.key});

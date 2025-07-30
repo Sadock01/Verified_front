@@ -10,7 +10,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
-import '../../utils/shared_preferences_utils.dart';
+import '../../../../utils/shared_preferences_utils.dart';
 
 class NewCollaborateurScreen extends StatefulWidget {
   const NewCollaborateurScreen({super.key});
@@ -33,19 +33,19 @@ class _NewCollaborateurScreenState extends State<NewCollaborateurScreen> {
     super.dispose();
   }
 
-  @override
-  void initState() {
-    super.initState();
-    _checkAuthentication();
-  }
-
-  void _checkAuthentication() async {
-    final token = SharedPreferencesUtils.getString('auth_token');
-    if (token == null || token.isEmpty) {
-      // Rediriger vers la page de login
-      context.go('/login'); // ou Navigator.of(context).pushReplacementNamed('/login');
-    }
-  }
+  // @override
+  // void initState() {
+  //   super.initState();
+  //   _checkAuthentication();
+  // }
+  //
+  // void _checkAuthentication() async {
+  //   final token = SharedPreferencesUtils.getString('auth_token');
+  //   if (token == null || token.isEmpty) {
+  //     // Rediriger vers la page de login
+  //     context.go('/login'); // ou Navigator.of(context).pushReplacementNamed('/login');
+  //   }
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -142,13 +142,10 @@ class _NewCollaborateurScreenState extends State<NewCollaborateurScreen> {
                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Wrap(
-                            spacing: 3,
-                            runSpacing: 5,
+                          Row(
                             children: [
-                              // Champ Prénom
-                              SizedBox(
-                                width: Const.screenWidth(context) * 0.3,
+                              Expanded(
+                                flex: 2,
                                 child: TextFormField(
                                   controller: _firstNameController,
                                   decoration: InputDecoration(
@@ -166,10 +163,10 @@ class _NewCollaborateurScreenState extends State<NewCollaborateurScreen> {
                                   },
                                 ),
                               ),
-                              const SizedBox(height: 10),
+                              const SizedBox(width: 10),
                               // Champ Nom
-                              SizedBox(
-                                width: Const.screenWidth(context) * 0.3,
+                              Expanded(
+                                flex: 2,
                                 child: TextFormField(
                                   controller: _lastNameController,
                                   decoration: InputDecoration(
@@ -187,10 +184,15 @@ class _NewCollaborateurScreenState extends State<NewCollaborateurScreen> {
                                   },
                                 ),
                               ),
-                              const SizedBox(height: 10),
-                              // Champ Email
-                              SizedBox(
-                                width: Const.screenWidth(context) * 0.3,
+                            ],
+                          ),
+                          SizedBox(
+                            width: 15,
+                          ),
+                          Row(
+                            children: [
+                              Expanded(
+                                flex: 2,
                                 child: TextFormField(
                                   controller: _emailController,
                                   decoration: InputDecoration(
@@ -202,19 +204,71 @@ class _NewCollaborateurScreenState extends State<NewCollaborateurScreen> {
                                   ),
                                   validator: (value) {
                                     if (value == null || value.isEmpty) {
-                                      return "Veuillez entrer l'email.";
-                                    }
-                                    if (!value.contains('@')) {
-                                      return "Veuillez entrer un email valide.";
+                                      return "Veuillez entrer le nom.";
                                     }
                                     return null;
                                   },
                                 ),
                               ),
-                              const SizedBox(height: 20),
-                              // Bouton Enregistrer
+                              SizedBox(
+                                width: 10,
+                              ),
+                              // Expanded(
+                              //   flex: 2,
+                              //   child: DropdownButtonHideUnderline(
+                              //     child: DropdownButtonFormField<TypeDocModel>(
+                              //       value: _selectedType,
+                              //       hint: Text(
+                              //         "Choisir un type",
+                              //         style: Theme.of(context).textTheme.labelSmall?.copyWith(color: Colors.grey.shade600),
+                              //       ),
+                              //       items: state.listType.map((type) {
+                              //         return DropdownMenuItem<TypeDocModel>(
+                              //           value: type,
+                              //           child: Text(
+                              //             type.name,
+                              //             style: theme.textTheme.labelMedium,
+                              //           ),
+                              //         );
+                              //       }).toList(),
+                              //       decoration: const InputDecoration.collapsed(hintText: ""),
+                              //       borderRadius: BorderRadius.circular(12),
+                              //       onChanged: (value) => setState(() => _selectedType = value),
+                              //       validator: (value) => value == null ? "Veuillez sélectionner un type." : null,
+                              //       isExpanded: false,
+                              //       icon: const Icon(Icons.keyboard_arrow_down),
+                              //       dropdownColor: Colors.white,
+                              //     ),
+                              //   ),
+                              // ),
                             ],
                           ),
+
+                          const SizedBox(height: 10),
+                          // Champ Email
+                          Expanded(
+                            flex: 2,
+                            child: TextFormField(
+                              controller: _emailController,
+                              decoration: InputDecoration(
+                                labelText: "Email",
+                                labelStyle: Theme.of(context).textTheme.labelMedium,
+                                border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(5),
+                                ),
+                              ),
+                              validator: (value) {
+                                if (value == null || value.isEmpty) {
+                                  return "Veuillez entrer l'email.";
+                                }
+                                if (!value.contains('@')) {
+                                  return "Veuillez entrer un email valide.";
+                                }
+                                return null;
+                              },
+                            ),
+                          ),
+                          const SizedBox(height: 20),
                           SizedBox(height: 10),
                           ElevatedButton(
                             style: ElevatedButton.styleFrom(

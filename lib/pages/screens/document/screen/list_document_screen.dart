@@ -1,27 +1,30 @@
 import 'package:doc_authentificator/const/const.dart';
-import 'package:doc_authentificator/cubits/rapports/report_cubit.dart';
-import 'package:doc_authentificator/cubits/rapports/report_state.dart';
-import 'package:doc_authentificator/cubits/verification/verification_cubit.dart';
+import 'package:doc_authentificator/cubits/documents/document_cubit.dart';
+import 'package:doc_authentificator/cubits/documents/document_state.dart';
+import 'package:doc_authentificator/widgets/appbar_dashboard.dart';
 import 'package:doc_authentificator/widgets/drawer_dashboard.dart';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
-import '../../utils/shared_preferences_utils.dart';
-import '../../widgets/appbar_dashboard.dart';
+import '../../../../utils/shared_preferences_utils.dart';
 
-class RapportsScreen extends StatefulWidget {
-  const RapportsScreen({super.key});
+class ListDocumentScreen extends StatefulWidget {
+  const ListDocumentScreen({super.key});
 
   @override
-  State<RapportsScreen> createState() => _RapportsScreenState();
+  State<ListDocumentScreen> createState() => _ListDocumentScreenState();
 }
 
-class _RapportsScreenState extends State<RapportsScreen> {
+class _ListDocumentScreenState extends State<ListDocumentScreen> {
   @override
   void initState() {
     super.initState();
     _checkAuthentication();
+    Future.delayed(Duration.zero, () {
+      context.read<DocumentCubit>().getAllDocument(1);
+    });
   }
 
   void _checkAuthentication() async {
@@ -34,7 +37,7 @@ class _RapportsScreenState extends State<RapportsScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<ReportCubit, ReportState>(builder: (context, state) {
+    return BlocBuilder<DocumentCubit, DocumentState>(builder: (context, state) {
       return Scaffold(
         body: Row(
           children: [
@@ -65,26 +68,36 @@ class _RapportsScreenState extends State<RapportsScreen> {
                           ),
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.center,
-                            children: [],
+                            children: [
+                              SizedBox(height: 5),
+                              OutlinedButton(
+                                style: OutlinedButton.styleFrom(
+                                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)),
+                                  side: BorderSide(color: Theme.of(context).colorScheme.primary),
+                                ),
+                                onPressed: () {
+                                  context.go('/document/nouveau_document');
+                                },
+                                child: Text(
+                                  "Nouveau Document +",
+                                  style: Theme.of(context).textTheme.displayMedium,
+                                ),
+                              )
+                            ],
                           ),
                         ),
                         SizedBox(width: 10),
                         Column(
                           children: [
-                            if (state.reportStatus == ReportStatus.loading)
+                            if (state.documentStatus == DocumentStatus.loading)
                               const Center(
                                 child: CircularProgressIndicator(
                                   strokeWidth: 3.0,
                                 ),
                               )
-                            else if (state.reportStatus == ReportStatus.error)
-                              Center(
-                                child: Text(
-                                  state.errorMessage,
-                                  style: Theme.of(context).textTheme.labelMedium,
-                                ),
-                              )
-                            else if (state.reportStatus == ReportStatus.loaded)
+                            else if (state.documentStatus == DocumentStatus.error)
+                              Center(child: SizedBox())
+                            else if (state.documentStatus == DocumentStatus.loaded || state.documentStatus == DocumentStatus.sucess)
                               Column(
                                 mainAxisSize: MainAxisSize.max,
                                 children: [
@@ -105,72 +118,80 @@ class _RapportsScreenState extends State<RapportsScreen> {
                                         DataColumn(
                                           label: SizedBox(
                                             width: Const.screenWidth(context) * 0.1, // Largeur définie pour éviter l'overflow
-                                            child: Text("Prenom", style: Theme.of(context).textTheme.displayMedium),
+                                            child: Text("Identifiant", style: Theme.of(context).textTheme.displayMedium),
                                           ),
                                         ),
                                         DataColumn(
                                           label: SizedBox(
-                                            width: Const.screenWidth(context) * 0.05,
-                                            child: Text("nom", style: Theme.of(context).textTheme.displayMedium),
+                                            width: Const.screenWidth(context) * 0.25,
+                                            child: Text("Description", style: Theme.of(context).textTheme.displayMedium),
                                           ),
                                         ),
                                         DataColumn(
                                           label: SizedBox(
-                                            width: Const.screenWidth(context) * 0.15,
-                                            child: Text("Ancienne valeur", style: Theme.of(context).textTheme.displayMedium),
-                                          ),
-                                        ),
-                                        DataColumn(
-                                          label: SizedBox(
-                                            width: Const.screenWidth(context) * 0.15,
-                                            child: Text("Nouvelle Valeur", style: Theme.of(context).textTheme.displayMedium),
+                                            width: Const.screenWidth(context) * 0.1,
+                                            child: Text("Type", style: Theme.of(context).textTheme.displayMedium),
                                           ),
                                         ),
                                         DataColumn(
                                           label: SizedBox(
                                             width: Const.screenWidth(context) * 0.12,
-                                            child: Text("Date de modification", style: Theme.of(context).textTheme.displayMedium),
+                                            child: Text("Action", style: Theme.of(context).textTheme.displayMedium),
                                           ),
                                         ),
                                       ],
-                                      rows: state.listReports
-                                          .map((report) => DataRow(
+                                      rows: state.listDocuments
+                                          .map((document) => DataRow(
                                                 cells: [
                                                   DataCell(SizedBox(
                                                     width: Const.screenWidth(context) * 0.1,
                                                     child: Text(
-                                                      report.firstName.toString(),
+                                                      document.identifier.toString(),
                                                       style: Theme.of(context).textTheme.displayMedium,
                                                       overflow: TextOverflow.ellipsis,
                                                     ),
                                                   )),
                                                   DataCell(SizedBox(
-                                                    width: Const.screenWidth(context) * 0.1,
+                                                    width: Const.screenWidth(context) * 0.25,
+                                                    height: Const.screenHeight(context) * 0.05,
                                                     child: Text(
-                                                      report.lastName.toString(),
+                                                      document.descriptionDocument,
                                                       style: Theme.of(context).textTheme.labelSmall,
                                                       overflow: TextOverflow.ellipsis,
                                                     ),
                                                   )),
                                                   DataCell(SizedBox(
-                                                    width: Const.screenWidth(context) * 0.15,
+                                                    width: Const.screenWidth(context) * 0.1,
                                                     child: Text(
-                                                      report.changes.isNotEmpty ? report.changes[0].oldValue : "N/A",
+                                                      document.typeName.toString(),
                                                       style: Theme.of(context).textTheme.displayMedium,
                                                     ),
                                                   )),
-                                                  DataCell(SizedBox(
-                                                    width: Const.screenWidth(context) * 0.15,
-                                                    child: Text(
-                                                      report.changes.isNotEmpty ? report.changes[0].newValue : "N/A",
-                                                      style: Theme.of(context).textTheme.displayMedium,
-                                                    ),
-                                                  )),
-                                                  DataCell(SizedBox(
-                                                    width: Const.screenWidth(context) * 0.12,
-                                                    child: Text(
-                                                      report.modifiedAt.toString(),
-                                                      style: Theme.of(context).textTheme.displayMedium,
+                                                  DataCell(PopupMenuButton<String>(
+                                                    onSelected: (value) {
+                                                      if (value == "edit") {
+                                                        context.go('/document/update/${document.id}');
+                                                      } else if (value == "view") {
+                                                        context.go('/document/view/${document.identifier}');
+                                                      }
+                                                    },
+                                                    itemBuilder: (context) => [
+                                                      PopupMenuItem(value: "edit", child: Text("Modifier document")),
+                                                      PopupMenuItem(value: "view", child: Text("Afficher document")),
+                                                    ],
+                                                    child: MouseRegion(
+                                                      cursor: SystemMouseCursors.click,
+                                                      child: Container(
+                                                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 5),
+                                                        decoration: BoxDecoration(
+                                                          color: Theme.of(context).colorScheme.primary,
+                                                          borderRadius: BorderRadius.circular(5),
+                                                        ),
+                                                        child: Text(
+                                                          "Option",
+                                                          style: Theme.of(context).textTheme.labelMedium!.copyWith(color: Colors.white),
+                                                        ),
+                                                      ),
                                                     ),
                                                   )),
                                                 ],
@@ -183,7 +204,7 @@ class _RapportsScreenState extends State<RapportsScreen> {
                                     mainAxisAlignment: MainAxisAlignment.center,
                                     children: [
                                       InkWell(
-                                        onTap: state.currentPage > 1 ? () => context.read<VerificationCubit>().goToPreviousPage() : null,
+                                        onTap: state.currentPage > 1 ? () => context.read<DocumentCubit>().goToPreviousPage() : null,
                                         child: Container(
                                             decoration:
                                                 BoxDecoration(color: Colors.grey.withValues(alpha: 0.2), borderRadius: BorderRadius.circular(3)),
@@ -194,7 +215,7 @@ class _RapportsScreenState extends State<RapportsScreen> {
                                         style: Theme.of(context).textTheme.labelSmall,
                                       ),
                                       InkWell(
-                                        onTap: state.currentPage < state.lastPage ? () => context.read<VerificationCubit>().goToNextPage() : null,
+                                        onTap: state.currentPage < state.lastPage ? () => context.read<DocumentCubit>().goToNextPage() : null,
                                         child: Container(
                                             decoration:
                                                 BoxDecoration(color: Colors.grey..withValues(alpha: 0.2), borderRadius: BorderRadius.circular(3)),
@@ -205,12 +226,7 @@ class _RapportsScreenState extends State<RapportsScreen> {
                                 ],
                               )
                             else
-                              Center(
-                                child: Text(
-                                  "Erreur inattendue",
-                                  style: Theme.of(context).textTheme.labelLarge,
-                                ),
-                              )
+                              Center(child: SizedBox())
                           ],
                         )
                       ]),

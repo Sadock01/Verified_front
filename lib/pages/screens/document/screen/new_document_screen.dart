@@ -18,8 +18,8 @@ import 'package:doc_authentificator/widgets/drawer_dashboard.dart';
 import 'package:doc_authentificator/const/const.dart';
 import 'dart:typed_data';
 
-import '../../utils/shared_preferences_utils.dart';
-import '../pdf_drop_zone_widget.dart';
+import '../../../../utils/shared_preferences_utils.dart';
+import '../../../pdf_drop_zone_widget.dart';
 
 class NewDocumentScreen extends StatefulWidget {
   const NewDocumentScreen({super.key});
