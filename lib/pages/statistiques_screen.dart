@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
+import 'package:go_router/go_router.dart';
 
 import '../const/const.dart';
+import '../utils/shared_preferences_utils.dart';
 import '../widgets/appbar_dashboard.dart';
 import '../widgets/drawer_dashboard.dart';
 
@@ -15,10 +17,24 @@ class StatistiquesScreen extends StatefulWidget {
 class _StatistiquesScreenState extends State<StatistiquesScreen> {
   late Future<Map<String, dynamic>> _statsFuture;
 
+  // @override
+  // void initState() {
+  //   super.initState();
+  //
+  // }
   @override
   void initState() {
     super.initState();
     _statsFuture = fetchStats();
+    _checkAuthentication();
+  }
+
+  void _checkAuthentication() async {
+    final token = SharedPreferencesUtils.getString('auth_token');
+    if (token == null || token.isEmpty) {
+      // Rediriger vers la page de login
+      context.go('/login'); // ou Navigator.of(context).pushReplacementNamed('/login');
+    }
   }
 
   Future<Map<String, dynamic>> fetchStats() async {
@@ -173,7 +189,7 @@ class _StatistiquesScreenState extends State<StatistiquesScreen> {
     return Container(
       width: 250,
       decoration: BoxDecoration(
-        color: Colors.white,  // <-- Fond blanc
+        color: Colors.white, // <-- Fond blanc
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(color: Colors.black12, blurRadius: 8, offset: Offset(0, 4)),
@@ -192,7 +208,11 @@ class _StatistiquesScreenState extends State<StatistiquesScreen> {
             crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Text(title, style: Theme.of(context).textTheme.labelMedium?.copyWith(fontSize: 16, color: color.withValues(alpha: 0.9),overflow: TextOverflow.ellipsis)),
+              Text(title,
+                  style: Theme.of(context)
+                      .textTheme
+                      .labelMedium
+                      ?.copyWith(fontSize: 16, color: color.withValues(alpha: 0.9), overflow: TextOverflow.ellipsis)),
               const SizedBox(height: 6),
               Text(value, style: Theme.of(context).textTheme.labelMedium?.copyWith(fontSize: 26, fontWeight: FontWeight.bold, color: color.darken())),
             ],

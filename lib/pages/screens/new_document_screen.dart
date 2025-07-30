@@ -18,6 +18,7 @@ import 'package:doc_authentificator/widgets/drawer_dashboard.dart';
 import 'package:doc_authentificator/const/const.dart';
 import 'dart:typed_data';
 
+import '../../utils/shared_preferences_utils.dart';
 import '../pdf_drop_zone_widget.dart';
 
 class NewDocumentScreen extends StatefulWidget {
@@ -45,7 +46,16 @@ class _NewDocumentScreenState extends State<NewDocumentScreen> with SingleTicker
   @override
   void initState() {
     super.initState();
+    _checkAuthentication();
     _tabController = TabController(length: 2, vsync: this);
+  }
+
+  void _checkAuthentication() async {
+    final token = SharedPreferencesUtils.getString('auth_token');
+    if (token == null || token.isEmpty) {
+      // Rediriger vers la page de login
+      context.go('/login'); // ou Navigator.of(context).pushReplacementNamed('/login');
+    }
   }
 
   @override

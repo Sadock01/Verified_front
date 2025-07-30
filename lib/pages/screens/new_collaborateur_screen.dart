@@ -10,6 +10,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../utils/shared_preferences_utils.dart';
+
 class NewCollaborateurScreen extends StatefulWidget {
   const NewCollaborateurScreen({super.key});
 
@@ -32,14 +34,27 @@ class _NewCollaborateurScreenState extends State<NewCollaborateurScreen> {
   }
 
   @override
+  void initState() {
+    super.initState();
+    _checkAuthentication();
+  }
+
+  void _checkAuthentication() async {
+    final token = SharedPreferencesUtils.getString('auth_token');
+    if (token == null || token.isEmpty) {
+      // Rediriger vers la page de login
+      context.go('/login'); // ou Navigator.of(context).pushReplacementNamed('/login');
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
     return BlocListener<CollaborateursCubit, CollaborateursState>(
       listener: (context, state) {
         if (state.collaborateurStatus == CollaborateurStatus.success) {
           ElegantNotification.success(
             notificationMargin: 10,
-            description: Text(state.errorMessage,
-                style: Theme.of(context).textTheme.labelSmall),
+            description: Text(state.errorMessage, style: Theme.of(context).textTheme.labelSmall),
             position: Alignment.topRight,
             animation: AnimationType.fromRight,
             icon: const Icon(
@@ -57,8 +72,7 @@ class _NewCollaborateurScreenState extends State<NewCollaborateurScreen> {
         if (state.collaborateurStatus == CollaborateurStatus.error) {
           ElegantNotification.error(
             notificationMargin: 10,
-            description: Text(state.errorMessage,
-                style: Theme.of(context).textTheme.labelSmall),
+            description: Text(state.errorMessage, style: Theme.of(context).textTheme.labelSmall),
             position: Alignment.topRight,
             animation: AnimationType.fromRight,
             icon: const Icon(
@@ -78,12 +92,10 @@ class _NewCollaborateurScreenState extends State<NewCollaborateurScreen> {
                   const AppbarDashboard(),
                   // Titre
                   Container(
-                    margin: const EdgeInsets.symmetric(
-                        vertical: 10, horizontal: 10),
+                    margin: const EdgeInsets.symmetric(vertical: 10, horizontal: 10),
                     width: Const.screenWidth(context),
                     height: Const.screenHeight(context) * 0.1,
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 50, vertical: 10),
+                    padding: const EdgeInsets.symmetric(horizontal: 50, vertical: 10),
                     decoration: BoxDecoration(
                       color: Theme.of(context).colorScheme.primary,
                       borderRadius: BorderRadius.circular(10),
@@ -91,8 +103,7 @@ class _NewCollaborateurScreenState extends State<NewCollaborateurScreen> {
                     child: Column(
                       children: [
                         Container(
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 20, vertical: 10),
+                          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
                           decoration: BoxDecoration(
                             border: Border.all(
                               color: Colors.white,
@@ -102,10 +113,7 @@ class _NewCollaborateurScreenState extends State<NewCollaborateurScreen> {
                           ),
                           child: Text(
                             "Nouveau Collaborateur",
-                            style: Theme.of(context)
-                                .textTheme
-                                .displayMedium!
-                                .copyWith(color: Colors.white),
+                            style: Theme.of(context).textTheme.displayMedium!.copyWith(color: Colors.white),
                           ),
                         ),
                       ],
@@ -113,8 +121,7 @@ class _NewCollaborateurScreenState extends State<NewCollaborateurScreen> {
                   ),
                   // Formulaire
                   Container(
-                    margin: const EdgeInsets.symmetric(
-                        vertical: 10, horizontal: 10),
+                    margin: const EdgeInsets.symmetric(vertical: 10, horizontal: 10),
                     padding: const EdgeInsets.all(10),
                     width: Const.screenWidth(context),
                     decoration: BoxDecoration(
@@ -146,8 +153,7 @@ class _NewCollaborateurScreenState extends State<NewCollaborateurScreen> {
                                   controller: _firstNameController,
                                   decoration: InputDecoration(
                                     labelText: "Prénom",
-                                    labelStyle:
-                                        Theme.of(context).textTheme.labelMedium,
+                                    labelStyle: Theme.of(context).textTheme.labelMedium,
                                     border: OutlineInputBorder(
                                       borderRadius: BorderRadius.circular(5),
                                     ),
@@ -168,8 +174,7 @@ class _NewCollaborateurScreenState extends State<NewCollaborateurScreen> {
                                   controller: _lastNameController,
                                   decoration: InputDecoration(
                                     labelText: "Nom",
-                                    labelStyle:
-                                        Theme.of(context).textTheme.labelMedium,
+                                    labelStyle: Theme.of(context).textTheme.labelMedium,
                                     border: OutlineInputBorder(
                                       borderRadius: BorderRadius.circular(5),
                                     ),
@@ -190,8 +195,7 @@ class _NewCollaborateurScreenState extends State<NewCollaborateurScreen> {
                                   controller: _emailController,
                                   decoration: InputDecoration(
                                     labelText: "Email",
-                                    labelStyle:
-                                        Theme.of(context).textTheme.labelMedium,
+                                    labelStyle: Theme.of(context).textTheme.labelMedium,
                                     border: OutlineInputBorder(
                                       borderRadius: BorderRadius.circular(5),
                                     ),
@@ -210,11 +214,11 @@ class _NewCollaborateurScreenState extends State<NewCollaborateurScreen> {
                               const SizedBox(height: 20),
                               // Bouton Enregistrer
                             ],
-                          ),SizedBox(height: 10),
+                          ),
+                          SizedBox(height: 10),
                           ElevatedButton(
                             style: ElevatedButton.styleFrom(
-                              backgroundColor:
-                                  Theme.of(context).colorScheme.primary,
+                              backgroundColor: Theme.of(context).colorScheme.primary,
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(5),
                               ),
@@ -230,17 +234,12 @@ class _NewCollaborateurScreenState extends State<NewCollaborateurScreen> {
                                 );
 
                                 // Appeler le Cubit pour ajouter le collaborateur
-                                context
-                                    .read<CollaborateursCubit>()
-                                    .addCollaborateur(collaborateur);
+                                context.read<CollaborateursCubit>().addCollaborateur(collaborateur);
                               }
                             },
                             child: Text(
                               "Enregistrer",
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .labelMedium!
-                                  .copyWith(color: Colors.white),
+                              style: Theme.of(context).textTheme.labelMedium!.copyWith(color: Colors.white),
                             ),
                           ),
                         ],

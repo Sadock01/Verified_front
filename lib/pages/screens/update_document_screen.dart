@@ -16,6 +16,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../utils/shared_preferences_utils.dart';
+
 class UpdateDocumentScreen extends StatefulWidget {
   final int documentId;
   const UpdateDocumentScreen({super.key, required this.documentId});
@@ -34,11 +36,20 @@ class _UpdateDocumentScreenState extends State<UpdateDocumentScreen> {
   @override
   void initState() {
     super.initState();
+    _checkAuthentication();
     _identifierController = TextEditingController();
     _descriptionController = TextEditingController();
 
     // Charger le document depuis le cubit
     context.read<DocumentCubit>().getDocumentById(widget.documentId);
+  }
+
+  void _checkAuthentication() async {
+    final token = SharedPreferencesUtils.getString('auth_token');
+    if (token == null || token.isEmpty) {
+      // Rediriger vers la page de login
+      context.go('/login'); // ou Navigator.of(context).pushReplacementNamed('/login');
+    }
   }
 
   @override

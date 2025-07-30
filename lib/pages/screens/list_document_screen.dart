@@ -8,6 +8,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../utils/shared_preferences_utils.dart';
+
 class ListDocumentScreen extends StatefulWidget {
   const ListDocumentScreen({super.key});
 
@@ -19,9 +21,18 @@ class _ListDocumentScreenState extends State<ListDocumentScreen> {
   @override
   void initState() {
     super.initState();
+    _checkAuthentication();
     Future.delayed(Duration.zero, () {
       context.read<DocumentCubit>().getAllDocument(1);
     });
+  }
+
+  void _checkAuthentication() async {
+    final token = SharedPreferencesUtils.getString('auth_token');
+    if (token == null || token.isEmpty) {
+      // Rediriger vers la page de login
+      context.go('/login'); // ou Navigator.of(context).pushReplacementNamed('/login');
+    }
   }
 
   @override
