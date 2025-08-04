@@ -13,44 +13,35 @@ class TypeDocCubit extends Cubit<TypeDocState> {
 
   Future<void> getAllType(int page) async {
     try {
-      emit(state.copyWith(
-          typeStatus: TypeStatus.loading, errorMessage: ""));
-      final List<TypeDocModel> types =
-          await typeDocRepository.getAllType(page);
-            // final int totalPages = response['last_page'];
-      emit(state.copyWith(
-          typeStatus: TypeStatus.loaded,
-          listType: types,currentPage: page,totalPage: 10 ,
-          errorMessage: ""));
+      emit(state.copyWith(typeStatus: TypeStatus.loading, errorMessage: ""));
+      final List<TypeDocModel> types = await typeDocRepository.getAllType(page);
+      // final int totalPages = response['last_page'];
+      emit(state.copyWith(typeStatus: TypeStatus.loaded, listType: types, currentPage: page, totalPage: 10, errorMessage: ""));
     } catch (e) {
-      emit(state.copyWith(
-          errorMessage: e.toString(), typeStatus: TypeStatus.error));
+      emit(state.copyWith(errorMessage: e.toString(), typeStatus: TypeStatus.error));
     }
   }
 
-   Future<void> addType(TypeDocModel typeDocModel) async {
+  Future<void> addType(TypeDocModel typeDocModel) async {
     try {
-      emit(state.copyWith(
-          typeStatus: TypeStatus.loading, errorMessage: ""));
+      emit(state.copyWith(typeStatus: TypeStatus.loading, errorMessage: ""));
       final response = await typeDocRepository.addType(typeDocModel);
       if (response['status_code'] == 200) {
         log("État actuel: ${state.typeStatus}");
         emit(state.copyWith(
-         typeStatus: TypeStatus.loaded,
+          typeStatus: TypeStatus.loaded,
           errorMessage: response['message'],
         ));
         log("voici ma response: ${response['message']}");
-      }else {
-         emit(state.copyWith(
+      } else {
+        emit(state.copyWith(
           typeStatus: TypeStatus.error,
           errorMessage: response['message'],
         ));
         log("voici ma response: ${response['message']}");
       }
     } catch (e) {
-      emit(state.copyWith(
-          errorMessage: e.toString(), typeStatus: TypeStatus.error));
+      emit(state.copyWith(errorMessage: e.toString(), typeStatus: TypeStatus.error));
     }
   }
-
 }

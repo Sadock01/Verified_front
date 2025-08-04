@@ -16,16 +16,15 @@ class CollaborateurRepository {
         };
       } else {
         log("Erreur : Code de statut inattendu ${response['status_code']}");
-        throw Exception(
-            "Erreur lors de la récupération des documents : ${response['message']}");
+        throw Exception("Erreur lors de la récupération des documents : ${response['message']}");
       }
     } catch (e) {
       log("Erreur dans DocumentRepository: $e");
       throw Exception("Erreur lors de la récupération des collaborateurs");
     }
   }
- Future<Map<String, dynamic>> addCollaborateur(
-      CollaborateursModel collaborateurModel) async {
+
+  Future<Map<String, dynamic>> addCollaborateur(CollaborateursModel collaborateurModel) async {
     try {
       log("Appel au service pour ajouter un document");
       final response = await CollaborateurService.addCollaborateur(collaborateurModel);
@@ -40,7 +39,6 @@ class CollaborateurRepository {
         return {
           'status_code': response['status_code'],
           'message': response['message'],
-          
         };
       }
     } catch (e) {
@@ -49,16 +47,14 @@ class CollaborateurRepository {
     }
   }
 
-  Future<Map<String, dynamic>> updateCollaborateur(
-      int collaborateurId, CollaborateursModel collaborateurModel) async {
+  Future<Map<String, dynamic>> updateCollaborateur(int collaborateurId, CollaborateursModel collaborateurModel) async {
     try {
       log("Appel au service pour mettre à jour un document");
 
-      final response =
-          await CollaborateurService.updateCollaborateur(collaborateurId, collaborateurModel);
+      final response = await CollaborateurService.updateCollaborateur(collaborateurId, collaborateurModel);
       log("$response");
       return {
-        'status_code':response['status_code'],
+        'status_code': response['status_code'],
         'message': response['message'],
       };
     } catch (e) {
@@ -67,4 +63,30 @@ class CollaborateurRepository {
     }
   }
 
+  static Future<Map<String, dynamic>> getClientDetails() async {
+    try {
+      final result = await CollaborateurService.getUserDetails();
+      log("la pute m'a eu: $result");
+      final int statusCode = result['status_code'];
+
+      if (statusCode == 200 || statusCode == 201) {
+        log("My repo getCollaborateur: ${result['data']}");
+        return {
+          'status_code': 200,
+          'data': result['data'],
+        };
+      } else {
+        return {
+          'status_code': 400,
+          'data': null,
+        };
+      }
+    } catch (e) {
+      return {
+        'success': false,
+        'message': 'Erreur lors de la récupération du compte : $e',
+        'data': null,
+      };
+    }
+  }
 }

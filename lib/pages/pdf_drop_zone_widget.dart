@@ -24,7 +24,7 @@ class _PdfDropZoneState extends State<PdfDropZone> {
   Future<void> _pickFile() async {
     FilePickerResult? result = await FilePicker.platform.pickFiles(
       type: FileType.custom,
-      allowedExtensions: ['pdf'],
+      allowedExtensions: ['pdf', 'xls', 'xlsx'],
       withData: true, // Important pour avoir les bytes
     );
     if (result != null && result.files.single.bytes != null) {

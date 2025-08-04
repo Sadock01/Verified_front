@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:doc_authentificator/const/const.dart';
 import 'package:doc_authentificator/cubits/switch_page/switch_page_cubit.dart';
 import 'package:doc_authentificator/cubits/switch_page/switch_page_state.dart';
@@ -5,8 +7,33 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
-class DrawerDashboard extends StatelessWidget {
+import '../cubits/collaborateurs/collaborateurs_cubit.dart';
+import '../utils/shared_preferences_utils.dart';
+
+class DrawerDashboard extends StatefulWidget {
   const DrawerDashboard({super.key});
+
+  @override
+  State<DrawerDashboard> createState() => _DrawerDashboardState();
+}
+
+class _DrawerDashboardState extends State<DrawerDashboard> {
+  int? roleId;
+
+  @override
+  void initState() {
+    super.initState();
+    context.read<CollaborateursCubit>().getCustomerDetails();
+    _loadRoleId();
+  }
+
+  Future<void> _loadRoleId() async {
+    final id = await SharedPreferencesUtils.getInt('role_id');
+    log("Voici le roleId: $id");
+    setState(() {
+      roleId = id;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -30,6 +57,16 @@ class DrawerDashboard extends StatelessWidget {
                     context.read<SwitchPageCubit>().switchPage(0);
                     context.go('/dashboard');
                   },
+                  style: ButtonStyle(
+                    overlayColor: MaterialStateProperty.resolveWith<Color?>(
+                      (Set<MaterialState> states) {
+                        if (states.contains(MaterialState.hovered)) {
+                          return Colors.transparent; // Pas d'effet au survol
+                        }
+                        return null; // Laisser les autres états par défaut
+                      },
+                    ),
+                  ),
                   child: Row(
                     children: [
                       Icon(
@@ -59,13 +96,23 @@ class DrawerDashboard extends StatelessWidget {
                           : context.read<SwitchPageCubit>().state.selectedPage == 5
                               ? Colors.white
                               : context.read<SwitchPageCubit>().state.selectedPage == 5
-                                  ? Colors.white
+                                  ? Theme.of(context).colorScheme.primary
                                   : Colors.white,
                 ),
                 child: TextButton(
                   onPressed: () {
                     context.read<SwitchPageCubit>().switchPage(1);
                   },
+                  style: ButtonStyle(
+                    overlayColor: MaterialStateProperty.resolveWith<Color?>(
+                      (Set<MaterialState> states) {
+                        if (states.contains(MaterialState.hovered)) {
+                          return Colors.transparent; // Pas d'effet au survol
+                        }
+                        return null; // Laisser les autres états par défaut
+                      },
+                    ),
+                  ),
                   child: Row(
                     children: [
                       Icon(
@@ -102,6 +149,16 @@ class DrawerDashboard extends StatelessWidget {
                                 context.read<SwitchPageCubit>().switchPage(5);
                                 context.go('/document/List_document');
                               },
+                              style: ButtonStyle(
+                                overlayColor: MaterialStateProperty.resolveWith<Color?>(
+                                  (Set<MaterialState> states) {
+                                    if (states.contains(MaterialState.hovered)) {
+                                      return Colors.transparent; // Pas d'effet au survol
+                                    }
+                                    return null; // Laisser les autres états par défaut
+                                  },
+                                ),
+                              ),
                               child: Row(
                                 children: [
                                   Icon(
@@ -135,12 +192,22 @@ class DrawerDashboard extends StatelessWidget {
                                 context.read<SwitchPageCubit>().switchPage(2);
                                 context.go('/document/nouveau_document');
                               },
+                              style: ButtonStyle(
+                                overlayColor: MaterialStateProperty.resolveWith<Color?>(
+                                  (Set<MaterialState> states) {
+                                    if (states.contains(MaterialState.hovered)) {
+                                      return Colors.transparent; // Pas d'effet au survol
+                                    }
+                                    return null; // Laisser les autres états par défaut
+                                  },
+                                ),
+                              ),
                               child: Row(
                                 children: [
                                   Icon(
                                     Icons.subdirectory_arrow_right,
                                     color:
-                                        context.read<SwitchPageCubit>().state.selectedPage == 5 ? Colors.white : Colors.grey.withValues(alpha: 0.2),
+                                        context.read<SwitchPageCubit>().state.selectedPage == 2 ? Colors.white : Colors.grey.withValues(alpha: 0.2),
                                   ),
                                   SizedBox(width: 5),
                                   SizedBox(
@@ -161,103 +228,139 @@ class DrawerDashboard extends StatelessWidget {
                       ),
                     )
                   : SizedBox(),
-              Container(
-                padding: EdgeInsets.symmetric(vertical: 10),
-                width: Const.screenWidth(context) * 0.19,
-                height: 35,
-                decoration: BoxDecoration(
-                  color: context.read<SwitchPageCubit>().state.selectedPage == 3 ? Theme.of(context).colorScheme.primary : Colors.white,
-                ),
-                child: TextButton(
-                  onPressed: () {
-                    context.read<SwitchPageCubit>().switchPage(3);
-                    context.go('/historiques');
-                  },
-                  child: Row(
-                    children: [
-                      Icon(
-                        Icons.history,
-                        color: context.read<SwitchPageCubit>().state.selectedPage == 3 ? Colors.white : Colors.grey.withValues(alpha: 0.2),
+              roleId == 1
+                  ? Container(
+                      padding: EdgeInsets.symmetric(vertical: 10),
+                      width: Const.screenWidth(context) * 0.19,
+                      height: 35,
+                      decoration: BoxDecoration(
+                        color: context.read<SwitchPageCubit>().state.selectedPage == 3 ? Theme.of(context).colorScheme.primary : Colors.white,
                       ),
-                      SizedBox(width: 5),
-                      Text(
-                        'Historiques',
-                        style: Theme.of(context).textTheme.displayMedium!.copyWith(
-                              color: context.read<SwitchPageCubit>().state.selectedPage == 3 ? Colors.white : Colors.black,
+                      child: TextButton(
+                        onPressed: () {
+                          context.read<SwitchPageCubit>().switchPage(3);
+                          context.go('/historiques');
+                        },
+                        style: ButtonStyle(
+                          overlayColor: MaterialStateProperty.resolveWith<Color?>(
+                            (Set<MaterialState> states) {
+                              if (states.contains(MaterialState.hovered)) {
+                                return Colors.transparent; // Pas d'effet au survol
+                              }
+                              return null; // Laisser les autres états par défaut
+                            },
+                          ),
+                        ),
+                        child: Row(
+                          children: [
+                            Icon(
+                              Icons.history,
+                              color: context.read<SwitchPageCubit>().state.selectedPage == 3 ? Colors.white : Colors.grey.withValues(alpha: 0.2),
                             ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-              Container(
-                padding: EdgeInsets.symmetric(vertical: 10),
-                width: Const.screenWidth(context) * 0.19,
-                height: 35,
-                decoration: BoxDecoration(
-                  color: context.read<SwitchPageCubit>().state.selectedPage == 4 ? Theme.of(context).colorScheme.primary : Colors.white,
-                ),
-                child: TextButton(
-                  onPressed: () {
-                    context.read<SwitchPageCubit>().switchPage(4);
-                    context.go('/rapports');
-                  },
-                  child: Row(
-                    children: [
-                      Icon(
-                        Icons.history,
-                        color: context.read<SwitchPageCubit>().state.selectedPage == 4 ? Colors.white : Colors.grey.withValues(alpha: 0.2),
-                      ),
-                      SizedBox(width: 5),
-                      Text(
-                        'Rapports',
-                        style: Theme.of(context).textTheme.displayMedium!.copyWith(
-                              color: context.read<SwitchPageCubit>().state.selectedPage == 4 ? Colors.white : Colors.black,
+                            SizedBox(width: 5),
+                            Text(
+                              'Historiques',
+                              style: Theme.of(context).textTheme.displayMedium!.copyWith(
+                                    color: context.read<SwitchPageCubit>().state.selectedPage == 3 ? Colors.white : Colors.black,
+                                  ),
                             ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-              Container(
-                padding: EdgeInsets.symmetric(vertical: 10),
-                width: Const.screenWidth(context) * 0.19,
-                height: 35,
-                decoration: BoxDecoration(
-                  color: context.read<SwitchPageCubit>().state.selectedPage == 6
-                      ? Theme.of(context).colorScheme.primary
-                      : context.read<SwitchPageCubit>().state.selectedPage == 7
-                          ? Colors.white
-                          : context.read<SwitchPageCubit>().state.selectedPage == 8
-                              ? Colors.white
-                              : context.read<SwitchPageCubit>().state.selectedPage == 8
-                                  ? Theme.of(context).colorScheme.primary
-                                  : Colors.white,
-                ),
-                child: TextButton(
-                  onPressed: () {
-                    context.read<SwitchPageCubit>().switchPage(6);
-                  },
-                  child: Row(
-                    children: [
-                      Icon(
-                        Icons.group,
-                        color: context.read<SwitchPageCubit>().state.selectedPage == 6 ? Colors.white : Colors.grey.withValues(alpha: 0.2),
-                      ),
-                      SizedBox(width: 5),
-                      SizedBox(
-                        width: Const.screenWidth(context) * 0.1,
-                        child: Text(
-                          'Collaborateurs',
-                          style: Theme.of(context).textTheme.displayMedium!.copyWith(
-                                color: context.read<SwitchPageCubit>().state.selectedPage == 6 ? Colors.white : Colors.black,
-                              ),
+                          ],
                         ),
                       ),
-                    ],
-                  ),
-                ),
-              ),
+                    )
+                  : SizedBox(),
+              roleId == 1
+                  ? Container(
+                      padding: EdgeInsets.symmetric(vertical: 10),
+                      width: Const.screenWidth(context) * 0.19,
+                      height: 35,
+                      decoration: BoxDecoration(
+                        color: context.read<SwitchPageCubit>().state.selectedPage == 4 ? Theme.of(context).colorScheme.primary : Colors.white,
+                      ),
+                      child: TextButton(
+                        onPressed: () {
+                          context.read<SwitchPageCubit>().switchPage(4);
+                          context.go('/rapports');
+                        },
+                        style: ButtonStyle(
+                          overlayColor: MaterialStateProperty.resolveWith<Color?>(
+                            (Set<MaterialState> states) {
+                              if (states.contains(MaterialState.hovered)) {
+                                return Colors.transparent; // Pas d'effet au survol
+                              }
+                              return null; // Laisser les autres états par défaut
+                            },
+                          ),
+                        ),
+                        child: Row(
+                          children: [
+                            Icon(
+                              Icons.history,
+                              color: context.read<SwitchPageCubit>().state.selectedPage == 4 ? Colors.white : Colors.grey.withValues(alpha: 0.2),
+                            ),
+                            SizedBox(width: 5),
+                            Text(
+                              'Rapports',
+                              style: Theme.of(context).textTheme.displayMedium!.copyWith(
+                                    color: context.read<SwitchPageCubit>().state.selectedPage == 4 ? Colors.white : Colors.black,
+                                  ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    )
+                  : SizedBox(),
+              roleId == 1
+                  ? Container(
+                      padding: EdgeInsets.symmetric(vertical: 10),
+                      width: Const.screenWidth(context) * 0.19,
+                      height: 35,
+                      decoration: BoxDecoration(
+                        color: context.read<SwitchPageCubit>().state.selectedPage == 6
+                            ? Theme.of(context).colorScheme.primary
+                            : context.read<SwitchPageCubit>().state.selectedPage == 7
+                                ? Colors.white
+                                : context.read<SwitchPageCubit>().state.selectedPage == 8
+                                    ? Colors.white
+                                    : context.read<SwitchPageCubit>().state.selectedPage == 8
+                                        ? Theme.of(context).colorScheme.primary
+                                        : Colors.white,
+                      ),
+                      child: TextButton(
+                        onPressed: () {
+                          context.read<SwitchPageCubit>().switchPage(6);
+                        },
+                        style: ButtonStyle(
+                          overlayColor: MaterialStateProperty.resolveWith<Color?>(
+                            (Set<MaterialState> states) {
+                              if (states.contains(MaterialState.hovered)) {
+                                return Colors.transparent; // Pas d'effet au survol
+                              }
+                              return null; // Laisser les autres états par défaut
+                            },
+                          ),
+                        ),
+                        child: Row(
+                          children: [
+                            Icon(
+                              Icons.group,
+                              color: context.read<SwitchPageCubit>().state.selectedPage == 6 ? Colors.white : Colors.grey.withValues(alpha: 0.2),
+                            ),
+                            SizedBox(width: 5),
+                            SizedBox(
+                              width: Const.screenWidth(context) * 0.1,
+                              child: Text(
+                                'Collaborateurs',
+                                style: Theme.of(context).textTheme.displayMedium!.copyWith(
+                                      color: context.read<SwitchPageCubit>().state.selectedPage == 6 ? Colors.white : Colors.black,
+                                    ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    )
+                  : SizedBox(),
               context.read<SwitchPageCubit>().state.selectedPage == 6 ||
                       context.read<SwitchPageCubit>().state.selectedPage == 7 ||
                       context.read<SwitchPageCubit>().state.selectedPage == 8
@@ -277,6 +380,16 @@ class DrawerDashboard extends StatelessWidget {
                                 context.read<SwitchPageCubit>().switchPage(7);
                                 context.go('/collaborateur/List_collaborateurs');
                               },
+                              style: ButtonStyle(
+                                overlayColor: MaterialStateProperty.resolveWith<Color?>(
+                                  (Set<MaterialState> states) {
+                                    if (states.contains(MaterialState.hovered)) {
+                                      return Colors.transparent; // Pas d'effet au survol
+                                    }
+                                    return null; // Laisser les autres états par défaut
+                                  },
+                                ),
+                              ),
                               child: Row(
                                 children: [
                                   Icon(
@@ -310,6 +423,16 @@ class DrawerDashboard extends StatelessWidget {
                                 context.read<SwitchPageCubit>().switchPage(8);
                                 context.go('/collaborateur/nouveau_collaborateur');
                               },
+                              style: ButtonStyle(
+                                overlayColor: MaterialStateProperty.resolveWith<Color?>(
+                                  (Set<MaterialState> states) {
+                                    if (states.contains(MaterialState.hovered)) {
+                                      return Colors.transparent; // Pas d'effet au survol
+                                    }
+                                    return null; // Laisser les autres états par défaut
+                                  },
+                                ),
+                              ),
                               child: Row(
                                 children: [
                                   Icon(

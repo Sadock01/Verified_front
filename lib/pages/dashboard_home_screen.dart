@@ -1,5 +1,7 @@
+import 'package:doc_authentificator/cubits/collaborateurs/collaborateurs_cubit.dart';
 import 'package:doc_authentificator/cubits/switch_page/switch_page_cubit.dart';
 import 'package:doc_authentificator/cubits/switch_page/switch_page_state.dart';
+import 'package:doc_authentificator/models/collaborateurs_model.dart';
 import 'package:doc_authentificator/pages/screens/document/screen/list_document_screen.dart';
 import 'package:doc_authentificator/pages/screens/collaborateur/screen/new_collaborateur_screen.dart';
 import 'package:doc_authentificator/pages/screens/document/screen/new_document_screen.dart';
@@ -33,6 +35,7 @@ class _DashboardHomeScreenState extends State<DashboardHomeScreen> {
   void initState() {
     super.initState();
     _checkAuthentication();
+    context.read<CollaborateursCubit>().getCustomerDetails();
   }
 
   void _checkAuthentication() async {

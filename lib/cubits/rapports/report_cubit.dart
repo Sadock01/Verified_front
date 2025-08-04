@@ -43,6 +43,37 @@ class ReportCubit extends Cubit<ReportState> {
     }
   }
 
+  Future<void> getAllDocReport(int documentId,int page) async {
+    try {
+      // Mettre l'état en "loading"
+      emit(
+          state.copyWith(reportStatus: ReportStatus.loading, errorMessage: ''));
+
+      // Appel au service pour récupérer les données
+      final response = await ReportService.getAllDocumentReport(documentId,page);
+
+      // Mapper les données en objets ReportModel
+      log("Voici je teste encore l'intestable");
+      final List<ReportModel> reports = response['data'];
+
+      // Mettre l'état avec les rapports récupérés
+      emit(state.copyWith(
+        reportStatus: ReportStatus.loaded,
+        listReports: reports,
+        currentPage: page,
+        lastPage: response['last_page'],
+        errorMessage: '',
+      ));
+    } catch (e) {
+      log("$e");
+      // En cas d'erreur, mettre l'état en "error" avec un message
+      emit(state.copyWith(
+        reportStatus: ReportStatus.error,
+        errorMessage: e.toString(),
+      ));
+    }
+  }
+
   void goToNextPage() {
     if (state.currentPage < state.lastPage) {
       final nextPage = state.currentPage + 1;

@@ -11,6 +11,7 @@ import 'package:doc_authentificator/cubits/verification/verification_cubit.dart'
 import 'package:doc_authentificator/pages/dashboard_home_screen.dart';
 import 'package:doc_authentificator/pages/screens/authentification/screen/login_page.dart';
 import 'package:doc_authentificator/pages/screens/collaborateur/screen/new_collaborateur_screen.dart';
+import 'package:doc_authentificator/pages/screens/document/screen/document_details_screen.dart';
 import 'package:doc_authentificator/pages/screens/document/screen/list_document_screen.dart';
 import 'package:doc_authentificator/pages/screens/document/screen/new_document_screen.dart';
 import 'package:doc_authentificator/pages/screens/rapport/Rapports_screen.dart';
@@ -92,14 +93,14 @@ final GoRouter _router = GoRouter(
     GoRoute(
       path: '/collaborateur/nouveau_collaborateur',
       builder: (BuildContext context, GoRouterState state) {
-        context.read<SwitchPageCubit>().switchPage(8); // Sélectionner la page Nouveau document
+        context.read<SwitchPageCubit>().switchPage(8);
         return const NewCollaborateurScreen();
       },
     ),
     GoRoute(
       path: '/rapports',
       builder: (BuildContext context, GoRouterState state) {
-        context.read<SwitchPageCubit>().switchPage(4); // Sélectionner la page Rapports
+        context.read<SwitchPageCubit>().switchPage(4);
         return const RapportsScreen();
       },
     ),
@@ -110,18 +111,14 @@ final GoRouter _router = GoRouter(
       },
     ),
     GoRoute(
-      path: '/document/update/:id',
-      builder: (BuildContext context, GoRouterState state) {
-        //  context
-        //     .read<SwitchPageCubit>()
-        //     .switchPage(5);
-        final documentId = int.parse(state.pathParameters['id']!);
-
-        return UpdateDocumentScreen(
-          documentId: documentId,
+      path: '/document/view/:identifier',
+      builder: (context, state) {
+        final identifier = state.pathParameters['identifier']!;
+        return DocumentDetailsScreen(
+          documentId: 1,
         );
       },
-    )
+    ),
   ],
 );
 
@@ -184,7 +181,7 @@ class MyApp extends StatelessWidget {
               create: (context) => ReportCubit(
                 reportRepository: context.read<ReportRepository>(),
               )..getAllReports(1),
-            )
+            ),
           ],
           child: Builder(builder: (context) {
             WidgetsBinding.instance.addPostFrameCallback((_) {});

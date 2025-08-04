@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../../const/const.dart';
+import '../../../../cubits/collaborateurs/collaborateurs_cubit.dart';
 import '../../../../utils/shared_preferences_utils.dart';
 import '../../../../widgets/appbar_dashboard.dart';
 import '../../../../widgets/drawer_dashboard.dart';
@@ -27,6 +29,7 @@ class _StatistiquesScreenState extends State<StatistiquesScreen> {
     super.initState();
     _statsFuture = fetchStats();
     _checkAuthentication();
+    context.read<CollaborateursCubit>().getCustomerDetails();
   }
 
   void _checkAuthentication() async {

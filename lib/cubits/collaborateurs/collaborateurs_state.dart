@@ -13,7 +13,7 @@ enum CollaborateurStatus {
 class CollaborateursState extends Equatable {
   final CollaborateurStatus collaborateurStatus;
   final List<CollaborateursModel> listCollaborateurs;
-  final DocumentsModel? selectedCollaborateur;
+  final CollaborateursModel? selectedCollaborateur;
   final int currentPage;
   final int lastPage;
   final String? searchKey;
@@ -44,7 +44,7 @@ class CollaborateursState extends Equatable {
   CollaborateursState copyWith({
     CollaborateurStatus? collaborateurStatus,
     List<CollaborateursModel>? listCollaborateurs,
-    DocumentsModel? selectedCollaborateur,
+    CollaborateursModel? selectedCollaborateur,
     int? currentPage,
     int? lastPage,
     String? errorMessage,
@@ -53,8 +53,7 @@ class CollaborateursState extends Equatable {
     return CollaborateursState(
       collaborateurStatus: collaborateurStatus ?? this.collaborateurStatus,
       listCollaborateurs: listCollaborateurs ?? this.listCollaborateurs,
-      selectedCollaborateur:
-          selectedCollaborateur ?? this.selectedCollaborateur,
+      selectedCollaborateur: selectedCollaborateur ?? this.selectedCollaborateur,
       errorMessage: errorMessage ?? this.errorMessage,
       currentPage: currentPage ?? this.currentPage,
       lastPage: lastPage ?? this.lastPage,

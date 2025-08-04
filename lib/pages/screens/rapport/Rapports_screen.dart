@@ -205,12 +205,7 @@ class _RapportsScreenState extends State<RapportsScreen> {
                                 ],
                               )
                             else
-                              Center(
-                                child: Text(
-                                  "Erreur inattendue",
-                                  style: Theme.of(context).textTheme.labelLarge,
-                                ),
-                              )
+                              Center()
                           ],
                         )
                       ]),

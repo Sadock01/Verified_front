@@ -11,18 +11,14 @@ class TypeService {
 
   static Future<List<TypeDocModel>> getAllType() async {
     final token = SharedPreferencesUtils.getString('auth_token');
-    api.options.headers['AUTHORIZATION'] =
-        'Bearer $token';
+    api.options.headers['AUTHORIZATION'] = 'Bearer $token';
     final response = await api.get("types", queryParameters: {"page": 1});
-    log("Il a commencé à récupérer les types");
+    log("Il a commencé à récupérer les types: $response");
     if (response.statusCode == 200 || response.statusCode == 201) {
       List<dynamic> allTypeMap = response.data['data'];
       // final int currentPage = response.data['current_page'];
       // final int totalPages = response.data['last_page'];
-      return allTypeMap
-          .map((typeMap) =>
-              TypeDocModel.fromJson(typeMap as Map<String, dynamic>))
-          .toList();
+      return allTypeMap.map((typeMap) => TypeDocModel.fromJson(typeMap as Map<String, dynamic>)).toList();
     } else {
       throw Exception("Echec lors de la recuperation des articles");
     }
@@ -30,11 +26,9 @@ class TypeService {
 
   static Future<Map<String, dynamic>> addType(TypeDocModel typeDocModel) async {
     final token = SharedPreferencesUtils.getString('auth_token');
-    api.options.headers['AUTHORIZATION'] =
-        'Bearer $token';
+    api.options.headers['AUTHORIZATION'] = 'Bearer $token';
     log("il est la?? ${typeDocModel.toJson()}");
-    final response =
-        await api.post("/types/create", data: typeDocModel.toJson());
+    final response = await api.post("/types/create", data: typeDocModel.toJson());
     log("Il a commencé à ajouter un type");
     log("$response");
     if (response.statusCode == 200 || response.statusCode == 201) {

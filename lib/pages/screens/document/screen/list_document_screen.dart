@@ -176,8 +176,8 @@ class _ListDocumentScreenState extends State<ListDocumentScreen> {
                                                       }
                                                     },
                                                     itemBuilder: (context) => [
-                                                      PopupMenuItem(value: "edit", child: Text("Modifier document")),
-                                                      PopupMenuItem(value: "view", child: Text("Afficher document")),
+                                                      PopupMenuItem(value: "edit", child: Text("Modifier document",style: Theme.of(context).textTheme.labelSmall,)),
+                                                      PopupMenuItem(value: "view", child: Text("Afficher document",style: Theme.of(context).textTheme.labelSmall)),
                                                     ],
                                                     child: MouseRegion(
                                                       cursor: SystemMouseCursors.click,

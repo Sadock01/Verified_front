@@ -8,16 +8,14 @@ import '../utils/shared_preferences_utils.dart';
 
 class AuthentificationService {
   static Dio api = ApiConfig.api();
-  static Future<Map<String, dynamic>> login(
-      String email, String password) async {
+  static Future<Map<String, dynamic>> login(String email, String password) async {
     try {
       final response = await api.post("login", data: {
         "email": email,
         "password": password,
       });
       log('voici le status_code: ${response.data['status_code']}');
-      if (response.data['status_code'] == 200 ||
-          response.data['status_code'] == 201) {
+      if (response.data['status_code'] == 200 || response.data['status_code'] == 201) {
         log("Connexion réussie : $response");
         final token = response.data['access_token'];
         await SharedPreferencesUtils.setString('auth_token', token);

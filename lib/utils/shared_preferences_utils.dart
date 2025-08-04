@@ -7,19 +7,6 @@ class SharedPreferencesUtils {
     _prefs = await SharedPreferences.getInstance();
   }
 
-  static setLimit(double limit) async {
-    if (_prefs == null) return;
-    await _prefs!.setDouble("spending_limit", limit);
-  }
-
-  static Future<void> setFirstTimeFlag(bool isFirstTime) async {
-    await _prefs.setBool('isFirstTime', isFirstTime);
-  }
-
-  static double getLimit() {
-    return _prefs?.getDouble("spending_limit") ?? 500.0;
-  }
-
   static bool isFirstTime() {
     return _prefs.getBool('isFirstTime') ?? true;
   }
