@@ -190,7 +190,7 @@ class _DrawerDashboardState extends State<DrawerDashboard> {
                             child: TextButton(
                               onPressed: () {
                                 context.read<SwitchPageCubit>().switchPage(2);
-                                context.go('/document/nouveau_document');
+                                context.go('/document/nouveau-document');
                               },
                               style: ButtonStyle(
                                 overlayColor: MaterialStateProperty.resolveWith<Color?>(
