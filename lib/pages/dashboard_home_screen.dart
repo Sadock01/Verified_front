@@ -7,7 +7,7 @@ import 'package:doc_authentificator/pages/screens/collaborateur/screen/new_colla
 import 'package:doc_authentificator/pages/screens/document/screen/new_document_screen.dart';
 import 'package:doc_authentificator/pages/screens/rapport/Rapports_screen.dart';
 
-import 'package:doc_authentificator/pages/screens/history_screen.dart';
+import 'package:doc_authentificator/pages/screens/history/screens/history_screen.dart';
 import 'package:doc_authentificator/pages/screens/collaborateur/screen/list_collaborateur_screen.dart';
 
 import 'package:doc_authentificator/pages/screens/dashboard/screen/statistiques_screen.dart';

@@ -16,7 +16,7 @@ import 'package:doc_authentificator/pages/screens/document/screen/list_document_
 import 'package:doc_authentificator/pages/screens/document/screen/new_document_screen.dart';
 import 'package:doc_authentificator/pages/screens/rapport/Rapports_screen.dart';
 
-import 'package:doc_authentificator/pages/screens/history_screen.dart';
+import 'package:doc_authentificator/pages/screens/history/screens/history_screen.dart';
 import 'package:doc_authentificator/pages/screens/collaborateur/screen/list_collaborateur_screen.dart';
 import 'package:doc_authentificator/pages/screens/document/screen/update_document_screen.dart';
 import 'package:doc_authentificator/pages/screens/dashboard/screen/statistiques_screen.dart';
@@ -98,6 +98,15 @@ final GoRouter _router = GoRouter(
       },
     ),
     GoRoute(
+      path: '/collaborateur/details/:identifier',
+      builder: (context, state) {
+        final identifier = state.pathParameters['identifier']!;
+        return UpdateDocumentScreen(
+          documentId: 1,
+        );
+      },
+    ),
+    GoRoute(
       path: '/rapports',
       builder: (BuildContext context, GoRouterState state) {
         context.read<SwitchPageCubit>().switchPage(4);
@@ -111,7 +120,7 @@ final GoRouter _router = GoRouter(
       },
     ),
     GoRoute(
-      path: '/document/update/:identifier',
+      path: '/document/details/:identifier',
       builder: (context, state) {
         final identifier = state.pathParameters['identifier']!;
         return UpdateDocumentScreen(

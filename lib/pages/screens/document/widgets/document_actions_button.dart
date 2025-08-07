@@ -39,7 +39,7 @@ class DocumentActionButtons extends StatelessWidget {
               color: Colors.black,
             ),
             onPressed: () {
-              _showDeleteConfirmation(context);
+              context.go('/document/view/${document.identifier}');
             },
           ),
         ),
@@ -47,28 +47,28 @@ class DocumentActionButtons extends StatelessWidget {
     );
   }
 
-  void _showDeleteConfirmation(BuildContext context) {
-    showDialog(
-      context: context,
-      builder: (ctx) => AlertDialog(
-        title: const Text('Confirmer la suppression'),
-        content: Text('Voulez-vous vraiment supprimer le document "${document.identifier}" ?'),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(ctx).pop(),
-            child: const Text('Annuler'),
-          ),
-          ElevatedButton(
-            style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
-            onPressed: () {
-              Navigator.of(ctx).pop();
-              // TODO: Ajouter la logique de suppression (via Cubit par ex.)
-              print("Suppression confirmée pour ${document.id}");
-            },
-            child: const Text('Supprimer'),
-          ),
-        ],
-      ),
-    );
-  }
+  // void _showDeleteConfirmation(BuildContext context) {
+  //   showDialog(
+  //     context: context,
+  //     builder: (ctx) => AlertDialog(
+  //       title: const Text('Confirmer la suppression'),
+  //       content: Text('Voulez-vous vraiment supprimer le document "${document.identifier}" ?'),
+  //       actions: [
+  //         TextButton(
+  //           onPressed: () => Navigator.of(ctx).pop(),
+  //           child: const Text('Annuler'),
+  //         ),
+  //         ElevatedButton(
+  //           style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
+  //           onPressed: () {
+  //             Navigator.of(ctx).pop();
+  //             // TODO: Ajouter la logique de suppression (via Cubit par ex.)
+  //             print("Suppression confirmée pour ${document.id}");
+  //           },
+  //           child: const Text('Supprimer'),
+  //         ),
+  //       ],
+  //     ),
+  //   );
+  // }
 }

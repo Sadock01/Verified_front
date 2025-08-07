@@ -70,7 +70,7 @@ class _DocumentDetailsScreenState extends State<DocumentDetailsScreen> {
                                   borderRadius: BorderRadius.circular(5),
                                 ),
                                 child: Text(
-                                  "Nouveau Collaborateur",
+                                  "Details Document",
                                   style: Theme.of(context).textTheme.displayMedium!.copyWith(color: Colors.white),
                                 ),
                               ),
