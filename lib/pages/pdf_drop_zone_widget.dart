@@ -67,7 +67,12 @@ class _PdfDropZoneState extends State<PdfDropZone> {
                   ? Column(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        Icon(Icons.cloud_upload_outlined, size: 48, color: Colors.grey[400]),
+                        Image.asset(
+                          "assets/images/telecharger.png",
+                          width: 50,
+                          height: 50,
+                        ),
+                        // Icon(Icons.cloud_upload_outlined, size: 48, color: Colors.grey[400]),
                         SizedBox(height: 12),
                         Text(
                           "Glissez-déposez votre fichier PDF ici,\nou cliquez pour sélectionner",

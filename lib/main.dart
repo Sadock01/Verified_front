@@ -70,7 +70,7 @@ final GoRouter _router = GoRouter(
       },
     ),
     GoRoute(
-      path: '/document/nouveau_document',
+      path: '/document/nouveau-document',
       builder: (BuildContext context, GoRouterState state) {
         context.read<SwitchPageCubit>().switchPage(2); // Sélectionner la page Nouveau document
         return const NewDocumentScreen();
@@ -108,6 +108,15 @@ final GoRouter _router = GoRouter(
       path: '/',
       builder: (BuildContext context, GoRouterState state) {
         return const UserVerifyPage();
+      },
+    ),
+    GoRoute(
+      path: '/document/update/:identifier',
+      builder: (context, state) {
+        final identifier = state.pathParameters['identifier']!;
+        return UpdateDocumentScreen(
+          documentId: 1,
+        );
       },
     ),
     GoRoute(
