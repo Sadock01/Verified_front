@@ -52,7 +52,7 @@ class DocumentService {
     log("il est la?? ${documentsModel.toJson()}");
     final response = await api.post("/documents/create", data: documentsModel.toJson());
     log("Il a commencé à ajouter un document");
-    // log("$response");
+    log("$response");
     if (response.statusCode == 200 || response.statusCode == 201) {
       return {
         'status_code': response.data['status_code'],
@@ -61,7 +61,7 @@ class DocumentService {
       };
     } else {
       log("${response.statusCode}");
-      log("$response");
+      log("la response du backend $response");
       throw Exception("Echec lors de l'ajout d'un document");
     }
   }

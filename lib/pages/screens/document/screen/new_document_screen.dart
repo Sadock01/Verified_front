@@ -19,6 +19,7 @@ import 'package:doc_authentificator/widgets/drawer_dashboard.dart';
 
 import 'dart:typed_data';
 
+import '../../../../models/documents_model.dart';
 import '../../../../utils/shared_preferences_utils.dart';
 import '../../../pdf_drop_zone_widget.dart';
 import '../widgets/choose_file_widget.dart';
@@ -142,14 +143,23 @@ class _NewDocumentScreenState extends State<NewDocumentScreen> with SingleTicker
                             extractedEntities != null
                                 ? ExtractedDataReviewForm(
                                     extractedData: extractedEntities!,
-                                    onSubmit: () {
-                                      ElegantNotification.info(
-                                        description: Text(
-                                          "Fonction de soumission non encore implémentée.",
-                                          style: Theme.of(context).textTheme.labelSmall,
-                                        ),
-                                      ).show(context);
-                                    })
+                                    documentIdentifier: _identifierController,
+                                    onSubmit: ({
+                                      required String identifier,
+                                      required String description,
+                                      required String typeCertificat,
+                                      required String beneficiaire,
+                                    }) {
+                                      log("Enregistrement document...: $description");
+                                      context.read<DocumentCubit>().addDocument(
+                                            DocumentsModel(
+                                                identifier: identifier,
+                                                descriptionDocument: description,
+                                                typeName: typeCertificat,
+                                                beneficiaire: beneficiaire),
+                                          );
+                                    },
+                                  )
                                 : _buildUploadForm(context, state)
                           ],
                         ),
@@ -514,16 +524,28 @@ class _NewDocumentScreenState extends State<NewDocumentScreen> with SingleTicker
                   //   _isUploading = false; // ✅ Fin du chargement
                   // });
                   final data = response['data'];
+                  // final firstItem = response['data']?[0]['entities'];
 
-                  if (data is Map<String, dynamic>) {
-                    final extracted = data['entities'] as Map<String, dynamic>?;
+                  if (data is List && data.isNotEmpty) {
+                    // On récupère le premier élément de la liste
+                    final firstItem = data[0];
+                    if (firstItem is Map<String, dynamic>) {
+                      final extracted = firstItem['entities'] as Map<String, dynamic>?;
 
-                    setState(() {
-                      extractedEntities = extracted;
-                      _isUploading = false;
-                    });
-                  } else if (data is List) {
-                    // Cas Excel : ne pas afficher les entités extraites
+                      setState(() {
+                        extractedEntities = extracted;
+                        log("Extracted entities: $extractedEntities");
+                        _isUploading = false; // Fin du chargement
+                      });
+                    } else {
+                      // Cas où le premier élément n'est pas un Map
+                      setState(() {
+                        extractedEntities = null;
+                        _isUploading = false;
+                      });
+                    }
+                  } else {
+                    // Cas où data n'est pas une liste ou est vide
                     setState(() {
                       extractedEntities = null;
                       _isUploading = false;

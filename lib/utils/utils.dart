@@ -83,7 +83,7 @@ class Utils {
                     ...reasons.entries.map((entry) => Align(
                           alignment: Alignment.centerLeft,
                           child: Text(
-                            "- ${_capitalize(entry.key)} : ${entry.value}",
+                            "${_capitalize(entry.key)} : ${entry.value}",
                             style: Theme.of(context).textTheme.labelMedium?.copyWith(fontWeight: FontWeight.bold),
                           ),
                         )),
@@ -95,7 +95,7 @@ class Utils {
                       alignment: Alignment.centerLeft,
                       child: Text(
                         "Détails du document :",
-                        style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                        style: Theme.of(context).textTheme.labelMedium?.copyWith(
                               fontWeight: FontWeight.bold,
                               fontSize: 16,
                             ),
@@ -117,18 +117,16 @@ class Utils {
                             padding: const EdgeInsets.symmetric(vertical: 6),
                             child: RichText(
                               text: TextSpan(
-                                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                                style: Theme.of(context).textTheme.labelMedium?.copyWith(
                                       fontSize: 14,
                                       color: Colors.black,
                                     ),
                                 children: [
                                   TextSpan(
                                     text: "${_capitalize(entry.key)} : ",
-                                    style: const TextStyle(fontWeight: FontWeight.bold),
+                                    style: Theme.of(context).textTheme.labelMedium?.copyWith(fontWeight: FontWeight.bold),
                                   ),
-                                  TextSpan(
-                                    text: "${entry.value}",
-                                  ),
+                                  TextSpan(text: "${entry.value}", style: Theme.of(context).textTheme.labelMedium),
                                 ],
                               ),
                             ),

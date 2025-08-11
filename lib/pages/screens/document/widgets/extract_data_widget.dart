@@ -3,11 +3,18 @@ import 'package:flutter/material.dart';
 
 class ExtractedDataReviewForm extends StatefulWidget {
   final Map<String, dynamic> extractedData;
-  final VoidCallback onSubmit;
+  final TextEditingController? documentIdentifier;
+  final void Function({
+    required String identifier,
+    required String description,
+    required String typeCertificat,
+    required String beneficiaire,
+  }) onSubmit;
 
   const ExtractedDataReviewForm({
     Key? key,
     required this.extractedData,
+    this.documentIdentifier,
     required this.onSubmit,
   }) : super(key: key);
 
@@ -19,10 +26,13 @@ class _ExtractedDataReviewFormState extends State<ExtractedDataReviewForm> {
   late TextEditingController typeController;
   late TextEditingController descriptionController;
   late TextEditingController beneficiaireController;
+  late TextEditingController identifierController;
 
   @override
   void initState() {
     super.initState();
+    identifierController = widget.documentIdentifier!;
+
     typeController = TextEditingController(
       text: (widget.extractedData['type_certificat'] as List?)?.join(', ') ?? '',
     );
@@ -36,6 +46,7 @@ class _ExtractedDataReviewFormState extends State<ExtractedDataReviewForm> {
 
   @override
   void dispose() {
+    identifierController.dispose();
     typeController.dispose();
     descriptionController.dispose();
     beneficiaireController.dispose();
@@ -65,7 +76,7 @@ class _ExtractedDataReviewFormState extends State<ExtractedDataReviewForm> {
             children: [
               Text(
                 "Vérification des données extraites",
-                style: Theme.of(context).textTheme.headlineMedium,
+                style: Theme.of(context).textTheme.labelLarge,
               ),
               const SizedBox(height: 25),
 
@@ -74,10 +85,15 @@ class _ExtractedDataReviewFormState extends State<ExtractedDataReviewForm> {
                 child: ListView(
                   padding: EdgeInsets.zero,
                   children: [
-                    LabeledTextField(label: "Identifiant du document", controller: typeController),
+                    Row(
+                      children: [
+                        Expanded(flex: 2, child: LabeledTextField(label: "Identifiant du document", controller: identifierController)),
+                        SizedBox(width: 10),
+                        Expanded(flex: 2, child: LabeledTextField(label: "Bénéficiaire", controller: beneficiaireController)),
+                      ],
+                    ),
                     LabeledTextField(label: "Type de certificat", controller: typeController),
                     LabeledTextField(label: "Description", controller: descriptionController, maxLines: 4),
-                    LabeledTextField(label: "Bénéficiaire", controller: beneficiaireController),
                   ],
                 ),
               ),
@@ -88,7 +104,14 @@ class _ExtractedDataReviewFormState extends State<ExtractedDataReviewForm> {
                 width: double.infinity,
                 child: ElevatedButton.icon(
                   icon: const Icon(Icons.check, color: Colors.white),
-                  onPressed: widget.onSubmit,
+                  onPressed: () {
+                    widget.onSubmit(
+                      identifier: identifierController.text,
+                      description: descriptionController.text,
+                      typeCertificat: typeController.text,
+                      beneficiaire: beneficiaireController.text,
+                    );
+                  },
                   label: Text(
                     "Valider et enregistrer",
                     style: Theme.of(context).textTheme.labelMedium!.copyWith(color: Colors.white),

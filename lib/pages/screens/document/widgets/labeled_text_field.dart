@@ -19,10 +19,21 @@ class LabeledTextField extends StatelessWidget {
       child: TextFormField(
         controller: controller,
         maxLines: maxLines,
+        style: Theme.of(context).textTheme.labelSmall,
         decoration: InputDecoration(
-          labelText: label,
-          border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(8),
+          hintText: label,
+          hintStyle: Theme.of(context).textTheme.labelSmall,
+          enabledBorder: OutlineInputBorder(
+            borderSide: BorderSide(color: Theme.of(context).colorScheme.primary),
+            borderRadius: BorderRadius.circular(5),
+          ),
+          focusedBorder: OutlineInputBorder(
+            borderSide: BorderSide(color: Theme.of(context).colorScheme.primary),
+            borderRadius: BorderRadius.circular(5),
+          ),
+          errorBorder: OutlineInputBorder(
+            borderSide: BorderSide(color: Colors.red),
+            borderRadius: BorderRadius.circular(10),
           ),
         ),
       ),

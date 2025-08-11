@@ -6,7 +6,7 @@ class DocumentsModel extends Equatable {
     required String identifier,
     required String descriptionDocument,
     String? beneficiaire,
-    required int? typeId,
+    int? typeId,
     String? typeName,
   })  : _id = id,
         _identifier = identifier,
@@ -42,17 +42,24 @@ class DocumentsModel extends Equatable {
     return DocumentsModel(
         id: map['id'],
         identifier: map['identifier'],
-        descriptionDocument: map['descriptionDocument'],
+        descriptionDocument: map['description'],
         typeId: map['typeId'],
-        beneficiaire: map[' beneficiaire']);
+        typeName: map['type_name'],
+        beneficiaire: map['beneficiaire']);
   }
 
   Map<String, dynamic> toMap() {
-    return {"id": _id, "identifier": _identifier, "descriptionDocument": _descriptionDocument, "typeId": _typeId, "beneficiaire": _beneficiaire};
+    return {"id": _id, "identifier": _identifier, "description": _descriptionDocument, "typeId": _typeId, "beneficiaire": _beneficiaire};
   }
 
   Map<String, dynamic> toJson() {
-    return {'identifier': _identifier, 'description': _descriptionDocument, 'type_id': _typeId, 'beneficiaire': _beneficiaire};
+    return {
+      'identifier': _identifier,
+      'description': _descriptionDocument,
+      'type_id': _typeId,
+      'type_name': _typeName,
+      'beneficiaire': _beneficiaire
+    };
   }
 
   DocumentsModel copyWith({

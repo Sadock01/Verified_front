@@ -42,18 +42,31 @@ class VerificationService {
 
   static Future<Map<String, dynamic>> verifyDocumentWithFile(
     String identifier,
-    Uint8List pdfBytes, {
+    Uint8List? pdfBytes, {
     String filename = 'document.pdf',
   }) async {
     try {
-      final formData = FormData.fromMap({
+      // final formData = FormData.fromMap({
+      //   'identifier': identifier,
+      //   'file': MultipartFile.fromBytes(
+      //     pdfBytes,
+      //     filename: filename,
+      //     contentType: MediaType('application', 'pdf'),
+      //   ),
+      // });
+      final Map<String, dynamic> data = {
         'identifier': identifier,
-        'file': MultipartFile.fromBytes(
-          pdfBytes,
+      };
+
+      if (pdfBytes != null) {
+        data['file'] = MultipartFile.fromBytes(
+          pdfBytes.toList(),
           filename: filename,
           contentType: MediaType('application', 'pdf'),
-        ),
-      });
+        );
+      }
+
+      final formData = FormData.fromMap(data);
 
       final response = await api.post('/documents/verify', data: formData);
       log("Voici la response de la requête: ${response}");

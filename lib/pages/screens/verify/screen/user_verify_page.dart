@@ -332,15 +332,15 @@ class _UserVerifyPageState extends State<UserVerifyPage> with TickerProviderStat
                             ElevatedButton(
                               onPressed: () async {
                                 if (_formKey.currentState?.validate() ?? false) {
-                                  if (_selectedFileBytes == null) {
-                                    Utils.showVerificationModal(
-                                      context: context,
-                                      isSuccess: false,
-                                      title: "Fichier manquant",
-                                      message: "Veuillez téléverser un fichier PDF pour lancer la vérification.",
-                                    );
-                                    return;
-                                  }
+                                  // if (_selectedFileBytes == null) {
+                                  //   Utils.showVerificationModal(
+                                  //     context: context,
+                                  //     isSuccess: false,
+                                  //     title: "Fichier manquant",
+                                  //     message: "Veuillez téléverser un fichier PDF pour lancer la vérification.",
+                                  //   );
+                                  //   return;
+                                  // }
 
                                   setState(() {
                                     _isLoading = true;
@@ -350,7 +350,7 @@ class _UserVerifyPageState extends State<UserVerifyPage> with TickerProviderStat
                                     final identifier = _identifierController.text;
                                     final response = await VerificationService.verifyDocumentWithFile(
                                       identifier,
-                                      _selectedFileBytes!,
+                                      _selectedFileBytes,
                                       filename: _selectedFileName ?? 'document.pdf',
                                     );
                                     log('🔍 STATUS: ${response['status']}');
@@ -369,6 +369,24 @@ class _UserVerifyPageState extends State<UserVerifyPage> with TickerProviderStat
                                         isSuccess: false,
                                         title: "Échec de Vérification",
                                         message: response['message'] ?? "Le document n'a pas pu être vérifié.",
+                                      );
+                                    } else if (response['status'] == null) {
+                                      Utils.showVerificationModal(
+                                        context: context,
+                                        isSuccess: false,
+                                        title: "Une erreur est survenue",
+                                        message: "Veuillez au besoin contacter le service client.",
+                                      );
+                                    } else if (response['status'] == "mi-authentic") {
+                                      Utils.showVerificationModal(
+                                        context: context,
+                                        isSuccess: true,
+                                        title: "Document Vérifié",
+                                        message: """Document trouvé
+Vous venez d’effectuer une vérification publique limitée basée uniquement sur l’identifiant du document.
+Cette vérification confirme que le document est bien enregistré et authentique dans notre base, mais ne donne pas accès aux détails sensibles.
+
+Pour obtenir une vérification complète avec toutes les métadonnées et informations, merci de téléverser une copie originale du document ou de vous connecter avec un compte autorisé.""",
                                       );
                                     } else {
                                       Utils.showVerificationModal(
