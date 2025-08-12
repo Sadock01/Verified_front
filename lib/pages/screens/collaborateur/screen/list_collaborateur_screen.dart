@@ -39,6 +39,7 @@ class _ListCollaborateurScreenState extends State<ListCollaborateurScreen> {
   Widget build(BuildContext context) {
     return BlocBuilder<CollaborateursCubit, CollaborateursState>(builder: (context, state) {
       return Scaffold(
+        backgroundColor: Colors.grey[200],
         body: Row(
           children: [
             DrawerDashboard(),

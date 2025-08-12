@@ -118,7 +118,7 @@ class DocumentService {
     api.options.headers['AUTHORIZATION'] = 'Bearer $token';
 
     final response = await api.put("documents/edit/document/$documentId", data: documentsModel.toJson());
-    log("$response");
+    log("response update :$response");
     log("Il a commencé à mettre à jour un document");
     if (response.statusCode == 200 || response.statusCode == 201) {
       log("${response.data['message']}");

@@ -1,10 +1,13 @@
 import 'package:doc_authentificator/const/const.dart';
 import 'package:doc_authentificator/cubits/verification/verification_cubit.dart';
 import 'package:doc_authentificator/cubits/verification/verification_state.dart';
+import 'package:doc_authentificator/pages/screens/history/widgets/history_tab_widget.dart';
 import 'package:doc_authentificator/widgets/drawer_dashboard.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 
+import '../../../../utils/shared_preferences_utils.dart';
 import '../../../../widgets/appbar_dashboard.dart';
 
 class HistoryScreen extends StatefulWidget {
@@ -16,9 +19,27 @@ class HistoryScreen extends StatefulWidget {
 
 class _HistoryScreenState extends State<HistoryScreen> {
   @override
+  void initState() {
+    super.initState();
+    _checkAuthentication();
+    Future.delayed(Duration.zero, () {
+      context.read<VerificationCubit>().getAllVerification(1);
+    });
+  }
+
+  void _checkAuthentication() async {
+    final token = SharedPreferencesUtils.getString('auth_token');
+    if (token == null || token.isEmpty) {
+      // Rediriger vers la page de login
+      context.go('/login'); // ou Navigator.of(context).pushReplacementNamed('/login');
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
     return BlocBuilder<VerificationCubit, VerificationState>(builder: (context, state) {
       return Scaffold(
+        backgroundColor: Colors.grey[100],
         body: Row(
           children: [
             DrawerDashboard(),
@@ -26,174 +47,182 @@ class _HistoryScreenState extends State<HistoryScreen> {
               child: Column(
                 children: [
                   AppbarDashboard(),
-                  Flexible(
-                    flex: 8,
-                    child: SingleChildScrollView(
-                      child: Column(children: [
-                        Container(
-                          margin: EdgeInsets.symmetric(vertical: 10, horizontal: 10),
-                          width: Const.screenWidth(context),
-                          height: Const.screenHeight(context) * 0.2,
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(25),
-                            color: Colors.white,
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.grey.withValues(alpha: 0.2),
-                                spreadRadius: 10,
-                                blurRadius: 10,
-                                offset: Offset(0, 3),
-                              ),
-                            ],
-                          ),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: [
-                              SizedBox(height: 5),
-                              // OutlinedButton(
-                              //   style: OutlinedButton.styleFrom(
-                              //     shape: RoundedRectangleBorder(
-                              //         borderRadius: BorderRadius.circular(5)),
-                              //     side: BorderSide(
-                              //         color: Theme.of(context).colorScheme.primary),
-                              //   ),
-                              //   onPressed: () {
-                              //     context.go('/document/nouveau_document');
-                              //   },
-                              //   child: Text(
-                              //     "Nouveau Document +",
-                              //     style: Theme.of(context).textTheme.displayMedium,
-                              //   ),
-                              // )
-                            ],
-                          ),
+                  if (state.verificationStatus == VerificationStatus.loading) ...[
+                    const Center(
+                      child: CircularProgressIndicator(strokeWidth: 3.0),
+                    ),
+                  ] else if (state.verificationStatus == VerificationStatus.error) ...[
+                    const Center(
+                      child: SizedBox(),
+                    ),
+                  ] else if (state.verificationStatus == VerificationStatus.loaded)
+                    Expanded(
+                      child: Container(
+                        padding: EdgeInsets.all(15),
+                        margin: EdgeInsets.only(left: 10, right: 10, top: 10, bottom: 20),
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(10),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.grey.withValues(alpha: 0.2),
+                              spreadRadius: 10,
+                              blurRadius: 10,
+                              offset: Offset(0, 3),
+                            ),
+                          ],
                         ),
-                        SizedBox(width: 10),
-                        Column(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            if (state.verificationStatus == VerificationStatus.loading)
-                              const Center(
-                                child: CircularProgressIndicator(
-                                  strokeWidth: 3.0,
+                            Row(
+                              children: [
+                                Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      "Historiques des verifications",
+                                      style: Theme.of(context).textTheme.displayMedium!.copyWith(fontWeight: FontWeight.bold),
+                                    ),
+                                    Text(
+                                      "Du dernier document verifié au premier.",
+                                      style: Theme.of(context).textTheme.displaySmall!.copyWith(color: Colors.grey[300]),
+                                    ),
+                                  ],
                                 ),
-                              )
-                            else if (state.verificationStatus == VerificationStatus.error)
-                              Center(child: SizedBox())
-                            else if (state.verificationStatus == VerificationStatus.loaded)
-                              Column(
-                                mainAxisSize: MainAxisSize.max,
-                                children: [
-                                  Container(
-                                    margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
-                                    width: Const.screenWidth(context),
-                                    decoration: const BoxDecoration(
-                                      borderRadius: BorderRadius.only(
-                                        topLeft: Radius.circular(15),
-                                        topRight: Radius.circular(15),
-                                      ),
-                                      color: Colors.white,
-                                    ),
-                                    child: DataTable(
-                                      headingRowHeight: 30,
-                                      dataRowMaxHeight: 50,
-                                      columns: [
-                                        DataColumn(
-                                          label: SizedBox(
-                                            width: Const.screenWidth(context) * 0.1, // Largeur définie pour éviter l'overflow
-                                            child: Text("Identifiant", style: Theme.of(context).textTheme.displayMedium),
-                                          ),
-                                        ),
-                                        DataColumn(
-                                          label: SizedBox(
-                                            width: Const.screenWidth(context) * 0.25,
-                                            child: Text("Date de verification", style: Theme.of(context).textTheme.displayMedium),
-                                          ),
-                                        ),
-                                        DataColumn(
-                                          label: SizedBox(
-                                            width: Const.screenWidth(context) * 0.12,
-                                            child: Text("Status", style: Theme.of(context).textTheme.displayMedium),
-                                          ),
-                                        ),
-                                      ],
-                                      rows: state.listVerifications
-                                          .map((verification) => DataRow(
-                                                cells: [
-                                                  DataCell(SizedBox(
-                                                    width: Const.screenWidth(context) * 0.1,
-                                                    child: Text(
-                                                      verification.identifier.toString(),
-                                                      style: Theme.of(context).textTheme.displayMedium,
-                                                      overflow: TextOverflow.ellipsis,
-                                                    ),
-                                                  )),
-                                                  DataCell(SizedBox(
-                                                    width: Const.screenWidth(context) * 0.25,
-                                                    height: Const.screenHeight(context) * 0.05,
-                                                    child: Text(
-                                                      verification.verificationDate.toString(),
-                                                      style: Theme.of(context).textTheme.labelSmall,
-                                                      overflow: TextOverflow.ellipsis,
-                                                    ),
-                                                  )),
-                                                  DataCell(SizedBox(
-                                                    width: Const.screenWidth(context) * 0.1,
-                                                    child: Container(
-                                                      padding: EdgeInsets.symmetric(horizontal: 10),
-                                                      decoration: BoxDecoration(
-                                                          borderRadius: BorderRadius.circular(15),
-                                                          color: verification.status == 'Authentique'
-                                                              ? Colors.green.withValues(alpha: 0.2)
-                                                              : Colors.red.withValues(alpha: 0.2)),
-                                                      child: Text(
-                                                        verification.status,
-                                                        style: Theme.of(context).textTheme.displayMedium,
-                                                      ),
-                                                    ),
-                                                  )),
-                                                ],
-                                              ))
-                                          .toList(),
-                                    ),
-                                  ),
-                                  Row(
-                                    mainAxisSize: MainAxisSize.min,
-                                    mainAxisAlignment: MainAxisAlignment.center,
+                                Spacer(),
+                                SizedBox(
+                                  width: 10,
+                                ),
+                                Container(
+                                  padding: EdgeInsets.all(5),
+                                  decoration: BoxDecoration(border: Border.all(color: Colors.grey[200]!), borderRadius: BorderRadius.circular(5)),
+                                  child: Row(
                                     children: [
-                                      InkWell(
-                                        onTap: state.currentPage > 1 ? () => context.read<VerificationCubit>().goToPreviousPage() : null,
-                                        child: Container(
-                                            decoration:
-                                                BoxDecoration(color: Colors.grey.withValues(alpha: 0.2), borderRadius: BorderRadius.circular(3)),
-                                            child: Icon(Icons.arrow_back_ios)),
+                                      Image.asset(
+                                        "assets/images/filtre.png",
+                                        width: 18,
+                                        height: 18,
+                                        color: Colors.black,
                                       ),
                                       Text(
-                                        '${state.currentPage} sur ${state.lastPage}',
-                                        style: Theme.of(context).textTheme.labelSmall,
-                                      ),
-                                      InkWell(
-                                        onTap: state.currentPage < state.lastPage ? () => context.read<VerificationCubit>().goToNextPage() : null,
-                                        child: Container(
-                                            decoration:
-                                                BoxDecoration(color: Colors.grey..withValues(alpha: 0.2), borderRadius: BorderRadius.circular(3)),
-                                            child: Icon(Icons.arrow_forward_ios)),
+                                        "Filter",
+                                        style: Theme.of(context).textTheme.displaySmall!.copyWith(fontWeight: FontWeight.bold),
                                       ),
                                     ],
-                                  )
-                                ],
-                              )
-                            else
-                              Center(
-                                child: Text(
-                                  "Erreur inattendue",
-                                  style: Theme.of(context).textTheme.labelLarge,
+                                  ),
                                 ),
-                              )
+                                SizedBox(
+                                  width: 10,
+                                ),
+                                Container(
+                                  padding: EdgeInsets.all(5),
+                                  decoration: BoxDecoration(border: Border.all(color: Colors.grey[200]!), borderRadius: BorderRadius.circular(5)),
+                                  child: Icon(Icons.picture_in_picture_alt_outlined, size: 18, color: Colors.black),
+                                ),
+                                SizedBox(
+                                  width: 10,
+                                ),
+                                Container(
+                                  padding: EdgeInsets.all(5),
+                                  decoration: BoxDecoration(border: Border.all(color: Colors.grey[200]!), borderRadius: BorderRadius.circular(5)),
+                                  child: Row(
+                                    children: [
+                                      Icon(Icons.grid_view, size: 18, color: Colors.grey),
+                                      Icon(
+                                        Icons.table_rows_outlined,
+                                        size: 18,
+                                        color: Colors.grey,
+                                      ),
+                                    ],
+                                  ),
+                                )
+                              ],
+                            ),
+                            SizedBox(height: 12),
+                            Expanded(
+                              child: SingleChildScrollView(
+                                scrollDirection: Axis.horizontal,
+                                child: ConstrainedBox(
+                                  constraints: BoxConstraints(
+                                    minWidth: MediaQuery.of(context).size.width,
+                                  ),
+                                  child: HistoryTabWidget(state: state),
+                                ),
+                              ),
+                            ),
+                            SizedBox(height: 30),
+                            Row(
+                              children: [
+                                Container(
+                                  padding: EdgeInsets.all(5),
+                                  decoration: BoxDecoration(border: Border.all(color: Colors.grey[200]!), borderRadius: BorderRadius.circular(5)),
+                                  child: Row(
+                                    children: [
+                                      Text(
+                                        "Show: 2",
+                                        style: Theme.of(context).textTheme.displaySmall!.copyWith(fontWeight: FontWeight.bold),
+                                      ),
+                                      Icon(
+                                        Icons.swap_vert,
+                                        size: 18,
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                Spacer(),
+                                InkWell(
+                                  onTap: state.currentPage > 1 ? () => context.read<VerificationCubit>().goToPreviousPage() : null,
+                                  child: Container(
+                                    padding: EdgeInsets.all(5),
+                                    decoration: BoxDecoration(border: Border.all(color: Colors.grey[200]!), borderRadius: BorderRadius.circular(5)),
+                                    child: Icon(
+                                      Icons.arrow_back,
+                                      size: 18,
+                                    ),
+                                  ),
+                                ),
+                                SizedBox(
+                                  width: 10,
+                                ),
+                                Container(
+                                  padding: EdgeInsets.all(5),
+                                  decoration: BoxDecoration(border: Border.all(color: Colors.grey[200]!), borderRadius: BorderRadius.circular(5)),
+                                  child: Icon(
+                                    Icons.more_horiz_outlined,
+                                    size: 18,
+                                  ),
+                                ),
+                                SizedBox(
+                                  width: 10,
+                                ),
+                                Container(
+                                    padding: EdgeInsets.all(5),
+                                    decoration: BoxDecoration(color: Colors.black, borderRadius: BorderRadius.circular(5)),
+                                    child: Text(
+                                      "12",
+                                      style: Theme.of(context).textTheme.displaySmall!.copyWith(fontWeight: FontWeight.bold, color: Colors.white),
+                                    )),
+                                SizedBox(
+                                  width: 10,
+                                ),
+                                InkWell(
+                                  onTap: state.currentPage < state.lastPage ? () => context.read<VerificationCubit>().goToNextPage() : null,
+                                  child: Container(
+                                    padding: EdgeInsets.all(5),
+                                    decoration: BoxDecoration(border: Border.all(color: Colors.grey[200]!), borderRadius: BorderRadius.circular(5)),
+                                    child: Icon(
+                                      Icons.arrow_forward,
+                                      size: 18,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
                           ],
-                        )
-                      ]),
+                        ),
+                      ),
                     ),
-                  )
                 ],
               ),
             ),

@@ -5,7 +5,7 @@ import 'package:doc_authentificator/models/collaborateurs_model.dart';
 import 'package:doc_authentificator/pages/screens/document/screen/list_document_screen.dart';
 import 'package:doc_authentificator/pages/screens/collaborateur/screen/new_collaborateur_screen.dart';
 import 'package:doc_authentificator/pages/screens/document/screen/new_document_screen.dart';
-import 'package:doc_authentificator/pages/screens/rapport/Rapports_screen.dart';
+import 'package:doc_authentificator/pages/screens/rapport/screen/Rapports_screen.dart';
 
 import 'package:doc_authentificator/pages/screens/history/screens/history_screen.dart';
 import 'package:doc_authentificator/pages/screens/collaborateur/screen/list_collaborateur_screen.dart';

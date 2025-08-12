@@ -103,6 +103,7 @@ class _NewDocumentScreenState extends State<NewDocumentScreen> with SingleTicker
       child: BlocBuilder<TypeDocCubit, TypeDocState>(
         builder: (context, state) {
           return Scaffold(
+            backgroundColor: Colors.grey[100],
             body: Row(
               children: [
                 DrawerDashboard(),
@@ -126,7 +127,7 @@ class _NewDocumentScreenState extends State<NewDocumentScreen> with SingleTicker
                               indicatorColor: Theme.of(context).colorScheme.primary,
                               tabs: const [
                                 Tab(text: "Saisie manuelle"),
-                                Tab(text: "Auto record"),
+                                Tab(text: "Enregistrement auto"),
                               ],
                             ),
                           ],
@@ -175,226 +176,6 @@ class _NewDocumentScreenState extends State<NewDocumentScreen> with SingleTicker
     );
   }
 
-  // Ajoute un bool pour savoir si la description auto est validée / affichée
-
-  // Widget _buildManualForm(BuildContext context, TypeDocState state) {
-  //   final theme = Theme.of(context);
-  //
-  //   return Center(
-  //       child: Container(
-  //     constraints: const BoxConstraints(maxWidth: 900),
-  //     padding: const EdgeInsets.all(15),
-  //     margin: const EdgeInsets.symmetric(vertical: 30),
-  //     decoration: BoxDecoration(
-  //       color: Colors.white,
-  //       borderRadius: BorderRadius.circular(16),
-  //       boxShadow: const [
-  //         BoxShadow(
-  //           color: Colors.black12,
-  //           blurRadius: 20,
-  //           offset: Offset(0, 8),
-  //         ),
-  //       ],
-  //     ),
-  //     child: Form(
-  //       key: _formKey,
-  //       child: Column(
-  //         crossAxisAlignment: CrossAxisAlignment.stretch,
-  //         children: [
-  //           Text(
-  //             "Saisie manuelle du document",
-  //             style: theme.textTheme.labelSmall!.copyWith(fontWeight: FontWeight.bold),
-  //           ),
-  //           const SizedBox(height: 24),
-  //
-  //           // Identifiant
-  //           Text("Identifiant du document", style: theme.textTheme.labelSmall),
-  //           const SizedBox(height: 8),
-  //           Row(
-  //             children: [
-  //               Expanded(
-  //                 flex: 2,
-  //                 child: TextFormField(
-  //                   controller: _identifierController,
-  //                   style: Theme.of(context).textTheme.labelSmall,
-  //                   decoration: InputDecoration(
-  //                     hintStyle: theme.textTheme.labelSmall,
-  //                     hintText: "Ex: DOC-2025-XYZ",
-  //                     border: OutlineInputBorder(borderRadius: BorderRadius.circular(5)),
-  //                   ),
-  //                   validator: (value) => value == null || value.isEmpty ? "Veuillez entrer l'identifiant." : null,
-  //                 ),
-  //               ),
-  //               SizedBox(
-  //                 width: 10,
-  //               ),
-  //               Expanded(
-  //                 flex: 2,
-  //                 child: TextFormField(
-  //                   controller: _identifierController,
-  //                   style: Theme.of(context).textTheme.labelSmall,
-  //                   decoration: InputDecoration(
-  //                     hintStyle: theme.textTheme.labelSmall,
-  //                     hintText: "Ex: John Doe",
-  //                     border: OutlineInputBorder(borderRadius: BorderRadius.circular(5)),
-  //                   ),
-  //                   // validator: (value) => value == null || value.isEmpty ? "Veuillez renseigner le Beneficiaire." : null,
-  //                 ),
-  //               ),
-  //             ],
-  //           ),
-  //
-  //           const SizedBox(height: 24),
-  //
-  //           // Choix auto / manuel
-  //           Text("Méthode de description", style: theme.textTheme.labelLarge),
-  //           const SizedBox(height: 8),
-  //           Row(
-  //             children: [
-  //               Radio<bool>(
-  //                 value: false,
-  //                 groupValue: _isAutoDescription,
-  //                 onChanged: (val) {
-  //                   setState(() {
-  //                     _isAutoDescription = val!;
-  //                     if (!val) _isDescriptionReady = false; // Reset si on revient en manuel
-  //                   });
-  //                 },
-  //               ),
-  //               Text(
-  //                 "Saisie manuelle",
-  //                 style: theme.textTheme.labelSmall,
-  //               ),
-  //               const SizedBox(width: 20),
-  //               Radio<bool>(
-  //                 value: true,
-  //                 groupValue: _isAutoDescription,
-  //                 onChanged: (val) => setState(() => _isAutoDescription = val!),
-  //               ),
-  //               Text(
-  //                 "Génération guidée",
-  //                 style: theme.textTheme.labelSmall,
-  //               ),
-  //             ],
-  //           ),
-  //
-  //           const SizedBox(height: 8),
-  //
-  //           if (_isAutoDescription)
-  //             !_isDescriptionReady
-  //                 ? Align(
-  //                     alignment: Alignment.centerLeft,
-  //                     child: ElevatedButton.icon(
-  //                       icon: const Icon(Icons.auto_fix_high, color: Colors.white),
-  //                       onPressed: () async {
-  //                         _showDescriptionDialog();
-  //                         setState(() {
-  //                           _isDescriptionReady = _descriptionController.text.isNotEmpty;
-  //                         });
-  //                       },
-  //                       label: Text(
-  //                         "Générer une description",
-  //                         style: theme.textTheme.labelSmall!.copyWith(color: Colors.white),
-  //                       ),
-  //                       style: ElevatedButton.styleFrom(
-  //                         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-  //                         backgroundColor: theme.colorScheme.primary,
-  //                         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)),
-  //                         foregroundColor: Colors.white,
-  //                       ),
-  //                     ),
-  //                   )
-  //                 : Column(
-  //                     crossAxisAlignment: CrossAxisAlignment.start,
-  //                     children: [
-  //                       Text(
-  //                         "Description générée :",
-  //                         style: theme.textTheme.labelSmall!.copyWith(fontWeight: FontWeight.bold),
-  //                       ),
-  //                       const SizedBox(height: 8),
-  //                       Container(
-  //                         padding: const EdgeInsets.all(12),
-  //                         decoration: BoxDecoration(
-  //                           color: Colors.grey.shade100,
-  //                           borderRadius: BorderRadius.circular(5),
-  //                           border: Border.all(color: Colors.grey.shade300),
-  //                         ),
-  //                         child: Text(
-  //                           _descriptionController.text,
-  //                           style: Theme.of(context).textTheme.labelSmall,
-  //                         ),
-  //                       ),
-  //                       const SizedBox(height: 8),
-  //                       TextButton(
-  //                         onPressed: () {
-  //                           setState(() {
-  //                             _isAutoDescription = false; // Passe en mode manuel pour modifier
-  //                             _isDescriptionReady = false;
-  //                           });
-  //                         },
-  //                         child: Text(
-  //                           "Modifier la description",
-  //                           style: Theme.of(context).textTheme.labelSmall!.copyWith(color: Theme.of(context).colorScheme.primary),
-  //                         ),
-  //                       ),
-  //                     ],
-  //                   )
-  //           else
-  //             TextFormField(
-  //               controller: _descriptionController,
-  //               maxLines: 4,
-  //               style: Theme.of(context).textTheme.labelSmall,
-  //               decoration: InputDecoration(
-  //                 hintStyle: Theme.of(context).textTheme.labelSmall,
-  //                 hintText: "Ex: Attestation délivrée par...",
-  //                 border: OutlineInputBorder(borderRadius: BorderRadius.circular(5)),
-  //               ),
-  //               validator: (value) => value == null || value.isEmpty ? "Veuillez entrer une description." : null,
-  //             ),
-  //
-  //           const SizedBox(height: 24),
-  //
-  //           // Dropdown type
-  //           Text("Type de document", style: theme.textTheme.labelSmall),
-  //           const SizedBox(height: 8),
-  //           _buildTypeDropdown(state),
-  //
-  //           const SizedBox(height: 30),
-  //
-  //           // Bouton Enregistrer
-  //           SizedBox(
-  //             width: double.infinity,
-  //             child: ElevatedButton.icon(
-  //               icon: const Icon(Icons.save, color: Colors.white),
-  //               onPressed: () {
-  //                 if (_formKey.currentState!.validate() && _selectedType != null) {
-  //                   context.read<DocumentCubit>().addDocument(
-  //                         DocumentsModel(
-  //                           identifier: _identifierController.text,
-  //                           descriptionDocument: _descriptionController.text,
-  //                           typeId: _selectedType!.id,
-  //                         ),
-  //                       );
-  //                 }
-  //               },
-  //               label: Text(
-  //                 "Enregistrer",
-  //                 style: theme.textTheme.labelSmall!.copyWith(color: Colors.white),
-  //               ),
-  //               style: ElevatedButton.styleFrom(
-  //                 backgroundColor: theme.colorScheme.primary,
-  //                 foregroundColor: Colors.white,
-  //                 padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
-  //                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)),
-  //               ),
-  //             ),
-  //           ),
-  //         ],
-  //       ),
-  //     ),
-  //   ));
-  // }
-
   Widget _buildUploadForm(BuildContext context, TypeDocState state) {
     return Center(
       child: Container(
@@ -411,195 +192,208 @@ class _NewDocumentScreenState extends State<NewDocumentScreen> with SingleTicker
             ),
           ],
         ),
-        child: ListView(
+        child: Padding(
           padding: const EdgeInsets.all(20),
-          children: [
-            // ElevatedButton.icon(
-            //   icon: Icon(Icons.upload_file),
-            //   onPressed: _pickFile,
-            //   label: Text(_selectedFile != null ? "Fichier sélectionné: ${_selectedFile!.name}" : "Choisir un fichier"),
-            //   style: ElevatedButton.styleFrom(
-            //     padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 14),
-            //     backgroundColor: Theme.of(context).colorScheme.secondary,
-            //     foregroundColor: Colors.white,
-            //     shape: RoundedRectangleBorder(
-            //       borderRadius: BorderRadius.circular(10),
-            //     ),
-            //   ),
-            // ),
-            // const SizedBox(height: 16),
-            Text("Identifiant du document", style: Theme.of(context).textTheme.labelSmall),
-            const SizedBox(height: 8),
-            TextFormField(
-              controller: _identifierController,
-              style: Theme.of(context).textTheme.labelSmall,
-              decoration: InputDecoration(
-                hintStyle: Theme.of(context).textTheme.labelSmall!.copyWith(color: Colors.grey[500]),
-                hintText: "Ex: DOC-2025-XYZ",
-                border: OutlineInputBorder(borderRadius: BorderRadius.circular(5)),
-              ),
-              validator: (value) => value == null || value.isEmpty ? "Veuillez entrer l'identifiant." : null,
-            ),
-            const SizedBox(height: 16),
-            // _buildTypeDropdown(state),
-            Text(
-              "Téléversez votre fichier PDF",
-              style: Theme.of(context).textTheme.labelSmall!.copyWith(fontWeight: FontWeight.bold),
-            ),
-            SizedBox(height: 8),
-            SizedBox(height: 8),
-            _selectedFileBytes == null
-                ? PdfDropZone(
-                    selectedFileBytes: _selectedFileBytes,
-                    selectedFileName: _selectedFileName,
-                    onFilePicked: (bytes, name) {
-                      setState(() {
-                        _selectedFileBytes = bytes;
-                        _selectedFileName = name;
-                      });
-                    },
-                  )
-                : Container(
-                    padding: EdgeInsets.all(12),
-                    decoration: BoxDecoration(
-                      color: Colors.green.shade100,
-                      borderRadius: BorderRadius.circular(8),
-                      border: Border.all(color: Colors.green.shade700),
+          child: Column(
+            children: [
+              Expanded(
+                child: ListView(
+                  children: [
+                    // ElevatedButton.icon(
+                    //   icon: Icon(Icons.upload_file),
+                    //   onPressed: _pickFile,
+                    //   label: Text(_selectedFile != null ? "Fichier sélectionné: ${_selectedFile!.name}" : "Choisir un fichier"),
+                    //   style: ElevatedButton.styleFrom(
+                    //     padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 14),
+                    //     backgroundColor: Theme.of(context).colorScheme.secondary,
+                    //     foregroundColor: Colors.white,
+                    //     shape: RoundedRectangleBorder(
+                    //       borderRadius: BorderRadius.circular(10),
+                    //     ),
+                    //   ),
+                    // ),
+                    // const SizedBox(height: 16),
+                    Text("Identifiant du document", style: Theme.of(context).textTheme.labelSmall),
+                    const SizedBox(height: 8),
+                    TextFormField(
+                      controller: _identifierController,
+                      style: Theme.of(context).textTheme.labelSmall,
+                      decoration: InputDecoration(
+                        hintStyle: Theme.of(context).textTheme.labelSmall!.copyWith(color: Colors.grey[500]),
+                        hintText: "Ex: DOC-2025-XYZ",
+                        border: OutlineInputBorder(borderRadius: BorderRadius.circular(5)),
+                      ),
+                      validator: (value) => value == null || value.isEmpty ? "Veuillez entrer l'identifiant." : null,
                     ),
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Icon(Icons.check_circle, color: Colors.green.shade700),
-                        SizedBox(width: 8),
-                        Flexible(
-                          child: Text(
-                            _selectedFileName ?? 'Fichier sélectionné',
-                            style: TextStyle(
-                              color: Colors.green.shade700,
-                              fontWeight: FontWeight.bold,
+                    const SizedBox(height: 16),
+                    // _buildTypeDropdown(state),
+                    Text(
+                      "Téléversez votre fichier PDF",
+                      style: Theme.of(context).textTheme.labelSmall!.copyWith(fontWeight: FontWeight.bold),
+                    ),
+                    SizedBox(height: 8),
+                    SizedBox(height: 8),
+                    _selectedFileBytes == null
+                        ? PdfDropZone(
+                            selectedFileBytes: _selectedFileBytes,
+                            selectedFileName: _selectedFileName,
+                            onFilePicked: (bytes, name) {
+                              setState(() {
+                                _selectedFileBytes = bytes;
+                                _selectedFileName = name;
+                              });
+                            },
+                          )
+                        : Container(
+                            padding: EdgeInsets.all(12),
+                            decoration: BoxDecoration(
+                              color: Colors.green.shade100,
+                              borderRadius: BorderRadius.circular(8),
+                              border: Border.all(color: Colors.green.shade700),
                             ),
-                            overflow: TextOverflow.ellipsis,
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Icon(Icons.check_circle, color: Colors.green.shade700),
+                                SizedBox(width: 8),
+                                Flexible(
+                                  child: Text(
+                                    _selectedFileName ?? 'Fichier sélectionné',
+                                    style: TextStyle(
+                                      color: Colors.green.shade700,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                ),
+                                SizedBox(width: 8),
+                                IconButton(
+                                  icon: Icon(Icons.close, color: Colors.green.shade700),
+                                  onPressed: () {
+                                    setState(() {
+                                      _selectedFileBytes = null;
+                                      _selectedFileName = null;
+                                    });
+                                  },
+                                ),
+                              ],
+                            ),
                           ),
-                        ),
-                        SizedBox(width: 8),
-                        IconButton(
-                          icon: Icon(Icons.close, color: Colors.green.shade700),
-                          onPressed: () {
-                            setState(() {
-                              _selectedFileBytes = null;
-                              _selectedFileName = null;
-                            });
-                          },
-                        ),
-                      ],
-                    ),
-                  ),
-            const SizedBox(height: 35),
-            ElevatedButton(
-              onPressed: () async {
-                if (_selectedFileBytes == null || _identifierController.text.isEmpty) {
-                  ElegantNotification.error(
-                    description: Text(
-                      "Veuillez compléter tous les champs.",
-                      style: Theme.of(context).textTheme.labelSmall,
-                    ),
-                  ).show(context);
-                  return;
-                }
+                    const SizedBox(height: 35),
 
-                setState(() => _isUploading = true); // ⏳ Démarre le chargement
-
-                try {
-                  final identifier = _identifierController.text;
-                  final response = await DocumentService.uploadDocumentWithFile(
-                    identifier,
-                    _selectedFileBytes!,
-                    filename: _selectedFileName ?? 'document.pdf',
-                  );
-
-                  // final extracted = response['data']?[0]['entities'];
-                  //
-                  // setState(() {
-                  //   extractedEntities = extracted;
-                  //   _isUploading = false; // ✅ Fin du chargement
-                  // });
-                  final data = response['data'];
-                  // final firstItem = response['data']?[0]['entities'];
-
-                  if (data is List && data.isNotEmpty) {
-                    // On récupère le premier élément de la liste
-                    final firstItem = data[0];
-                    if (firstItem is Map<String, dynamic>) {
-                      final extracted = firstItem['entities'] as Map<String, dynamic>?;
-
-                      setState(() {
-                        extractedEntities = extracted;
-                        log("Extracted entities: $extractedEntities");
-                        _isUploading = false; // Fin du chargement
-                      });
-                    } else {
-                      // Cas où le premier élément n'est pas un Map
-                      setState(() {
-                        extractedEntities = null;
-                        _isUploading = false;
-                      });
-                    }
-                  } else {
-                    // Cas où data n'est pas une liste ou est vide
-                    setState(() {
-                      extractedEntities = null;
-                      _isUploading = false;
-                    });
-                  }
-                } catch (e) {
-                  setState(() => _isUploading = false);
-                  ElegantNotification.error(
-                    description: Text(
-                      "Erreur lors de l'envoi : ${e.toString()}",
-                      style: Theme.of(context).textTheme.labelSmall,
-                    ),
-                  ).show(context);
-                }
-              },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Theme.of(context).colorScheme.primary,
-                foregroundColor: Colors.white,
-                padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 14),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(5),
+                    // SizedBox(height: 15),
+                    // Text(
+                    //   "Pour les documents excel",
+                    //   style: Theme.of(context).textTheme.labelSmall,
+                    // ),
+                    // SizedBox(
+                    //   height: 20,
+                    // ),
+                    // FileOrUrlPicker()
+                  ],
                 ),
               ),
-              child: _isUploading
-                  ? SizedBox(
-                      width: 20,
-                      height: 20,
-                      child: CircularProgressIndicator(
-                        strokeWidth: 2.5,
-                        valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
-                      ),
-                    )
-                  : Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Icon(Icons.save_alt, color: Colors.white),
-                        SizedBox(width: 8),
-                        Text(
-                          "Uploader et enregistrer",
-                          style: Theme.of(context).textTheme.labelMedium!.copyWith(color: Colors.white),
+              SizedBox(
+                width: double.infinity,
+                child: ElevatedButton(
+                  onPressed: () async {
+                    if (_selectedFileBytes == null || _identifierController.text.isEmpty) {
+                      ElegantNotification.error(
+                        description: Text(
+                          "Veuillez compléter tous les champs.",
+                          style: Theme.of(context).textTheme.labelSmall,
                         ),
-                      ],
+                      ).show(context);
+                      return;
+                    }
+
+                    setState(() => _isUploading = true); // ⏳ Démarre le chargement
+
+                    try {
+                      final identifier = _identifierController.text;
+                      final response = await DocumentService.uploadDocumentWithFile(
+                        identifier,
+                        _selectedFileBytes!,
+                        filename: _selectedFileName ?? 'document.pdf',
+                      );
+
+                      // final extracted = response['data']?[0]['entities'];
+                      //
+                      // setState(() {
+                      //   extractedEntities = extracted;
+                      //   _isUploading = false; // ✅ Fin du chargement
+                      // });
+                      final data = response['data'];
+                      // final firstItem = response['data']?[0]['entities'];
+
+                      if (data is List && data.isNotEmpty) {
+                        // On récupère le premier élément de la liste
+                        final firstItem = data[0];
+                        if (firstItem is Map<String, dynamic>) {
+                          final extracted = firstItem['entities'] as Map<String, dynamic>?;
+
+                          setState(() {
+                            extractedEntities = extracted;
+                            log("Extracted entities: $extractedEntities");
+                            _isUploading = false; // Fin du chargement
+                          });
+                        } else {
+                          // Cas où le premier élément n'est pas un Map
+                          setState(() {
+                            extractedEntities = null;
+                            _isUploading = false;
+                          });
+                        }
+                      } else {
+                        // Cas où data n'est pas une liste ou est vide
+                        setState(() {
+                          extractedEntities = null;
+                          _isUploading = false;
+                        });
+                      }
+                    } catch (e) {
+                      setState(() => _isUploading = false);
+                      ElegantNotification.error(
+                        description: Text(
+                          "Erreur lors de l'envoi : ${e.toString()}",
+                          style: Theme.of(context).textTheme.labelSmall,
+                        ),
+                      ).show(context);
+                    }
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Theme.of(context).colorScheme.primary,
+                    foregroundColor: Colors.white,
+                    padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 14),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(5),
                     ),
-            ),
-            // SizedBox(height: 15),
-            // Text(
-            //   "Pour les documents excel",
-            //   style: Theme.of(context).textTheme.labelSmall,
-            // ),
-            // SizedBox(
-            //   height: 20,
-            // ),
-            // FileOrUrlPicker()
-          ],
+                  ),
+                  child: _isUploading
+                      ? SizedBox(
+                          width: 20,
+                          height: 20,
+                          child: CircularProgressIndicator(
+                            strokeWidth: 2.5,
+                            valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                          ),
+                        )
+                      : Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Icon(Icons.save_alt, color: Colors.white),
+                            SizedBox(width: 8),
+                            Text(
+                              "Uploader et enregistrer",
+                              style: Theme.of(context).textTheme.labelMedium!.copyWith(color: Colors.white),
+                            ),
+                          ],
+                        ),
+                ),
+              ),
+              const SizedBox(height: 20),
+            ],
+          ),
         ),
       ),
     );

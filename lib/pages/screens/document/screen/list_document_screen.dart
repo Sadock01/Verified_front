@@ -40,6 +40,7 @@ class _ListDocumentScreenState extends State<ListDocumentScreen> {
   Widget build(BuildContext context) {
     return BlocBuilder<DocumentCubit, DocumentState>(builder: (context, state) {
       return Scaffold(
+        backgroundColor: Colors.grey[100],
         body: Row(
           children: [
             DrawerDashboard(),

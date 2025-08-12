@@ -38,6 +38,7 @@ class _DocumentDetailsScreenState extends State<DocumentDetailsScreen> {
   Widget build(BuildContext context) {
     return BlocBuilder<ReportCubit, ReportState>(builder: (context, state) {
       return Scaffold(
+        backgroundColor: Colors.grey[200],
         body: Row(
           children: [
             DrawerDashboard(),

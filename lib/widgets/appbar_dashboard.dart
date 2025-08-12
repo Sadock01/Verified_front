@@ -1,93 +1,97 @@
-import 'package:doc_authentificator/const/const.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+
+import '../const/const.dart';
 
 class AppbarDashboard extends StatelessWidget {
   const AppbarDashboard({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return Flexible(
-      child: Container(
-        margin: EdgeInsets.only(left: 10, right: 10, top: 10),
-        width: Const.screenWidth(context),
-        height: 50,
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(10),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.grey.withValues(alpha: 0.2), // Couleur de l'ombre
-              spreadRadius: 10, // Étalement de l'ombre
-              blurRadius: 10, // Flou de l'ombre
-              offset: Offset(0, 3), // Décalage horizontal et vertical de l'ombre
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+      color: Colors.white, // fond général
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.end,
+        children: [
+          Container(
+            width: Const.screenWidth(context) * 0.23,
+            height: 38,
+            decoration: BoxDecoration(
+              color: Colors.grey[200],
+              borderRadius: BorderRadius.circular(30),
             ),
-          ],
-        ),
-        child: Row(
-          mainAxisSize: MainAxisSize.min,
-          mainAxisAlignment: MainAxisAlignment.start,
-          children: [
-            Container(
-              width: Const.screenWidth(context) * 0.1,
-              height: 25,
-              decoration: BoxDecoration(image: DecorationImage(image: AssetImage('assets/images/Verified_original.png'))),
+            padding: const EdgeInsets.symmetric(horizontal: 15),
+            child: Row(
+              children: [
+                Icon(Icons.search, size: 20, color: Colors.grey),
+                SizedBox(width: 10),
+                Expanded(
+                  child: TextField(
+                    style: Theme.of(context).textTheme.labelSmall,
+                    decoration: InputDecoration(
+                      hintText: 'Search anything...',
+                      hintStyle: Theme.of(context).textTheme.labelSmall,
+                      border: InputBorder.none,
+                      isDense: true,
+                    ),
+                  ),
+                ),
+              ],
             ),
-            Spacer(),
-            InkWell(
-              onTap: () {
-                showMenu(
-                  context: context,
-                  position: RelativeRect.fromLTRB(100, 50, 0, 0),
-                  items: [
-                    PopupMenuItem<String>(
-                      value: 'Déconnexion',
-                      onTap: () => context.go('/login'),
-                      child: Row(
-                        children: [
-                          Icon(Icons.exit_to_app),
-                          SizedBox(width: 8),
-                          Text(
-                            'Déconnexion',
-                            style: Theme.of(context).textTheme.labelSmall,
-                          ),
-                        ],
-                      ),
-                    ),
-                    PopupMenuItem<String>(
-                      value: 'Configuration',
-                      child: Row(
-                        children: [
-                          Icon(Icons.settings),
-                          SizedBox(width: 8),
-                          Text('Configuration', style: Theme.of(context).textTheme.labelSmall),
-                        ],
-                      ),
-                    ),
-                  ],
-                );
-              },
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Icon(
-                    Icons.account_circle,
-                    size: 45,
-                    color: Colors.grey[300],
-                  ),
-                  SizedBox(width: 2),
-                  Text(
-                    "John Doe",
-                    style: TextStyle(fontSize: 12),
-                  ),
-                  SizedBox(width: 10),
-                  Icon(Icons.arrow_drop_down),
-                ],
-              ),
-            )
-          ],
-        ),
+          ),
+
+          const SizedBox(width: 20),
+
+          // Container(
+          //   height: 40,
+          //   padding: const EdgeInsets.symmetric(horizontal: 20),
+          //   decoration: BoxDecoration(
+          //     color: Colors.black,
+          //     borderRadius: BorderRadius.circular(25),
+          //   ),
+          //   alignment: Alignment.center,
+          //   child: const Text(
+          //     'Create',
+          //     style: TextStyle(color: Colors.white, fontWeight: FontWeight.w500),
+          //   ),
+          // ),
+
+          const SizedBox(width: 15),
+
+          // 🔔 Notification
+          _iconCircle(Icons.notifications_none_rounded),
+
+          const SizedBox(width: 10),
+
+          // // 💬 Message
+          // _iconCircle(Icons.chat_bubble_outline_rounded),
+
+          const SizedBox(width: 10),
+
+          CircleAvatar(
+              backgroundColor: Colors.grey[200],
+              radius: 18,
+              child: Image.asset(
+                "assets/images/user.png",
+                width: 20,
+                height: 20,
+              )),
+        ],
       ),
+    );
+  }
+
+  // Widget réutilisable pour les cercles d'icônes
+  Widget _iconCircle(IconData icon) {
+    return Container(
+      height: 36,
+      width: 36,
+      decoration: BoxDecoration(
+        shape: BoxShape.circle,
+        color: Colors.grey[200],
+      ),
+      child: Icon(icon, size: 20, color: Colors.black54),
     );
   }
 }

@@ -14,7 +14,7 @@ import 'package:doc_authentificator/pages/screens/collaborateur/screen/new_colla
 import 'package:doc_authentificator/pages/screens/document/screen/document_details_screen.dart';
 import 'package:doc_authentificator/pages/screens/document/screen/list_document_screen.dart';
 import 'package:doc_authentificator/pages/screens/document/screen/new_document_screen.dart';
-import 'package:doc_authentificator/pages/screens/rapport/Rapports_screen.dart';
+import 'package:doc_authentificator/pages/screens/rapport/screen/Rapports_screen.dart';
 
 import 'package:doc_authentificator/pages/screens/history/screens/history_screen.dart';
 import 'package:doc_authentificator/pages/screens/collaborateur/screen/list_collaborateur_screen.dart';
@@ -80,7 +80,7 @@ final GoRouter _router = GoRouter(
       path: '/historiques',
       builder: (BuildContext context, GoRouterState state) {
         context.read<SwitchPageCubit>().switchPage(3); // Sélectionner la page Collaborateurs
-        return DashboardHomeScreen(widget: const HistoryScreen());
+        return const HistoryScreen();
       },
     ),
     GoRoute(
@@ -120,11 +120,11 @@ final GoRouter _router = GoRouter(
       },
     ),
     GoRoute(
-      path: '/document/details/:identifier',
+      path: '/document/update/:identifier',
       builder: (context, state) {
-        final identifier = state.pathParameters['identifier']!;
+        final identifier = int.parse(state.pathParameters['identifier']!);
         return UpdateDocumentScreen(
-          documentId: 1,
+          documentId: identifier,
         );
       },
     ),

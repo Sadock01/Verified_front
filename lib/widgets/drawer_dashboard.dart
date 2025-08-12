@@ -46,10 +46,32 @@ class _DrawerDashboardState extends State<DrawerDashboard> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Container(
+                margin: EdgeInsets.only(bottom: 8),
+                padding: EdgeInsets.symmetric(vertical: 10),
+                width: Const.screenWidth(context) * 0.12,
+                height: 45,
+                decoration: BoxDecoration(image: DecorationImage(fit: BoxFit.contain, image: AssetImage('assets/images/Verified_original.png'))),
+              ),
+              Container(
+                margin: EdgeInsets.symmetric(vertical: 6, horizontal: 8),
                 padding: EdgeInsets.symmetric(vertical: 10),
                 width: Const.screenWidth(context) * 0.19,
                 height: 35,
                 decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(6),
+                  boxShadow: [
+                    context.read<SwitchPageCubit>().state.selectedPage == 0
+                        ? BoxShadow(
+                            color: Colors.grey.withValues(alpha: 0.2),
+                            spreadRadius: 10,
+                            blurRadius: 10,
+                            offset: Offset(0, 3), // Décalage horizontal et vertical de l'ombre
+                          )
+                        : BoxShadow(
+
+                            // Décalage horizontal et vertical de l'ombre
+                            )
+                  ],
                   color: context.read<SwitchPageCubit>().state.selectedPage == 0 ? Theme.of(context).colorScheme.primary : Colors.white,
                 ),
                 child: TextButton(
@@ -69,8 +91,8 @@ class _DrawerDashboardState extends State<DrawerDashboard> {
                   ),
                   child: Row(
                     children: [
-                      Icon(
-                        Icons.bar_chart,
+                      Image.asset(
+                        "assets/images/dashboards.png",
                         color: context.read<SwitchPageCubit>().state.selectedPage == 0 ? Colors.white : Colors.grey.withValues(alpha: 0.2),
                       ),
                       SizedBox(width: 5),
@@ -85,10 +107,33 @@ class _DrawerDashboardState extends State<DrawerDashboard> {
                 ),
               ),
               Container(
+                margin: EdgeInsets.symmetric(vertical: 6, horizontal: 8),
                 padding: EdgeInsets.symmetric(vertical: 10),
                 width: Const.screenWidth(context) * 0.19,
                 height: 35,
                 decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(6),
+                  boxShadow: [
+                    context.read<SwitchPageCubit>().state.selectedPage == 1
+                        ? BoxShadow(
+                            color: Colors.grey.withValues(alpha: 0.2),
+                            spreadRadius: 10,
+                            blurRadius: 10,
+                            offset: Offset(0, 3), // Décalage horizontal et vertical de l'ombre
+                          )
+                        : context.read<SwitchPageCubit>().state.selectedPage == 2
+                            ? BoxShadow()
+                            : context.read<SwitchPageCubit>().state.selectedPage == 5
+                                ? BoxShadow()
+                                : context.read<SwitchPageCubit>().state.selectedPage == 5
+                                    ? BoxShadow(
+                                        color: Colors.grey.withValues(alpha: 0.2),
+                                        spreadRadius: 10,
+                                        blurRadius: 10,
+                                        offset: Offset(0, 3), // Décalage horizontal et vertical de l'ombre
+                                      )
+                                    : BoxShadow(),
+                  ],
                   color: context.read<SwitchPageCubit>().state.selectedPage == 1
                       ? Theme.of(context).colorScheme.primary
                       : context.read<SwitchPageCubit>().state.selectedPage == 2
@@ -115,8 +160,8 @@ class _DrawerDashboardState extends State<DrawerDashboard> {
                   ),
                   child: Row(
                     children: [
-                      Icon(
-                        Icons.folder,
+                      Image.asset(
+                        "assets/images/documentation.png",
                         color: context.read<SwitchPageCubit>().state.selectedPage == 1 ? Colors.white : Colors.grey.withValues(alpha: 0.2),
                       ),
                       SizedBox(width: 5),
@@ -138,10 +183,25 @@ class _DrawerDashboardState extends State<DrawerDashboard> {
                       child: Column(
                         children: [
                           Container(
+                            margin: EdgeInsets.symmetric(vertical: 6, horizontal: 8),
                             padding: EdgeInsets.symmetric(vertical: 10),
                             width: Const.screenWidth(context) * 0.19,
                             height: 35,
                             decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(6),
+                              boxShadow: [
+                                context.read<SwitchPageCubit>().state.selectedPage == 5
+                                    ? BoxShadow(
+                                        color: Colors.grey.withValues(alpha: 0.2),
+                                        spreadRadius: 10,
+                                        blurRadius: 10,
+                                        offset: Offset(0, 3), // Décalage horizontal et vertical de l'ombre
+                                      )
+                                    : BoxShadow(
+
+                                        // Décalage horizontal et vertical de l'ombre
+                                        )
+                              ],
                               color: context.read<SwitchPageCubit>().state.selectedPage == 5 ? Theme.of(context).colorScheme.primary : Colors.white,
                             ),
                             child: TextButton(
@@ -181,10 +241,25 @@ class _DrawerDashboardState extends State<DrawerDashboard> {
                             ),
                           ),
                           Container(
+                            margin: EdgeInsets.symmetric(vertical: 6, horizontal: 8),
                             padding: EdgeInsets.symmetric(vertical: 10),
                             width: Const.screenWidth(context) * 0.19,
                             height: 35,
                             decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(6),
+                              boxShadow: [
+                                context.read<SwitchPageCubit>().state.selectedPage == 2
+                                    ? BoxShadow(
+                                        color: Colors.grey.withValues(alpha: 0.2),
+                                        spreadRadius: 10,
+                                        blurRadius: 10,
+                                        offset: Offset(0, 3), // Décalage horizontal et vertical de l'ombre
+                                      )
+                                    : BoxShadow(
+
+                                        // Décalage horizontal et vertical de l'ombre
+                                        )
+                              ],
                               color: context.read<SwitchPageCubit>().state.selectedPage == 2 ? Theme.of(context).colorScheme.primary : Colors.white,
                             ),
                             child: TextButton(
@@ -228,53 +303,82 @@ class _DrawerDashboardState extends State<DrawerDashboard> {
                       ),
                     )
                   : SizedBox(),
+              Container(
+                margin: EdgeInsets.symmetric(vertical: 6, horizontal: 8),
+                padding: EdgeInsets.symmetric(vertical: 10),
+                width: Const.screenWidth(context) * 0.19,
+                height: 35,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(6),
+                  boxShadow: [
+                    context.read<SwitchPageCubit>().state.selectedPage == 3
+                        ? BoxShadow(
+                            color: Colors.grey.withValues(alpha: 0.2),
+                            spreadRadius: 10,
+                            blurRadius: 10,
+                            offset: Offset(0, 3), // Décalage horizontal et vertical de l'ombre
+                          )
+                        : BoxShadow(
+
+                            // Décalage horizontal et vertical de l'ombre
+                            )
+                  ],
+                  color: context.read<SwitchPageCubit>().state.selectedPage == 3 ? Theme.of(context).colorScheme.primary : Colors.white,
+                ),
+                child: TextButton(
+                  onPressed: () {
+                    context.read<SwitchPageCubit>().switchPage(3);
+                    context.go('/historiques');
+                  },
+                  style: ButtonStyle(
+                    overlayColor: MaterialStateProperty.resolveWith<Color?>(
+                      (Set<MaterialState> states) {
+                        if (states.contains(MaterialState.hovered)) {
+                          return Colors.transparent; // Pas d'effet au survol
+                        }
+                        return null; // Laisser les autres états par défaut
+                      },
+                    ),
+                  ),
+                  child: Row(
+                    children: [
+                      Image.asset(
+                        "assets/images/history.png",
+                        color: context.read<SwitchPageCubit>().state.selectedPage == 3 ? Colors.white : Colors.grey.withValues(alpha: 0.2),
+                      ),
+                      SizedBox(width: 5),
+                      Text(
+                        'Historiques',
+                        style: Theme.of(context).textTheme.displayMedium!.copyWith(
+                              color: context.read<SwitchPageCubit>().state.selectedPage == 3 ? Colors.white : Colors.black,
+                            ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              SizedBox(),
               roleId == 1
                   ? Container(
+                      margin: EdgeInsets.symmetric(vertical: 6, horizontal: 8),
                       padding: EdgeInsets.symmetric(vertical: 10),
                       width: Const.screenWidth(context) * 0.19,
                       height: 35,
                       decoration: BoxDecoration(
-                        color: context.read<SwitchPageCubit>().state.selectedPage == 3 ? Theme.of(context).colorScheme.primary : Colors.white,
-                      ),
-                      child: TextButton(
-                        onPressed: () {
-                          context.read<SwitchPageCubit>().switchPage(3);
-                          context.go('/historiques');
-                        },
-                        style: ButtonStyle(
-                          overlayColor: MaterialStateProperty.resolveWith<Color?>(
-                            (Set<MaterialState> states) {
-                              if (states.contains(MaterialState.hovered)) {
-                                return Colors.transparent; // Pas d'effet au survol
-                              }
-                              return null; // Laisser les autres états par défaut
-                            },
-                          ),
-                        ),
-                        child: Row(
-                          children: [
-                            Icon(
-                              Icons.history,
-                              color: context.read<SwitchPageCubit>().state.selectedPage == 3 ? Colors.white : Colors.grey.withValues(alpha: 0.2),
-                            ),
-                            SizedBox(width: 5),
-                            Text(
-                              'Historiques',
-                              style: Theme.of(context).textTheme.displayMedium!.copyWith(
-                                    color: context.read<SwitchPageCubit>().state.selectedPage == 3 ? Colors.white : Colors.black,
-                                  ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    )
-                  : SizedBox(),
-              roleId == 1
-                  ? Container(
-                      padding: EdgeInsets.symmetric(vertical: 10),
-                      width: Const.screenWidth(context) * 0.19,
-                      height: 35,
-                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(6),
+                        boxShadow: [
+                          context.read<SwitchPageCubit>().state.selectedPage == 4
+                              ? BoxShadow(
+                                  color: Colors.grey.withValues(alpha: 0.2),
+                                  spreadRadius: 10,
+                                  blurRadius: 10,
+                                  offset: Offset(0, 3), // Décalage horizontal et vertical de l'ombre
+                                )
+                              : BoxShadow(
+
+                                  // Décalage horizontal et vertical de l'ombre
+                                  )
+                        ],
                         color: context.read<SwitchPageCubit>().state.selectedPage == 4 ? Theme.of(context).colorScheme.primary : Colors.white,
                       ),
                       child: TextButton(
@@ -294,8 +398,8 @@ class _DrawerDashboardState extends State<DrawerDashboard> {
                         ),
                         child: Row(
                           children: [
-                            Icon(
-                              Icons.history,
+                            Image.asset(
+                              "assets/images/marketing.png",
                               color: context.read<SwitchPageCubit>().state.selectedPage == 4 ? Colors.white : Colors.grey.withValues(alpha: 0.2),
                             ),
                             SizedBox(width: 5),
@@ -312,10 +416,33 @@ class _DrawerDashboardState extends State<DrawerDashboard> {
                   : SizedBox(),
               roleId == 1
                   ? Container(
+                      margin: EdgeInsets.symmetric(vertical: 6, horizontal: 8),
                       padding: EdgeInsets.symmetric(vertical: 10),
                       width: Const.screenWidth(context) * 0.19,
                       height: 35,
                       decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(6),
+                        boxShadow: [
+                          context.read<SwitchPageCubit>().state.selectedPage == 6
+                              ? BoxShadow(
+                                  color: Colors.grey.withValues(alpha: 0.2),
+                                  spreadRadius: 10,
+                                  blurRadius: 10,
+                                  offset: Offset(0, 3), // Décalage horizontal et vertical de l'ombre
+                                )
+                              : context.read<SwitchPageCubit>().state.selectedPage == 7
+                                  ? BoxShadow()
+                                  : context.read<SwitchPageCubit>().state.selectedPage == 8
+                                      ? BoxShadow()
+                                      : context.read<SwitchPageCubit>().state.selectedPage == 8
+                                          ? BoxShadow(
+                                              color: Colors.grey.withValues(alpha: 0.2),
+                                              spreadRadius: 10,
+                                              blurRadius: 10,
+                                              offset: Offset(0, 3), // Décalage horizontal et vertical de l'ombre
+                                            )
+                                          : BoxShadow(),
+                        ],
                         color: context.read<SwitchPageCubit>().state.selectedPage == 6
                             ? Theme.of(context).colorScheme.primary
                             : context.read<SwitchPageCubit>().state.selectedPage == 7
@@ -369,10 +496,25 @@ class _DrawerDashboardState extends State<DrawerDashboard> {
                       child: Column(
                         children: [
                           Container(
+                            margin: EdgeInsets.symmetric(vertical: 6, horizontal: 8),
                             padding: EdgeInsets.symmetric(vertical: 10),
                             width: Const.screenWidth(context) * 0.19,
                             height: 35,
                             decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(6),
+                              boxShadow: [
+                                context.read<SwitchPageCubit>().state.selectedPage == 7
+                                    ? BoxShadow(
+                                        color: Colors.grey.withValues(alpha: 0.2),
+                                        spreadRadius: 10,
+                                        blurRadius: 10,
+                                        offset: Offset(0, 3), // Décalage horizontal et vertical de l'ombre
+                                      )
+                                    : BoxShadow(
+
+                                        // Décalage horizontal et vertical de l'ombre
+                                        )
+                              ],
                               color: context.read<SwitchPageCubit>().state.selectedPage == 7 ? Theme.of(context).colorScheme.primary : Colors.white,
                             ),
                             child: TextButton(
@@ -412,10 +554,25 @@ class _DrawerDashboardState extends State<DrawerDashboard> {
                             ),
                           ),
                           Container(
+                            margin: EdgeInsets.symmetric(vertical: 6, horizontal: 8),
                             padding: EdgeInsets.symmetric(vertical: 10),
                             width: Const.screenWidth(context) * 0.19,
                             height: 35,
                             decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(6),
+                              boxShadow: [
+                                context.read<SwitchPageCubit>().state.selectedPage == 8
+                                    ? BoxShadow(
+                                        color: Colors.grey.withValues(alpha: 0.2),
+                                        spreadRadius: 10,
+                                        blurRadius: 10,
+                                        offset: Offset(0, 3), // Décalage horizontal et vertical de l'ombre
+                                      )
+                                    : BoxShadow(
+
+                                        // Décalage horizontal et vertical de l'ombre
+                                        )
+                              ],
                               color: context.read<SwitchPageCubit>().state.selectedPage == 8 ? Theme.of(context).colorScheme.primary : Colors.white,
                             ),
                             child: TextButton(

@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:doc_authentificator/const/const.dart';
 import 'package:doc_authentificator/cubits/documents/document_cubit.dart';
 import 'package:doc_authentificator/cubits/documents/document_state.dart';
@@ -71,6 +73,7 @@ class _UpdateDocumentScreenState extends State<UpdateDocumentScreen> {
             animation: AnimationType.fromRight,
             icon: const Icon(Icons.check_circle_outline, color: Colors.green),
           ).show(context);
+          log("document update state : ${state.documentStatus} ");
           context.read<SwitchPageCubit>().switchPage(1);
           Future.delayed(const Duration(seconds: 1), () {
             if (state.documentStatus == DocumentStatus.loaded) {
@@ -80,7 +83,7 @@ class _UpdateDocumentScreenState extends State<UpdateDocumentScreen> {
         }
         if (state.documentStatus == DocumentStatus.error) {
           ElegantNotification.error(
-            width: Const.screenWidth(context) * 0.12,
+            width: Const.screenWidth(context) * 0.5,
             description: Text("Une erreur est survenue.", style: Theme.of(context).textTheme.labelSmall),
             position: Alignment.topRight,
             animation: AnimationType.fromRight,
@@ -90,10 +93,6 @@ class _UpdateDocumentScreenState extends State<UpdateDocumentScreen> {
       },
       child: BlocBuilder<DocumentCubit, DocumentState>(
         builder: (context, docState) {
-          if (docState.documentStatus == DocumentStatus.loading) {
-            return const Center(child: CircularProgressIndicator());
-          }
-
           if (docState.selectedDocument == null) {
             return const Center(child: Text("Document introuvable."));
           }
@@ -113,6 +112,7 @@ class _UpdateDocumentScreenState extends State<UpdateDocumentScreen> {
               }
 
               return Scaffold(
+                backgroundColor: Colors.grey[200],
                 body: Row(
                   children: [
                     DrawerDashboard(),
@@ -235,7 +235,8 @@ class _UpdateDocumentScreenState extends State<UpdateDocumentScreen> {
                                       icon: const Icon(Icons.save, color: Colors.white),
                                       onPressed: () {
                                         if (_formKey.currentState!.validate() && _selectedType != null) {
-                                          context.read<DocumentCubit>().addDocument(
+                                          context.read<DocumentCubit>().updateDocument(
+                                                widget.documentId,
                                                 DocumentsModel(
                                                   identifier: _identifierController.text,
                                                   descriptionDocument: _descriptionController.text,
@@ -244,10 +245,15 @@ class _UpdateDocumentScreenState extends State<UpdateDocumentScreen> {
                                               );
                                         }
                                       },
-                                      label: Text(
-                                        "Enregistrer",
-                                        style: Theme.of(context).textTheme.labelSmall!.copyWith(color: Colors.white),
-                                      ),
+                                      label: docState.documentStatus == DocumentStatus.loading
+                                          ? Center(
+                                              child: CircularProgressIndicator(
+                                              strokeWidth: 1,
+                                            ))
+                                          : Text(
+                                              "Enregistrer",
+                                              style: Theme.of(context).textTheme.labelSmall!.copyWith(color: Colors.white),
+                                            ),
                                       style: ElevatedButton.styleFrom(
                                         backgroundColor: Theme.of(context).colorScheme.primary,
                                         foregroundColor: Colors.white,

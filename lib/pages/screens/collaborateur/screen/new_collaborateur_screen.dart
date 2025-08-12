@@ -90,6 +90,7 @@ class _NewCollaborateurScreenState extends State<NewCollaborateurScreen> {
         }
       },
       child: Scaffold(
+        backgroundColor: Colors.grey[200],
         body: Row(
           children: [
             const DrawerDashboard(),

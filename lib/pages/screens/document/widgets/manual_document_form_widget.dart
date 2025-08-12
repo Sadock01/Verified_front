@@ -21,6 +21,7 @@ class _ManualDocumentFormState extends State<ManualDocumentForm> {
   final _formKey = GlobalKey<FormState>();
   final _identifierController = TextEditingController();
   final _descriptionController = TextEditingController();
+  final _beneficiaireController = TextEditingController();
   final TextEditingController _newTypeController = TextEditingController();
 
   bool _isAutoDescription = false;
@@ -32,6 +33,7 @@ class _ManualDocumentFormState extends State<ManualDocumentForm> {
   void dispose() {
     _identifierController.dispose();
     _descriptionController.dispose();
+    _beneficiaireController.dispose();
     super.dispose();
   }
 
@@ -91,6 +93,7 @@ class _ManualDocumentFormState extends State<ManualDocumentForm> {
                   Expanded(
                     flex: 2,
                     child: TextFormField(
+                      controller: _beneficiaireController,
                       style: theme.textTheme.labelSmall,
                       decoration: InputDecoration(
                         hintStyle: theme.textTheme.labelSmall,
@@ -197,10 +200,11 @@ class _ManualDocumentFormState extends State<ManualDocumentForm> {
                     if (_formKey.currentState!.validate() && _selectedType != null) {
                       context.read<DocumentCubit>().addDocument(
                             DocumentsModel(
-                              identifier: _identifierController.text,
-                              descriptionDocument: _descriptionController.text,
-                              typeId: _selectedType!.id,
-                            ),
+                                identifier: _identifierController.text,
+                                descriptionDocument: _descriptionController.text,
+                                typeId: _selectedType!.id,
+                                typeName: _selectedType!.name,
+                                beneficiaire: _beneficiaireController.text),
                           );
                     }
                   },
