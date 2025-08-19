@@ -1,5 +1,7 @@
+import 'package:doc_authentificator/services/authentification_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 import 'package:lottie/lottie.dart';
 
 import '../cubits/types/type_doc_cubit.dart';
@@ -66,7 +68,7 @@ class Utils {
                   // Message principal
                   Text(
                     message,
-                    style: Theme.of(context).textTheme.labelMedium,
+                    style: Theme.of(context).textTheme.labelSmall,
                     textAlign: TextAlign.center,
                   ),
                   const SizedBox(height: 24),
@@ -270,5 +272,64 @@ class Utils {
   static String _capitalize(String s) {
     if (s.isEmpty) return s;
     return s[0].toUpperCase() + s.substring(1);
+  }
+
+  static Future<void> showLogoutConfirmationDialog(BuildContext context) async {
+    return showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext dialogContext) {
+        return AlertDialog(
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+          title: Text(
+            'Déconnexion',
+            style: Theme.of(dialogContext).textTheme.labelSmall!.copyWith(fontWeight: FontWeight.bold),
+          ),
+          content: Text(
+            'Voulez-vous vraiment vous déconnecter ?',
+            style: Theme.of(dialogContext).textTheme.labelSmall,
+          ),
+          actionsPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+          actions: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: [
+                TextButton(
+                  onPressed: () => Navigator.of(dialogContext).pop(),
+                  child: Text(
+                    'Annuler',
+                    style: Theme.of(dialogContext).textTheme.labelSmall!.copyWith(color: Colors.grey),
+                  ),
+                ),
+                ElevatedButton(
+                  onPressed: () async {
+                    Navigator.of(dialogContext).pop(); // Ferme le dialog
+
+                    final int res = await AuthentificationService.logout();
+
+                    // Sécurité : petit délai après fermeture du dialog
+                    await Future.delayed(Duration(milliseconds: 2));
+
+                    if (res.toString().contains("2")) {
+                      context.go('/login');
+                    } else {
+                      Navigator.of(context, rootNavigator: true).pushReplacementNamed('/login_screen');
+                    }
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.redAccent,
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                  ),
+                  child: Text(
+                    'Se déconnecter',
+                    style: Theme.of(dialogContext).textTheme.labelSmall!.copyWith(color: Colors.white),
+                  ),
+                ),
+              ],
+            ),
+          ],
+        );
+      },
+    );
   }
 }

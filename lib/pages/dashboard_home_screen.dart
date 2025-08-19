@@ -66,8 +66,16 @@ class _DashboardHomeScreenState extends State<DashboardHomeScreen> {
           return NewCollaborateurScreen();
         } else {
           return Center(
-            child: Text("Page not found", style: Theme.of(context).textTheme.labelMedium),
-          );
+              child: Container(
+            width: 225,
+            height: 225,
+            decoration: BoxDecoration(
+                image: DecorationImage(
+                    fit: BoxFit.cover,
+                    image: AssetImage(
+                      "assets/images/undraw_not-found_6bgl.png",
+                    ))),
+          ));
         }
       }),
     ));

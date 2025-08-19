@@ -270,7 +270,7 @@ class _ManualDocumentFormState extends State<ManualDocumentForm> {
                 );
               }).toList(),
               decoration: const InputDecoration.collapsed(hintText: ""),
-              borderRadius: BorderRadius.circular(12),
+              borderRadius: BorderRadius.circular(4),
               onChanged: (value) => setState(() => _selectedType = value),
               validator: (value) => value == null ? "Veuillez sélectionner un type." : null,
               isExpanded: false,

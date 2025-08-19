@@ -38,18 +38,50 @@ class AuthentificationService {
     }
   }
 
-  static Future<String> logout() async {
-    final token = SharedPreferencesUtils.getString('auth_token');
-    log("mon token de connexion : $token");
-    api.options.headers['Authorization'] = 'Bearer $token';
+  // static Future<String> logout() async {
+  //   final token = SharedPreferencesUtils.getString('auth_token');
+  //   log("mon token de connexion : $token");
+  //   api.options.headers['Authorization'] = 'Bearer $token';
+  //
+  //   final response = await api.post("logout");
+  //   log('il se trouve ici');
+  //   if (response.statusCode == 200 || response.statusCode == 201) {
+  //     await FlutterStorageSecure.deleteToken();
+  //     return response.data['message'];
+  //   } else {
+  //     throw Exception("Echec de connexion");
+  //   }
+  // }
+  static Future<int> logout() async {
+    try {
+      final token = SharedPreferencesUtils.getString('auth_token');
+      log("mon token de connexion : $token");
+      if (token != null && token.isNotEmpty) {
+        // final res1 = await CreditCardService.getCreditCardDetails(currentUser!.id);
+        // log("Voici les details de la card de credit: $res1");
+        final response = await api.post(
+          '/logout',
+          options: Options(
+            headers: {
+              'Authorization': 'Bearer $token',
+            },
+          ),
+        );
+        log("Voici A RESPONSE: $response");
+        final int res = response.data['status_code'];
 
-    final response = await api.post("logout");
-    log('il se trouve ici');
-    if (response.statusCode == 200 || response.statusCode == 201) {
-      await FlutterStorageSecure.deleteToken();
-      return response.data['message'];
-    } else {
-      throw Exception("Echec de connexion");
+        if (response.statusCode == 200 || response.statusCode == 201) {
+          // await SharedPreferencesUtils.remove('auth_token');
+          return res;
+        } else {
+          return res;
+        }
+      } else {
+        // cas où le token est null ou vide
+        return 400;
+      }
+    } catch (e) {
+      throw Exception("Erreur lors de la déconnexion : ${e.toString()}");
     }
   }
 }

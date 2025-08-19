@@ -3,7 +3,7 @@ import 'package:dio/dio.dart';
 class ApiConfig {
   static api() {
     final options = BaseOptions(
-      baseUrl: 'https://4e8da6350788.ngrok-free.app/api/',
+      baseUrl: 'https://7acfffa39732.ngrok-free.app/api/',
       connectTimeout: const Duration(seconds: 30),
       receiveTimeout: const Duration(seconds: 30),
       validateStatus: (status) {

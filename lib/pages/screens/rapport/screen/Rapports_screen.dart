@@ -23,6 +23,7 @@ class _RapportsScreenState extends State<RapportsScreen> {
   void initState() {
     super.initState();
     _checkAuthentication();
+    context.read<ReportCubit>().getAllReports(1);
   }
 
   void _checkAuthentication() async {

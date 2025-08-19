@@ -48,6 +48,26 @@ void main() async {
 
 final GoRouter _router = GoRouter(
   initialLocation: '/',
+  errorBuilder: (BuildContext context, GoRouterState state) {
+    return Scaffold(
+      body: Center(
+          child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Image.asset(
+            "assets/images/undraw_cancel_7zdh.png",
+            width: 252,
+            height: 252,
+          ),
+          SizedBox(height: 10),
+          Text(
+            "Page not found",
+            style: Theme.of(context).textTheme.labelLarge!.copyWith(fontWeight: FontWeight.w900),
+          )
+        ],
+      )),
+    );
+  },
   routes: [
     GoRoute(
       path: '/login',

@@ -3,6 +3,7 @@ import 'dart:developer';
 import 'package:doc_authentificator/const/const.dart';
 import 'package:doc_authentificator/cubits/switch_page/switch_page_cubit.dart';
 import 'package:doc_authentificator/cubits/switch_page/switch_page_state.dart';
+import 'package:doc_authentificator/utils/utils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -46,11 +47,11 @@ class _DrawerDashboardState extends State<DrawerDashboard> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Container(
-                margin: EdgeInsets.only(bottom: 8),
+                margin: EdgeInsets.only(bottom: 8, top: 5),
                 padding: EdgeInsets.symmetric(vertical: 10),
                 width: Const.screenWidth(context) * 0.12,
                 height: 45,
-                decoration: BoxDecoration(image: DecorationImage(fit: BoxFit.contain, image: AssetImage('assets/images/Verified_original.png'))),
+                decoration: BoxDecoration(image: DecorationImage(fit: BoxFit.cover, image: AssetImage('assets/images/logo_mix.png'))),
               ),
               Container(
                 margin: EdgeInsets.symmetric(vertical: 6, horizontal: 8),
@@ -469,8 +470,8 @@ class _DrawerDashboardState extends State<DrawerDashboard> {
                         ),
                         child: Row(
                           children: [
-                            Icon(
-                              Icons.group,
+                            Image.asset(
+                              "assets/images/people.png",
                               color: context.read<SwitchPageCubit>().state.selectedPage == 6 ? Colors.white : Colors.grey.withValues(alpha: 0.2),
                             ),
                             SizedBox(width: 5),
@@ -616,6 +617,28 @@ class _DrawerDashboardState extends State<DrawerDashboard> {
                       ),
                     )
                   : SizedBox(),
+              Spacer(),
+              Padding(
+                padding: const EdgeInsets.all(20.0),
+                child: InkWell(
+                  onTap: () {
+                    Utils.showLogoutConfirmationDialog(context);
+                  },
+                  child: Row(
+                    children: [
+                      Icon(
+                        Icons.logout_outlined,
+                        color: Colors.red,
+                      ),
+                      SizedBox(width: 5),
+                      Text(
+                        "Déconnexion",
+                        style: Theme.of(context).textTheme.labelSmall,
+                      )
+                    ],
+                  ),
+                ),
+              )
             ],
           )),
     );

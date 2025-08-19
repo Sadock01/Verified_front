@@ -1,5 +1,6 @@
 import 'package:doc_authentificator/models/collaborateurs_model.dart';
 import 'package:equatable/equatable.dart';
+import 'package:intl/intl.dart';
 
 class ReportModel extends Equatable {
   final String firstName;
@@ -18,19 +19,41 @@ class ReportModel extends Equatable {
     required this.user,
   });
 
+  String get formattedDate {
+    return DateFormat('dd/MM/yyyy HH:mm').format(modifiedAt!);
+  }
+
   factory ReportModel.fromJson(Map<String, dynamic> json) {
     return ReportModel(
       firstName: json['user']['firstname'],
       lastName: json['user']['lastname'],
       modifiedAt: DateTime.parse(json['modified_at']),
-      userId: json['user_id'],
-      changes: (json['changes'] as Map<String, dynamic>).entries.map((entry) {
-        return ChangeModel(
-          field: entry.key,
-          oldValue: entry.value['old'].toString(),
-          newValue: entry.value['new'].toString(),
-        );
-      }).toList(),
+      userId: json['user_id'] ?? 1,
+      // changes: (json['changes'] as Map<String, dynamic>).entries.map((entry) {
+      //   return ChangeModel(
+      //     field: entry.key,
+      //     oldValue: entry.value['old'].toString(),
+      //     newValue: entry.value['new'].toString(),
+      //   );
+      // }).toList(),
+      changes: () {
+        final changesData = json['changes'];
+        if (changesData is Map<String, dynamic>) {
+          return changesData.entries.map((entry) {
+            return ChangeModel(
+              field: entry.key,
+              oldValue: entry.value['old'].toString(),
+              newValue: entry.value['new'].toString(),
+            );
+          }).toList();
+        } else if (changesData is List && changesData.isEmpty) {
+          // changes est une liste vide => pas de changements
+          return <ChangeModel>[];
+        } else {
+          // Cas inattendu, retourne une liste vide par défaut
+          return <ChangeModel>[];
+        }
+      }(),
       user: CollaborateursModel.fromJson(json['user']),
     );
   }

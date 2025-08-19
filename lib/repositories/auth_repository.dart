@@ -3,8 +3,7 @@ import 'dart:developer';
 import 'package:doc_authentificator/services/authentification_service.dart';
 
 class AuthRepository {
-  static Future<Map<String, dynamic>> login(
-      String email, String password) async {
+  static Future<Map<String, dynamic>> login(String email, String password) async {
     try {
       final response = await AuthentificationService.login(email, password);
 
@@ -26,8 +25,8 @@ class AuthRepository {
     }
   }
 
-  static Future<String> logout() async {
-    String message = await AuthentificationService.logout();
-    return message;
-  }
+  // static Future<String> logout() async {
+  //   String message = await AuthentificationService.logout();
+  //   return message;
+  // }
 }

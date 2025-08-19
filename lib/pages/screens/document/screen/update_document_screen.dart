@@ -32,6 +32,7 @@ class _UpdateDocumentScreenState extends State<UpdateDocumentScreen> {
   final _formKey = GlobalKey<FormState>();
   late TextEditingController _identifierController;
   late TextEditingController _descriptionController;
+  late TextEditingController _beneficiaryController;
 
   TypeDocModel? _selectedType;
 
@@ -41,7 +42,7 @@ class _UpdateDocumentScreenState extends State<UpdateDocumentScreen> {
     _checkAuthentication();
     _identifierController = TextEditingController();
     _descriptionController = TextEditingController();
-
+    _beneficiaryController = TextEditingController();
     // Charger le document depuis le cubit
     context.read<DocumentCubit>().getDocumentById(widget.documentId);
   }
@@ -58,6 +59,7 @@ class _UpdateDocumentScreenState extends State<UpdateDocumentScreen> {
   void dispose() {
     _identifierController.dispose();
     _descriptionController.dispose();
+    _beneficiaryController.dispose();
     super.dispose();
   }
 
@@ -101,6 +103,7 @@ class _UpdateDocumentScreenState extends State<UpdateDocumentScreen> {
 
           _identifierController.text = document.identifier;
           _descriptionController.text = document.descriptionDocument;
+          _beneficiaryController.text = document.beneficiaire ?? "";
 
           return BlocBuilder<TypeDocCubit, TypeDocState>(
             builder: (context, typeState) {
@@ -166,15 +169,36 @@ class _UpdateDocumentScreenState extends State<UpdateDocumentScreen> {
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  TextFormField(
-                                    controller: _identifierController,
-                                    style: Theme.of(context).textTheme.labelSmall,
-                                    decoration: InputDecoration(
-                                      hintStyle: Theme.of(context).textTheme.labelSmall,
-                                      hintText: "Ex: DOC-2025-XYZ",
-                                      border: OutlineInputBorder(borderRadius: BorderRadius.circular(5)),
-                                    ),
-                                    validator: (value) => value == null || value.isEmpty ? "Veuillez entrer l'identifiant." : null,
+                                  Row(
+                                    children: [
+                                      Expanded(
+                                        flex: 2,
+                                        child: TextFormField(
+                                          controller: _identifierController,
+                                          style: Theme.of(context).textTheme.labelSmall,
+                                          decoration: InputDecoration(
+                                            hintStyle: Theme.of(context).textTheme.labelSmall,
+                                            hintText: "Ex: DOC-2025-XYZ",
+                                            border: OutlineInputBorder(borderRadius: BorderRadius.circular(5)),
+                                          ),
+                                          validator: (value) => value == null || value.isEmpty ? "Veuillez entrer l'identifiant." : null,
+                                        ),
+                                      ),
+                                      SizedBox(width: 10),
+                                      Expanded(
+                                        flex: 2,
+                                        child: TextFormField(
+                                          controller: _beneficiaryController,
+                                          style: Theme.of(context).textTheme.labelSmall,
+                                          decoration: InputDecoration(
+                                            hintStyle: Theme.of(context).textTheme.labelSmall,
+                                            hintText: "Ex: John Doe",
+                                            border: OutlineInputBorder(borderRadius: BorderRadius.circular(5)),
+                                          ),
+                                          validator: (value) => value == null || value.isEmpty ? "Veuillez entrer l'identifiant." : null,
+                                        ),
+                                      ),
+                                    ],
                                   ),
                                   const SizedBox(height: 10),
                                   TextFormField(
@@ -240,6 +264,7 @@ class _UpdateDocumentScreenState extends State<UpdateDocumentScreen> {
                                                 DocumentsModel(
                                                   identifier: _identifierController.text,
                                                   descriptionDocument: _descriptionController.text,
+                                                  beneficiaire: _beneficiaryController.text,
                                                   typeId: _selectedType!.id,
                                                 ),
                                               );
