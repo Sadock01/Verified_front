@@ -2,6 +2,7 @@ import 'package:doc_authentificator/cubits/documents/document_state.dart';
 import 'package:doc_authentificator/models/documents_model.dart';
 import 'package:flutter/material.dart';
 
+import '../../../../const/const.dart';
 import '../../../../widgets/customs_data_table.dart';
 import 'document_actions_button.dart';
 
@@ -44,7 +45,9 @@ class DocumentsTabWidget extends StatelessWidget {
       return DataRow(
         cells: [
           DataCell(Text(doc.identifier, style: Theme.of(context).textTheme.labelSmall, overflow: TextOverflow.ellipsis)),
-          DataCell(Text(doc.descriptionDocument, style: Theme.of(context).textTheme.labelSmall, overflow: TextOverflow.ellipsis)),
+          DataCell(SizedBox(
+              width: Const.screenWidth(context) * 0.2,
+              child: Text(doc.descriptionDocument, style: Theme.of(context).textTheme.labelSmall, overflow: TextOverflow.ellipsis))),
 
           DataCell(Text(doc.typeName.toString(), style: Theme.of(context).textTheme.labelSmall)),
           DataCell(Text(doc.beneficiaire ?? "John Doe", style: Theme.of(context).textTheme.labelSmall, overflow: TextOverflow.ellipsis)),

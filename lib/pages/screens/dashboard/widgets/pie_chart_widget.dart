@@ -25,10 +25,12 @@ class InventoryPieChart extends StatelessWidget {
       return baseRadius + (value / total) * 20;
     }
 
+    final theme = Theme.of(context);
+    final isLight = theme.brightness == Brightness.light;
     return Container(
       padding: EdgeInsets.all(16),
       decoration: BoxDecoration(
-          color: Colors.white,
+          color: theme.cardColor,
           border: Border.all(color: Colors.grey.shade200),
           borderRadius: BorderRadius.circular(12),
           boxShadow: [BoxShadow(color: Colors.black12, blurRadius: 3)]),

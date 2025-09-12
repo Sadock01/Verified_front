@@ -19,6 +19,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../../utils/shared_preferences_utils.dart';
+import '../../../../widgets/app_bar_drawer_widget.dart';
+import '../../../../widgets/new_drawer_dashboard.dart';
 
 class UpdateDocumentScreen extends StatefulWidget {
   final int documentId;
@@ -118,11 +120,11 @@ class _UpdateDocumentScreenState extends State<UpdateDocumentScreen> {
                 backgroundColor: Colors.grey[200],
                 body: Row(
                   children: [
-                    DrawerDashboard(),
+                    NewDrawerDashboard(),
                     Expanded(
                       child: Column(
                         children: [
-                          AppbarDashboard(),
+                          AppBarDrawerWidget(),
                           Container(
                             margin: const EdgeInsets.symmetric(vertical: 10, horizontal: 10),
                             width: Const.screenWidth(context),

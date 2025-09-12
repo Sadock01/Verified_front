@@ -1,5 +1,6 @@
 import 'dart:developer';
 import 'package:doc_authentificator/pages/screens/document/widgets/manual_document_form_widget.dart';
+import 'package:doc_authentificator/pages/screens/document/widgets/upload_excel_widget.dart';
 import 'package:doc_authentificator/services/document_service.dart';
 import 'package:file_picker/file_picker.dart'; // Pour le fichier
 import 'package:flutter/material.dart';
@@ -26,22 +27,23 @@ import '../../../../widgets/new_drawer_dashboard.dart';
 import '../../../pdf_drop_zone_widget.dart';
 import '../widgets/choose_file_widget.dart';
 import '../widgets/extract_data_widget.dart';
+import '../widgets/extract_excel_summary.dart';
 
-class NewDocumentScreen extends StatefulWidget {
-  const NewDocumentScreen({super.key});
+class CreateDocumentScreen extends StatefulWidget {
+  const CreateDocumentScreen({super.key});
 
   @override
-  State<NewDocumentScreen> createState() => _NewDocumentScreenState();
+  State<CreateDocumentScreen> createState() => _CreateDocumentScreenState();
 }
 
-class _NewDocumentScreenState extends State<NewDocumentScreen> with SingleTickerProviderStateMixin {
+class _CreateDocumentScreenState extends State<CreateDocumentScreen> with SingleTickerProviderStateMixin {
   final _formKey = GlobalKey<FormState>();
   final TextEditingController _identifierController = TextEditingController();
   final TextEditingController _descriptionController = TextEditingController();
   final TextEditingController _newTypeController = TextEditingController();
   Uint8List? _selectedFileBytes;
   String? _selectedFileName;
-  TypeDocModel? _selectedType;
+  List<Map<String, dynamic>>? extractedEntitiesList;
 
   PlatformFile? _selectedFile;
   late TabController _tabController;
@@ -83,8 +85,6 @@ class _NewDocumentScreenState extends State<NewDocumentScreen> with SingleTicker
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final isLight = theme.brightness == Brightness.light;
-
     return BlocListener<DocumentCubit, DocumentState>(
       listener: (context, state) {
         if (state.documentStatus == DocumentStatus.sucess) {
@@ -123,25 +123,84 @@ class _NewDocumentScreenState extends State<NewDocumentScreen> with SingleTicker
                   child: Column(
                     children: [
                       AppBarDrawerWidget(),
+                      // Container(
+                      //   margin: const EdgeInsets.all(16),
+                      //   padding: const EdgeInsets.all(10),
+                      //   decoration: BoxDecoration(
+                      //     color: Colors.white,
+                      //     borderRadius: BorderRadius.circular(12),
+                      //   ),
+                      //   child: Column(
+                      //     children: [
+                      //       TabBar(
+                      //         controller: _tabController,
+                      //         labelStyle: Theme.of(context).textTheme.labelSmall,
+                      //         labelColor: Theme.of(context).colorScheme.primary,
+                      //         indicatorColor: Theme.of(context).colorScheme.primary,
+                      //         tabs: const [
+                      //           Tab(text: "Saisie manuelle"),
+                      //           Tab(text: "Enregistrement auto"),
+                      //         ],
+                      //       ),
+                      //     ],
+                      //   ),
+                      // ),
                       Expanded(
-                        child: Column(
+                        flex: 7,
+                        child: TabBarView(
+                          controller: _tabController,
                           children: [
-                            Container(
-                              margin: EdgeInsets.symmetric(horizontal: 30, vertical: 10),
-                              width: double.infinity,
-                              padding: const EdgeInsets.all(10),
-                              decoration: BoxDecoration(
-                                color: Colors.amber.withValues(alpha: 0.15),
-                                borderRadius: BorderRadius.circular(6),
-                                border: Border.all(color: Colors.amber.withValues(alpha: 0.4)),
-                              ),
-                              child: Text(
-                                  'Vous êtes en train d’enregistrer manuellement ce document. Les informations saisies ici seront celles visibles lors de sa vérification..',
-                                  style: Theme.of(context).textTheme.displaySmall),
-                            ),
-                            ManualDocumentForm(
-                              state: state,
-                            ),
+                            extractedEntitiesList != null
+                                ? ExtractedExcelDataSummary(
+                                    extractedDocuments: extractedEntitiesList!,
+                                    onCancel: () {
+                                      setState(() => extractedEntitiesList = null);
+                                    },
+                                    onConfirm: () {
+                                      for (final item in extractedEntitiesList!) {
+                                        final entity = item['entities'] as Map<String, dynamic>;
+
+                                        context.read<DocumentCubit>().addDocument(
+                                              DocumentsModel(
+                                                identifier: entity['identifier'] ?? '',
+                                                descriptionDocument: entity['description'] ?? '',
+                                                typeName: entity['type_document'] ?? '',
+                                                beneficiaire: entity['beneficiaire'] ?? '',
+                                              ),
+                                            );
+                                      }
+
+                                      setState(() => extractedEntitiesList = null);
+                                    },
+                                  )
+                                : UploadExcelWidget(
+                                    onExtracted: (data) {
+                                      setState(() {
+                                        extractedEntitiesList = data;
+                                      });
+                                    },
+                                  ),
+                            extractedEntities != null
+                                ? ExtractedDataReviewForm(
+                                    extractedData: extractedEntities!,
+                                    documentIdentifier: _identifierController,
+                                    onSubmit: ({
+                                      required String identifier,
+                                      required String description,
+                                      required String typeCertificat,
+                                      required String beneficiaire,
+                                    }) {
+                                      log("Enregistrement document...: $description");
+                                      context.read<DocumentCubit>().addDocument(
+                                            DocumentsModel(
+                                                identifier: identifier,
+                                                descriptionDocument: description,
+                                                typeName: typeCertificat,
+                                                beneficiaire: beneficiaire),
+                                          );
+                                    },
+                                  )
+                                : _buildUploadForm(context, state)
                           ],
                         ),
                       ),
@@ -177,104 +236,86 @@ class _NewDocumentScreenState extends State<NewDocumentScreen> with SingleTicker
         child: Padding(
           padding: const EdgeInsets.all(20),
           child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Expanded(
-                child: ListView(
-                  children: [
-                    // ElevatedButton.icon(
-                    //   icon: Icon(Icons.upload_file),
-                    //   onPressed: _pickFile,
-                    //   label: Text(_selectedFile != null ? "Fichier sélectionné: ${_selectedFile!.name}" : "Choisir un fichier"),
-                    //   style: ElevatedButton.styleFrom(
-                    //     padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 14),
-                    //     backgroundColor: Theme.of(context).colorScheme.secondary,
-                    //     foregroundColor: Colors.white,
-                    //     shape: RoundedRectangleBorder(
-                    //       borderRadius: BorderRadius.circular(10),
-                    //     ),
-                    //   ),
-                    // ),
-                    // const SizedBox(height: 16),
-                    Text("Identifiant du document", style: Theme.of(context).textTheme.labelSmall),
-                    const SizedBox(height: 8),
-                    TextFormField(
-                      controller: _identifierController,
-                      style: Theme.of(context).textTheme.labelSmall,
-                      decoration: InputDecoration(
-                        hintStyle: Theme.of(context).textTheme.labelSmall!.copyWith(color: Colors.grey[500]),
-                        hintText: "Ex: DOC-2025-XYZ",
-                        border: OutlineInputBorder(borderRadius: BorderRadius.circular(5)),
+              Container(
+                width: double.infinity,
+                padding: const EdgeInsets.all(10),
+                decoration: BoxDecoration(
+                  color: Colors.amber.withValues(alpha: 0.15),
+                  borderRadius: BorderRadius.circular(6),
+                  border: Border.all(color: Colors.amber.withValues(alpha: 0.4)),
+                ),
+                child: Text("Cette section accepte uniquement les fichiers PDF. Assurez-vous que votre fichier est au bon format.",
+                    style: Theme.of(context).textTheme.displaySmall),
+              ),
+              Text("Identifiant du document", style: Theme.of(context).textTheme.labelSmall),
+              const SizedBox(height: 8),
+              TextFormField(
+                controller: _identifierController,
+                style: Theme.of(context).textTheme.labelSmall,
+                decoration: InputDecoration(
+                  hintStyle: Theme.of(context).textTheme.labelSmall!.copyWith(color: Colors.grey[500]),
+                  hintText: "Ex: DOC-2025-XYZ",
+                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(5)),
+                ),
+                validator: (value) => value == null || value.isEmpty ? "Veuillez entrer l'identifiant." : null,
+              ),
+              const SizedBox(height: 16),
+              // _buildTypeDropdown(state),
+              Text(
+                "Téléversez votre fichier PDF",
+                style: Theme.of(context).textTheme.labelSmall!.copyWith(fontWeight: FontWeight.bold),
+              ),
+              SizedBox(height: 8),
+              SizedBox(height: 8),
+              _selectedFileBytes == null
+                  ? PdfDropZone(
+                      selectedFileBytes: _selectedFileBytes,
+                      selectedFileName: _selectedFileName,
+                      onFilePicked: (bytes, name) {
+                        setState(() {
+                          _selectedFileBytes = bytes;
+                          _selectedFileName = name;
+                        });
+                      },
+                    )
+                  : Container(
+                      padding: EdgeInsets.all(12),
+                      decoration: BoxDecoration(
+                        color: Colors.green.shade100,
+                        borderRadius: BorderRadius.circular(8),
+                        border: Border.all(color: Colors.green.shade700),
                       ),
-                      validator: (value) => value == null || value.isEmpty ? "Veuillez entrer l'identifiant." : null,
-                    ),
-                    const SizedBox(height: 16),
-                    // _buildTypeDropdown(state),
-                    Text(
-                      "Téléversez votre fichier PDF",
-                      style: Theme.of(context).textTheme.labelSmall!.copyWith(fontWeight: FontWeight.bold),
-                    ),
-                    SizedBox(height: 8),
-                    SizedBox(height: 8),
-                    _selectedFileBytes == null
-                        ? PdfDropZone(
-                            selectedFileBytes: _selectedFileBytes,
-                            selectedFileName: _selectedFileName,
-                            onFilePicked: (bytes, name) {
-                              setState(() {
-                                _selectedFileBytes = bytes;
-                                _selectedFileName = name;
-                              });
-                            },
-                          )
-                        : Container(
-                            padding: EdgeInsets.all(12),
-                            decoration: BoxDecoration(
-                              color: Colors.green.shade100,
-                              borderRadius: BorderRadius.circular(8),
-                              border: Border.all(color: Colors.green.shade700),
-                            ),
-                            child: Row(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                Icon(Icons.check_circle, color: Colors.green.shade700),
-                                SizedBox(width: 8),
-                                Flexible(
-                                  child: Text(
-                                    _selectedFileName ?? 'Fichier sélectionné',
-                                    style: TextStyle(
-                                      color: Colors.green.shade700,
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                    overflow: TextOverflow.ellipsis,
-                                  ),
-                                ),
-                                SizedBox(width: 8),
-                                IconButton(
-                                  icon: Icon(Icons.close, color: Colors.green.shade700),
-                                  onPressed: () {
-                                    setState(() {
-                                      _selectedFileBytes = null;
-                                      _selectedFileName = null;
-                                    });
-                                  },
-                                ),
-                              ],
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Icon(Icons.check_circle, color: Colors.green.shade700),
+                          SizedBox(width: 8),
+                          Flexible(
+                            child: Text(
+                              _selectedFileName ?? 'Fichier sélectionné',
+                              style: TextStyle(
+                                color: Colors.green.shade700,
+                                fontWeight: FontWeight.bold,
+                              ),
+                              overflow: TextOverflow.ellipsis,
                             ),
                           ),
-                    const SizedBox(height: 35),
-
-                    // SizedBox(height: 15),
-                    // Text(
-                    //   "Pour les documents excel",
-                    //   style: Theme.of(context).textTheme.labelSmall,
-                    // ),
-                    // SizedBox(
-                    //   height: 20,
-                    // ),
-                    // FileOrUrlPicker()
-                  ],
-                ),
-              ),
+                          SizedBox(width: 8),
+                          IconButton(
+                            icon: Icon(Icons.close, color: Colors.green.shade700),
+                            onPressed: () {
+                              setState(() {
+                                _selectedFileBytes = null;
+                                _selectedFileName = null;
+                              });
+                            },
+                          ),
+                        ],
+                      ),
+                    ),
+              const SizedBox(height: 35),
               SizedBox(
                 width: double.infinity,
                 child: ElevatedButton(

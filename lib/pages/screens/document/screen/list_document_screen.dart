@@ -9,6 +9,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../../utils/shared_preferences_utils.dart';
+import '../../../../widgets/app_bar_drawer_widget.dart';
+import '../../../../widgets/new_drawer_dashboard.dart';
 import '../widgets/documents_tab_widget.dart';
 
 class ListDocumentScreen extends StatefulWidget {
@@ -38,30 +40,44 @@ class _ListDocumentScreenState extends State<ListDocumentScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final isLargeScreen = MediaQuery.of(context).size.width > 1150;
+    final theme = Theme.of(context);
+    final isLight = theme.brightness == Brightness.light;
     return BlocBuilder<DocumentCubit, DocumentState>(builder: (context, state) {
       return Scaffold(
-        backgroundColor: Colors.grey[100],
+        drawer: isLargeScreen ? null : const DrawerDashboard(),
         body: Row(
           children: [
-            DrawerDashboard(),
+            if (isLargeScreen) const NewDrawerDashboard(),
             Expanded(
               child: Column(
                 children: [
-                  AppbarDashboard(),
+                  LayoutBuilder(
+                    builder: (context, constraints) {
+                      double width = constraints.maxWidth;
+                      if (width > 1150) {
+                        return SizedBox(height: 60, child: AppBarDrawerWidget());
+                      } else {
+                        return AppBarVendorWidget();
+                      }
+                    },
+                  ),
                   Expanded(
                     child: Container(
                       padding: EdgeInsets.all(15),
                       margin: EdgeInsets.only(left: 10, right: 10, top: 10, bottom: 20),
                       decoration: BoxDecoration(
-                        color: Colors.white,
+                        color: theme.cardColor,
                         borderRadius: BorderRadius.circular(10),
                         boxShadow: [
-                          BoxShadow(
-                            color: Colors.grey.withValues(alpha: 0.2),
-                            spreadRadius: 10,
-                            blurRadius: 10,
-                            offset: Offset(0, 3), // Décalage horizontal et vertical de l'ombre
-                          ),
+                          isLight
+                              ? BoxShadow(
+                                  color: Colors.grey.withValues(alpha: 0.2),
+                                  spreadRadius: 10,
+                                  blurRadius: 10,
+                                  offset: Offset(0, 3),
+                                )
+                              : BoxShadow()
                         ],
                       ),
                       child: Column(
@@ -88,7 +104,7 @@ class _ListDocumentScreenState extends State<ListDocumentScreen> {
                                   context.go('/document/nouveau-document');
                                 },
                                 child: Container(
-                                  padding: EdgeInsets.all(5),
+                                  padding: const EdgeInsets.all(10),
                                   decoration: BoxDecoration(border: Border.all(color: Colors.grey[200]!), borderRadius: BorderRadius.circular(5)),
                                   child: Row(
                                     children: [
@@ -108,7 +124,7 @@ class _ListDocumentScreenState extends State<ListDocumentScreen> {
                                 width: 10,
                               ),
                               Container(
-                                padding: EdgeInsets.all(5),
+                                padding: const EdgeInsets.all(10),
                                 decoration: BoxDecoration(border: Border.all(color: Colors.grey[200]!), borderRadius: BorderRadius.circular(5)),
                                 child: Row(
                                   children: [
@@ -129,27 +145,16 @@ class _ListDocumentScreenState extends State<ListDocumentScreen> {
                                 width: 10,
                               ),
                               Container(
-                                padding: EdgeInsets.all(5),
-                                decoration: BoxDecoration(border: Border.all(color: Colors.grey[200]!), borderRadius: BorderRadius.circular(5)),
-                                child: Icon(Icons.picture_in_picture_alt_outlined, size: 18, color: Colors.black),
-                              ),
-                              SizedBox(
-                                width: 10,
-                              ),
-                              Container(
-                                padding: EdgeInsets.all(5),
+                                padding: const EdgeInsets.all(10),
                                 decoration: BoxDecoration(border: Border.all(color: Colors.grey[200]!), borderRadius: BorderRadius.circular(5)),
                                 child: Row(
                                   children: [
-                                    Icon(Icons.grid_view, size: 18, color: Colors.grey),
-                                    Icon(
-                                      Icons.table_rows_outlined,
-                                      size: 18,
-                                      color: Colors.grey,
-                                    ),
+                                    Image.asset('assets/images/reload.png', width: 18, height: 18, color: Colors.grey[300]),
+                                    const SizedBox(width: 10),
+                                    Text('Reload', style: Theme.of(context).textTheme.labelSmall!.copyWith(fontWeight: FontWeight.bold)),
                                   ],
                                 ),
-                              )
+                              ),
                             ],
                           ),
                           SizedBox(height: 12),

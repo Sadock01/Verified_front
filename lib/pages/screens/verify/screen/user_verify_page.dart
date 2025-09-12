@@ -4,6 +4,7 @@ import 'dart:typed_data';
 
 import 'package:doc_authentificator/pages/pdf_drop_zone_widget.dart';
 import 'package:doc_authentificator/services/verification_service.dart';
+import 'package:doc_authentificator/utils/app_colors.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 
@@ -162,7 +163,7 @@ class _UserVerifyPageState extends State<UserVerifyPage> with TickerProviderStat
           ),
           ElevatedButton(
               style: ElevatedButton.styleFrom(
-                backgroundColor: Theme.of(context).colorScheme.primary,
+                backgroundColor: AppColors.PRIMARY_BLUE_COLOR,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(5),
                 ),
@@ -412,7 +413,7 @@ Pour obtenir une vérification complète avec toutes les métadonnées et inform
                                 }
                               },
                               style: ElevatedButton.styleFrom(
-                                backgroundColor: Theme.of(context).colorScheme.primary,
+                                backgroundColor: AppColors.PRIMARY_BLUE_COLOR,
                                 padding: EdgeInsets.symmetric(vertical: 16),
                                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)),
                               ),

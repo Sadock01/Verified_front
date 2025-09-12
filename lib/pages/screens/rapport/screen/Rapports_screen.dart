@@ -8,7 +8,9 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../../utils/shared_preferences_utils.dart';
+import '../../../../widgets/app_bar_drawer_widget.dart';
 import '../../../../widgets/appbar_dashboard.dart';
+import '../../../../widgets/new_drawer_dashboard.dart';
 import '../widgets/report_tab_widget.dart';
 
 class RapportsScreen extends StatefulWidget {
@@ -36,30 +38,33 @@ class _RapportsScreenState extends State<RapportsScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final isLight = theme.brightness == Brightness.light;
     return BlocBuilder<ReportCubit, ReportState>(builder: (context, state) {
       return Scaffold(
-        backgroundColor: Colors.grey[200],
         body: Row(
           children: [
-            DrawerDashboard(),
+            NewDrawerDashboard(),
             Expanded(
               child: Column(
                 children: [
-                  AppbarDashboard(),
+                  AppBarDrawerWidget(),
                   Expanded(
                     child: Container(
                       padding: EdgeInsets.all(15),
                       margin: EdgeInsets.only(left: 10, right: 10, top: 10, bottom: 20),
                       decoration: BoxDecoration(
-                        color: Colors.white,
+                        color: theme.cardColor,
                         borderRadius: BorderRadius.circular(10),
                         boxShadow: [
-                          BoxShadow(
-                            color: Colors.grey.withValues(alpha: 0.2),
-                            spreadRadius: 10,
-                            blurRadius: 10,
-                            offset: Offset(0, 3),
-                          ),
+                          isLight
+                              ? BoxShadow(
+                                  color: Colors.grey.withValues(alpha: 0.2),
+                                  spreadRadius: 10,
+                                  blurRadius: 10,
+                                  offset: Offset(0, 3),
+                                )
+                              : BoxShadow()
                         ],
                       ),
                       child: Column(

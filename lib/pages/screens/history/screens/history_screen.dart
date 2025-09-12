@@ -8,7 +8,9 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../../utils/shared_preferences_utils.dart';
+import '../../../../widgets/app_bar_drawer_widget.dart';
 import '../../../../widgets/appbar_dashboard.dart';
+import '../../../../widgets/new_drawer_dashboard.dart';
 
 class HistoryScreen extends StatefulWidget {
   const HistoryScreen({super.key});
@@ -37,19 +39,20 @@ class _HistoryScreenState extends State<HistoryScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final isLight = theme.brightness == Brightness.light;
     return BlocBuilder<VerificationCubit, VerificationState>(builder: (context, state) {
       return Scaffold(
-        backgroundColor: Colors.grey[100],
         body: Row(
           children: [
-            DrawerDashboard(),
+            NewDrawerDashboard(),
             Expanded(
               child: Column(
                 children: [
-                  AppbarDashboard(),
+                  AppBarDrawerWidget(),
                   if (state.verificationStatus == VerificationStatus.loading) ...[
                     const Center(
-                      child: CircularProgressIndicator(strokeWidth: 3.0),
+                      child: CircularProgressIndicator(strokeWidth: 1.0),
                     ),
                   ] else if (state.verificationStatus == VerificationStatus.error) ...[
                     const Center(
@@ -61,15 +64,17 @@ class _HistoryScreenState extends State<HistoryScreen> {
                         padding: EdgeInsets.all(15),
                         margin: EdgeInsets.only(left: 10, right: 10, top: 10, bottom: 20),
                         decoration: BoxDecoration(
-                          color: Colors.white,
+                          color: theme.cardColor,
                           borderRadius: BorderRadius.circular(10),
                           boxShadow: [
-                            BoxShadow(
-                              color: Colors.grey.withValues(alpha: 0.2),
-                              spreadRadius: 10,
-                              blurRadius: 10,
-                              offset: Offset(0, 3),
-                            ),
+                            isLight
+                                ? BoxShadow(
+                                    color: Colors.grey.withValues(alpha: 0.2),
+                                    spreadRadius: 10,
+                                    blurRadius: 10,
+                                    offset: Offset(0, 3),
+                                  )
+                                : BoxShadow()
                           ],
                         ),
                         child: Column(

@@ -113,6 +113,51 @@ class DocumentService {
     }
   }
 
+  static Future<Map<String, dynamic>> uploadExcelFile(
+    Uint8List pdfBytes, {
+    String filename = 'document.pdf',
+  }) async {
+    try {
+      final formData = FormData.fromMap({
+        'excel_file': MultipartFile.fromBytes(
+          pdfBytes,
+          filename: filename,
+          contentType: MediaType('application', 'pdf'),
+        ),
+      });
+      final token = SharedPreferencesUtils.getString('auth_token');
+      api.options.headers['AUTHORIZATION'] = 'Bearer $token';
+      final response = await api.post(
+        '/uploadExcel', // Remplace par ton endpoint complet si nécessaire
+        data: formData,
+        options: Options(
+          contentType: 'multipart/form-data',
+        ),
+      );
+
+      log("Réponse de upload document: ${response.data}");
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        return {
+          'success': true,
+          'message': response.data['message'],
+          'data': response.data['data'],
+        };
+      } else {
+        return {
+          'success': false,
+          'message': response.data['message'] ?? 'Erreur inconnue',
+        };
+      }
+    } catch (e) {
+      log("Erreur lors de la création du document : $e");
+      return {
+        'success': false,
+        'message': 'Erreur lors de la création du document : $e',
+      };
+    }
+  }
+
   static Future<Map<String, dynamic>> updateDocument(int documentId, DocumentsModel documentsModel) async {
     final token = SharedPreferencesUtils.getString('auth_token');
     api.options.headers['AUTHORIZATION'] = 'Bearer $token';

@@ -1,9 +1,14 @@
 import 'package:equatable/equatable.dart';
 
 class SwitchPageState extends Equatable {
-  final int selectedPage;
+  final double selectedPage;
+  final bool isDocumentExpanded;
+  final bool isCollabExpanded;
+
   const SwitchPageState({
     required this.selectedPage,
+    this.isDocumentExpanded = false,
+    this.isCollabExpanded = false,
   });
 
   factory SwitchPageState.initial() {
@@ -13,13 +18,20 @@ class SwitchPageState extends Equatable {
   }
 
   SwitchPageState copyWith({
-    int? selectedPage,
+    double? selectedPage,
+    bool? isDocumentExpanded,
+    bool? isCollabExpanded,
   }) {
     return SwitchPageState(
-      selectedPage: selectedPage ?? this.selectedPage,
-    );
+        selectedPage: selectedPage ?? this.selectedPage,
+        isDocumentExpanded: isDocumentExpanded ?? this.isDocumentExpanded,
+        isCollabExpanded: isCollabExpanded ?? this.isCollabExpanded);
   }
-  
+
   @override
-   List<Object> get props => [selectedPage];
+  List<Object> get props => [
+        selectedPage,
+        isCollabExpanded,
+        isDocumentExpanded,
+      ];
 }

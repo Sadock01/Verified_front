@@ -9,8 +9,10 @@ import '../../../../const/const.dart';
 import '../../../../cubits/collaborateurs/collaborateurs_cubit.dart';
 import '../../../../utils/app_colors.dart';
 import '../../../../utils/shared_preferences_utils.dart';
+import '../../../../widgets/app_bar_drawer_widget.dart';
 import '../../../../widgets/appbar_dashboard.dart';
 import '../../../../widgets/drawer_dashboard.dart';
+import '../../../../widgets/new_drawer_dashboard.dart';
 import '../widgets/stat_card_widget.dart';
 
 class StatistiquesScreen extends StatefulWidget {
@@ -68,17 +70,29 @@ class _StatistiquesScreenState extends State<StatistiquesScreen> {
     int crossAxisCount = 4;
     if (screenWidth < 1200) crossAxisCount = 2;
     if (screenWidth < 700) crossAxisCount = 1;
+    final isLargeScreen = MediaQuery.of(context).size.width > 1150;
+    // final theme = Theme.of(context);
+    final isLight = theme.brightness == Brightness.light;
 
     return Scaffold(
-      backgroundColor: Colors.grey[100],
+      drawer: isLargeScreen ? null : const NewDrawerDashboard(),
       body: SafeArea(
         child: Row(
           children: [
-            DrawerDashboard(),
+            if (isLargeScreen) const NewDrawerDashboard(),
             Expanded(
               child: Column(
                 children: [
-                  AppbarDashboard(),
+                  LayoutBuilder(
+                    builder: (context, constraints) {
+                      double width = constraints.maxWidth;
+                      if (width > 900) {
+                        return SizedBox(height: 60, child: AppBarDrawerWidget());
+                      } else {
+                        return AppBarVendorWidget();
+                      }
+                    },
+                  ),
                   Expanded(
                     child: Padding(
                       padding: const EdgeInsets.all(24.0),
@@ -91,75 +105,105 @@ class _StatistiquesScreenState extends State<StatistiquesScreen> {
                             return Center(child: Text("Erreur : ${snapshot.error}"));
                           } else {
                             final data = snapshot.data!;
-                            return Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  "Tableau de bord des statistiques",
-                                  style: theme.textTheme.labelMedium?.copyWith(
-                                    fontWeight: FontWeight.bold,
-                                    color: theme.colorScheme.primary,
+                            return SingleChildScrollView(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    "Tableau de bord des statistiques",
+                                    style: theme.textTheme.labelMedium?.copyWith(
+                                      fontWeight: FontWeight.bold,
+                                      color: theme.colorScheme.primary,
+                                    ),
                                   ),
-                                ),
-                                const SizedBox(height: 24),
-                                Row(
-                                  children: [
-                                    Expanded(
-                                      child: StatCardWidget(
-                                          title: "Total Documents",
-                                          value: "30",
-                                          subtitle: "+150 last month",
-                                          percentage: "+13.9%",
+                                  const SizedBox(height: 24),
+                                  Row(
+                                    children: [
+                                      Expanded(
+                                        child: StatCardWidget(
+                                            title: "Total Documents",
+                                            value: "30",
+                                            subtitle: "+150 last month",
+                                            percentage: "+13.9%",
+                                            isPositive: true,
+                                            color: Colors.orangeAccent,
+                                            imageUrl: "assets/images/documentation.png"),
+                                      ),
+                                      SizedBox(width: 12),
+                                      Expanded(
+                                        child: StatCardWidget(
+                                          title: "Total Verifications",
+                                          value: "100",
+                                          subtitle: "+500,000 last month",
+                                          percentage: "+16.1%",
                                           isPositive: true,
-                                          color: Colors.orangeAccent,
-                                          imageUrl: "assets/images/documentation.png"),
-                                    ),
-                                    SizedBox(width: 12),
-                                    Expanded(
-                                      child: StatCardWidget(
-                                        title: "Total Verifications",
-                                        value: "100",
-                                        subtitle: "+500,000 last month",
-                                        percentage: "+16.1%",
-                                        isPositive: true,
-                                        imageUrl: "assets/images/quality-assurance.png",
-                                        color: Colors.green,
+                                          imageUrl: "assets/images/quality-assurance.png",
+                                          color: Colors.green,
+                                        ),
                                       ),
-                                    ),
-                                    SizedBox(width: 12),
-                                    Expanded(
-                                      child: StatCardWidget(
-                                        title: "Total Types",
-                                        value: "10",
-                                        subtitle: "+2.3% last month",
-                                        percentage: "+11.1%",
-                                        isPositive: true,
-                                        imageUrl: "assets/images/file.png",
-                                        color: Colors.blue,
+                                      SizedBox(width: 12),
+                                      Expanded(
+                                        child: StatCardWidget(
+                                          title: "Total Types",
+                                          value: "10",
+                                          subtitle: "+2.3% last month",
+                                          percentage: "+11.1%",
+                                          isPositive: true,
+                                          imageUrl: "assets/images/file.png",
+                                          color: Colors.blue,
+                                        ),
                                       ),
-                                    ),
-                                    SizedBox(width: 12),
-                                    Expanded(
-                                      child: StatCardWidget(
-                                        title: "Total Collaborateurs",
-                                        value: "23",
-                                        subtitle: "+2,984 last month",
-                                        percentage: "-10.5%",
-                                        isPositive: false,
-                                        color: AppColors.PRIMARY_BLUE_COLOR,
-                                        imageUrl: "assets/images/people.png",
+                                      SizedBox(width: 12),
+                                      Expanded(
+                                        child: StatCardWidget(
+                                          title: "Total Collaborateurs",
+                                          value: "23",
+                                          subtitle: "+2,984 last month",
+                                          percentage: "-10.5%",
+                                          isPositive: false,
+                                          color: AppColors.PRIMARY_BLUE_COLOR,
+                                          imageUrl: "assets/images/people.png",
+                                        ),
                                       ),
-                                    ),
-                                  ],
-                                ),
-                                const SizedBox(height: 32),
-                                Row(
-                                  children: [
-                                    Expanded(flex: 2, child: SalesChartWidget()),
-                                    Expanded(flex: 1, child: InventoryPieChart(inStock: 10, outOfStock: 40)),
-                                  ],
-                                )
-                              ],
+                                    ],
+                                  ),
+                                  const SizedBox(height: 32),
+                                  LayoutBuilder(
+                                    builder: (context, constraints) {
+                                      double width = constraints.maxWidth;
+
+                                      if (width > 1024) {
+                                        return Row(
+                                          crossAxisAlignment: CrossAxisAlignment.start,
+                                          children: [
+                                            /// Le graphique principal
+                                            Expanded(
+                                              flex: 2,
+                                              child: SalesChartWidget(),
+                                            ),
+                                            SizedBox(width: 16),
+
+                                            /// Le camembert
+                                            Expanded(
+                                              flex: 1,
+                                              child: InventoryPieChart(inStock: 10, outOfStock: 40),
+                                            ),
+                                          ],
+                                        );
+                                      } else {
+                                        return Column(
+                                          crossAxisAlignment: CrossAxisAlignment.stretch,
+                                          children: [
+                                            SalesChartWidget(),
+                                            SizedBox(height: 16),
+                                            InventoryPieChart(inStock: 10, outOfStock: 40),
+                                          ],
+                                        );
+                                      }
+                                    },
+                                  ),
+                                ],
+                              ),
                             );
                           }
                         },

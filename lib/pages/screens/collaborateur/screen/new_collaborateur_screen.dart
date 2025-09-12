@@ -10,7 +10,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../../utils/app_colors.dart';
 import '../../../../utils/shared_preferences_utils.dart';
+import '../../../../widgets/app_bar_drawer_widget.dart';
+import '../../../../widgets/new_drawer_dashboard.dart';
 
 class NewCollaborateurScreen extends StatefulWidget {
   const NewCollaborateurScreen({super.key});
@@ -56,6 +59,8 @@ class _NewCollaborateurScreenState extends State<NewCollaborateurScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final isLight = theme.brightness == Brightness.light;
     return BlocListener<CollaborateursCubit, CollaborateursState>(
       listener: (context, state) {
         if (state.collaborateurStatus == CollaborateurStatus.success) {
@@ -90,14 +95,13 @@ class _NewCollaborateurScreenState extends State<NewCollaborateurScreen> {
         }
       },
       child: Scaffold(
-        backgroundColor: Colors.grey[200],
         body: Row(
           children: [
-            const DrawerDashboard(),
+            NewDrawerDashboard(),
             Expanded(
               child: Column(
                 children: [
-                  const AppbarDashboard(),
+                  AppBarDrawerWidget(),
                   // Titre
                   Container(
                     margin: const EdgeInsets.symmetric(vertical: 10, horizontal: 10),
@@ -105,7 +109,7 @@ class _NewCollaborateurScreenState extends State<NewCollaborateurScreen> {
                     height: Const.screenHeight(context) * 0.1,
                     padding: const EdgeInsets.symmetric(horizontal: 50, vertical: 10),
                     decoration: BoxDecoration(
-                      color: Theme.of(context).colorScheme.primary,
+                      color: AppColors.PRIMARY_BLUE_COLOR,
                       borderRadius: BorderRadius.circular(5),
                     ),
                     child: Column(
@@ -135,14 +139,16 @@ class _NewCollaborateurScreenState extends State<NewCollaborateurScreen> {
                     height: Const.screenHeight(context) * 0.35,
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(15),
-                      color: Colors.white,
+                      color: theme.cardColor,
                       boxShadow: [
-                        BoxShadow(
-                          color: Colors.grey.withValues(alpha: 0.2),
-                          spreadRadius: 10,
-                          blurRadius: 10,
-                          offset: const Offset(0, 3),
-                        ),
+                        isLight
+                            ? BoxShadow(
+                                color: Colors.grey.withValues(alpha: 0.2),
+                                spreadRadius: 10,
+                                blurRadius: 10,
+                                offset: Offset(0, 3),
+                              )
+                            : BoxShadow()
                       ],
                     ),
                     child: Form(

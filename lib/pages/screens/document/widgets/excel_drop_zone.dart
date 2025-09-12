@@ -2,12 +2,12 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'dart:typed_data';
 
-class PdfDropZone extends StatefulWidget {
+class ExcelDropZone extends StatefulWidget {
   final Uint8List? selectedFileBytes;
   final String? selectedFileName;
   final void Function(Uint8List?, String?) onFilePicked;
 
-  const PdfDropZone({
+  const ExcelDropZone({
     required this.selectedFileBytes,
     required this.selectedFileName,
     required this.onFilePicked,
@@ -15,16 +15,16 @@ class PdfDropZone extends StatefulWidget {
   }) : super(key: key);
 
   @override
-  State<PdfDropZone> createState() => _PdfDropZoneState();
+  State<ExcelDropZone> createState() => _ExcelDropZoneState();
 }
 
-class _PdfDropZoneState extends State<PdfDropZone> {
+class _ExcelDropZoneState extends State<ExcelDropZone> {
   bool _dragging = false;
 
   Future<void> _pickFile() async {
     FilePickerResult? result = await FilePicker.platform.pickFiles(
       type: FileType.custom,
-      allowedExtensions: ['pdf'],
+      allowedExtensions: ['xls', 'xlsx'],
       withData: true, // Important pour avoir les bytes
     );
     if (result != null && result.files.single.bytes != null) {
@@ -75,7 +75,7 @@ class _PdfDropZoneState extends State<PdfDropZone> {
                         // Icon(Icons.cloud_upload_outlined, size: 48, color: Colors.grey[400]),
                         SizedBox(height: 12),
                         Text(
-                          "Glissez-déposez votre fichier PDF ici,\nou cliquez pour sélectionner",
+                          "Cliquez pour sélectionner votre fichier EXCEL",
                           textAlign: TextAlign.center,
                           style: Theme.of(context).textTheme.labelSmall!.copyWith(
                                 color: Colors.grey[400],

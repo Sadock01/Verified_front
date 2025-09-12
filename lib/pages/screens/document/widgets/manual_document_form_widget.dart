@@ -45,6 +45,7 @@ class _ManualDocumentFormState extends State<ManualDocumentForm> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final isLight = theme.brightness == Brightness.light;
 
     return Center(
       child: Container(
@@ -52,7 +53,7 @@ class _ManualDocumentFormState extends State<ManualDocumentForm> {
         padding: const EdgeInsets.all(15),
         margin: const EdgeInsets.symmetric(vertical: 30),
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: theme.cardColor,
           borderRadius: BorderRadius.circular(16),
           boxShadow: const [
             BoxShadow(
@@ -216,6 +217,9 @@ class _ManualDocumentFormState extends State<ManualDocumentForm> {
                   ),
                 ),
               ),
+              SizedBox(
+                height: 40,
+              )
             ],
           ),
         ),
@@ -225,6 +229,7 @@ class _ManualDocumentFormState extends State<ManualDocumentForm> {
 
   Widget _buildTypeDropdown(TypeDocState state) {
     final theme = Theme.of(context);
+    final isLight = theme.brightness == Brightness.light;
 
     if (state.typeStatus == TypeStatus.loading) {
       return const LinearProgressIndicator(minHeight: 1);
@@ -238,47 +243,48 @@ class _ManualDocumentFormState extends State<ManualDocumentForm> {
     return Row(
       mainAxisAlignment: MainAxisAlignment.start,
       children: [
-        Container(
-          padding: const EdgeInsets.symmetric(horizontal: 12),
-          decoration: BoxDecoration(
-            color: Colors.white,
-            border: Border.all(color: Colors.grey.withValues(alpha: 0.5)),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.grey.withOpacity(0.1),
-                blurRadius: 10,
-                offset: const Offset(0, 4),
-              ),
-            ],
-          ),
-          width: 365,
-          height: 35,
-          child: DropdownButtonHideUnderline(
+        SizedBox(
+            // padding: const EdgeInsets.symmetric(horizontal: 12),
+            // decoration: BoxDecoration(
+            //   color: theme.cardColor,
+            //   borderRadius: BorderRadius.circular(5),
+            //   border: Border.all(color: Colors.grey.withValues(alpha: 0.5)),
+            //   boxShadow: [
+            //     BoxShadow(
+            //       color: Colors.grey.withOpacity(0.1),
+            //       blurRadius: 10,
+            //       offset: const Offset(0, 4),
+            //     ),
+            //   ],
+            // ),
+            width: 365,
+            height: 50,
             child: DropdownButtonFormField<TypeDocModel>(
               value: _selectedType,
               hint: Text(
                 "Choisir un type",
-                style: Theme.of(context).textTheme.labelSmall?.copyWith(color: Colors.grey.shade600),
+                style: TextStyle(fontSize: 13, color: Colors.grey.shade600), // ✅ Texte local
               ),
               items: state.listType.map((type) {
                 return DropdownMenuItem<TypeDocModel>(
                   value: type,
                   child: Text(
                     type.name,
-                    style: theme.textTheme.displaySmall,
+                    style: theme.textTheme.labelSmall, // ✅ Texte des options
                   ),
                 );
               }).toList(),
-              decoration: const InputDecoration.collapsed(hintText: ""),
+
               borderRadius: BorderRadius.circular(4),
               onChanged: (value) => setState(() => _selectedType = value),
               validator: (value) => value == null ? "Veuillez sélectionner un type." : null,
               isExpanded: false,
-              icon: const Icon(Icons.keyboard_arrow_down),
-              dropdownColor: Colors.white,
+              icon: const Icon(Icons.keyboard_arrow_down, color: Colors.grey), // ✅ Icône personnalisée
+              dropdownColor: theme.cardColor, // ✅ Couleur du menu déroulant
+              style: theme.textTheme.labelSmall, // ✅ Texte sélectionné
+            )
+            // largeur contrôlée, adaptée au web
             ),
-          ), // largeur contrôlée, adaptée au web
-        ),
         const SizedBox(width: 12),
         Tooltip(
           message: "Ajouter un nouveau type",

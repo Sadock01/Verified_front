@@ -8,7 +8,9 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../../utils/shared_preferences_utils.dart';
+import '../../../../widgets/app_bar_drawer_widget.dart';
 import '../../../../widgets/appbar_dashboard.dart';
+import '../../../../widgets/new_drawer_dashboard.dart';
 import '../widgets/document_detail_tab_widget.dart';
 
 class DocumentDetailsScreen extends StatefulWidget {
@@ -42,11 +44,11 @@ class _DocumentDetailsScreenState extends State<DocumentDetailsScreen> {
         backgroundColor: Colors.grey[200],
         body: Row(
           children: [
-            DrawerDashboard(),
+            NewDrawerDashboard(),
             Expanded(
               child: Column(
                 children: [
-                  AppbarDashboard(),
+                  AppBarDrawerWidget(),
                   Container(
                     margin: const EdgeInsets.symmetric(vertical: 10, horizontal: 10),
                     width: Const.screenWidth(context),

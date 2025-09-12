@@ -17,7 +17,7 @@ class CustomDataTable extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return DataTable(
-      headingRowColor: MaterialStateProperty.all(headingColor ?? Colors.grey[300]),
+      // headingRowColor: MaterialStateProperty.all(headingColor ?? Colors.grey[300]),
       headingRowHeight: headingRowHeight,
       columns: columns,
       rows: rows,

@@ -24,10 +24,12 @@ class _SalesChartWidgetState extends State<SalesChartWidget> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final isLight = theme.brightness == Brightness.light;
     return Stack(
       children: <Widget>[
         Card(
-          color: Colors.white,
+          color: theme.cardColor,
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
