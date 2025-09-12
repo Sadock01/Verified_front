@@ -146,7 +146,6 @@ class _CreateDocumentScreenState extends State<CreateDocumentScreen> with Single
                       //   ),
                       // ),
                       Expanded(
-                        flex: 7,
                         child: TabBarView(
                           controller: _tabController,
                           children: [
@@ -249,6 +248,7 @@ class _CreateDocumentScreenState extends State<CreateDocumentScreen> with Single
                 child: Text("Cette section accepte uniquement les fichiers PDF. Assurez-vous que votre fichier est au bon format.",
                     style: Theme.of(context).textTheme.displaySmall),
               ),
+              const SizedBox(height: 16),
               Text("Identifiant du document", style: Theme.of(context).textTheme.labelSmall),
               const SizedBox(height: 8),
               TextFormField(
@@ -322,8 +322,9 @@ class _CreateDocumentScreenState extends State<CreateDocumentScreen> with Single
                   onPressed: () async {
                     if (_selectedFileBytes == null || _identifierController.text.isEmpty) {
                       ElegantNotification.error(
+                        background: theme.cardColor,
                         description: Text(
-                          "Veuillez compléter tous les champs.",
+                          "Veuillez renseigner l'identifiant ou uploader le fichier pdf.",
                           style: Theme.of(context).textTheme.labelSmall,
                         ),
                       ).show(context);

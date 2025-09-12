@@ -67,28 +67,36 @@ class _UpdateDocumentScreenState extends State<UpdateDocumentScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final isLight = theme.brightness == Brightness.light;
     return BlocListener<DocumentCubit, DocumentState>(
       listener: (context, state) {
         if (state.documentStatus == DocumentStatus.sucess) {
           ElegantNotification.success(
+            background: theme.cardColor,
             width: Const.screenWidth(context) * 0.5,
-            description: Text(state.errorMessage, style: Theme.of(context).textTheme.labelSmall),
+            description: Text(
+              state.errorMessage,
+              style: theme.textTheme.labelSmall,
+            ),
             position: Alignment.topRight,
             animation: AnimationType.fromRight,
             icon: const Icon(Icons.check_circle_outline, color: Colors.green),
           ).show(context);
           log("document update state : ${state.documentStatus} ");
           context.read<SwitchPageCubit>().switchPage(1);
-          Future.delayed(const Duration(seconds: 1), () {
-            if (state.documentStatus == DocumentStatus.loaded) {
-              context.go('/document/List_document');
-            }
+          Future.delayed(Duration(milliseconds: 300), () {
+            if (mounted) context.go('/document/List_document');
           });
         }
         if (state.documentStatus == DocumentStatus.error) {
           ElegantNotification.error(
+            background: theme.cardColor,
             width: Const.screenWidth(context) * 0.5,
-            description: Text("Une erreur est survenue.", style: Theme.of(context).textTheme.labelSmall),
+            description: Text(
+              "Une erreur est survenue.",
+              style: theme.textTheme.labelSmall,
+            ),
             position: Alignment.topRight,
             animation: AnimationType.fromRight,
             icon: const Icon(Icons.error_outline, color: Colors.red),
@@ -117,7 +125,6 @@ class _UpdateDocumentScreenState extends State<UpdateDocumentScreen> {
               }
 
               return Scaffold(
-                backgroundColor: Colors.grey[200],
                 body: Row(
                   children: [
                     NewDrawerDashboard(),
@@ -156,7 +163,7 @@ class _UpdateDocumentScreenState extends State<UpdateDocumentScreen> {
                             width: Const.screenWidth(context),
                             decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(10),
-                              color: Colors.white,
+                              color: theme.cardColor,
                               boxShadow: [
                                 BoxShadow(
                                   color: Colors.grey.withValues(alpha: 0.2),
@@ -217,43 +224,48 @@ class _UpdateDocumentScreenState extends State<UpdateDocumentScreen> {
                                   const SizedBox(height: 10),
                                   typeState.typeStatus == TypeStatus.loading
                                       ? const Center(child: LinearProgressIndicator(minHeight: 1))
-                                      : Container(
-                                          padding: const EdgeInsets.symmetric(horizontal: 12),
-                                          decoration: BoxDecoration(
-                                            color: Colors.white,
-                                            border: Border.all(color: Colors.grey.withValues(alpha: 0.5)),
-                                            borderRadius: BorderRadius.circular(5),
-                                            boxShadow: [
-                                              BoxShadow(
-                                                color: Colors.grey.withOpacity(0.1),
-                                                blurRadius: 10,
-                                                offset: const Offset(0, 4),
-                                              ),
-                                            ],
-                                          ),
+                                      : SizedBox(
+                                          // padding: const EdgeInsets.symmetric(horizontal: 12),
+                                          // decoration: BoxDecoration(
+                                          //   color: theme.cardColor,
+                                          //   borderRadius: BorderRadius.circular(5),
+                                          //   border: Border.all(color: Colors.grey.withValues(alpha: 0.5)),
+                                          //   boxShadow: [
+                                          //     BoxShadow(
+                                          //       color: Colors.grey.withOpacity(0.1),
+                                          //       blurRadius: 10,
+                                          //       offset: const Offset(0, 4),
+                                          //     ),
+                                          //   ],
+                                          // ),
                                           width: 365,
-                                          height: 35,
-                                          child: DropdownButtonHideUnderline(
-                                            child: DropdownButtonFormField<TypeDocModel>(
-                                              value: _selectedType,
-                                              decoration: const InputDecoration.collapsed(hintText: ""),
-                                              isExpanded: false,
-                                              items: typeState.listType.map((type) {
-                                                return DropdownMenuItem<TypeDocModel>(
-                                                  value: type,
-                                                  child: Text(type.name, style: Theme.of(context).textTheme.labelSmall),
-                                                );
-                                              }).toList(),
-                                              onChanged: (value) {
-                                                setState(() {
-                                                  _selectedType = value;
-                                                });
-                                              },
-                                              dropdownColor: Colors.white,
-                                              validator: (value) => value == null ? "Veuillez sélectionner un type." : null,
+                                          height: 50,
+                                          child: DropdownButtonFormField<TypeDocModel>(
+                                            value: _selectedType,
+                                            hint: Text(
+                                              "Choisir un type",
+                                              style: TextStyle(fontSize: 13, color: Colors.grey.shade600), // ✅ Texte local
                                             ),
+                                            items: typeState.listType.map((type) {
+                                              return DropdownMenuItem<TypeDocModel>(
+                                                value: type,
+                                                child: Text(
+                                                  type.name,
+                                                  style: theme.textTheme.labelSmall, // ✅ Texte des options
+                                                ),
+                                              );
+                                            }).toList(),
+
+                                            borderRadius: BorderRadius.circular(4),
+                                            onChanged: (value) => setState(() => _selectedType = value),
+                                            validator: (value) => value == null ? "Veuillez sélectionner un type." : null,
+                                            isExpanded: false,
+                                            icon: const Icon(Icons.keyboard_arrow_down, color: Colors.grey), // ✅ Icône personnalisée
+                                            dropdownColor: theme.cardColor, // ✅ Couleur du menu déroulant
+                                            style: theme.textTheme.labelSmall, // ✅ Texte sélectionné
+                                          )
+                                          // largeur contrôlée, adaptée au web
                                           ),
-                                        ),
                                   const SizedBox(height: 20),
                                   SizedBox(
                                     width: double.infinity,
