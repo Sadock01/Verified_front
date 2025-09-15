@@ -29,6 +29,7 @@ class _UserVerifyPageState extends State<UserVerifyPage> with TickerProviderStat
   final TextEditingController _identifierController = TextEditingController();
   final TextEditingController _dateController = TextEditingController();
   final TextEditingController _nameController = TextEditingController();
+  final TextEditingController _manualTypeController = TextEditingController();
 
   Uint8List? _selectedFileBytes;
   String? _selectedFileName;
@@ -214,15 +215,15 @@ class _UserVerifyPageState extends State<UserVerifyPage> with TickerProviderStat
                       children: [
                         HoverAnimatedStep(
                           number: 1,
-                          title: "Entrez l'identifiant",
-                          desc: "Saisissez l'identifiant unique du document à vérifier.",
+                          title: "Option 1 : Remplir manuellement",
+                          desc: "Indiquez l'identifiant, la date de délivrance, le nom du bénéficiaire et le type de document.",
                           color: Colors.deepPurple,
                           icon: Icons.confirmation_number,
                         ),
                         HoverAnimatedStep(
                           number: 2,
-                          title: "Téléversez votre PDF",
-                          desc: "Choisissez le fichier PDF original du document.",
+                          title: "Option 2 : Téléverser un PDF",
+                          desc: "Importez directement le fichier PDF original du document.",
                           color: Colors.indigo,
                           icon: Icons.upload_file,
                         ),
@@ -258,7 +259,7 @@ class _UserVerifyPageState extends State<UserVerifyPage> with TickerProviderStat
                               "Entrez les informations du document",
                               style: Theme.of(context).textTheme.labelSmall!.copyWith(fontWeight: FontWeight.bold),
                             ),
-                            SizedBox(height: 8),
+                            SizedBox(height: 15),
                             Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
@@ -488,7 +489,15 @@ class _UserVerifyPageState extends State<UserVerifyPage> with TickerProviderStat
                                   try {
                                     final identifier = _identifierController.text;
                                     final name = _nameController.text;
-                                    final type = _selectedType!.name;
+                                    String? typeName;
+
+                                    if (_selectedType != null) {
+                                      typeName = _selectedType!.name;
+                                    } else if (_manualTypeController.text.isNotEmpty) {
+                                      typeName = _manualTypeController.text.trim();
+                                    }
+
+                                    // final type = _selectedType!.name;
                                     final date = _dateController.text;
                                     // final response = await VerificationService.verifyDocumentWithFile(
                                     //   identifier,
@@ -499,7 +508,7 @@ class _UserVerifyPageState extends State<UserVerifyPage> with TickerProviderStat
                                     final response = await VerificationService.verifyDocWithFile(
                                       identifier,
                                       name,
-                                      type,
+                                      typeName,
                                       date,
                                       _selectedFileBytes,
                                       filename: _selectedFileName ?? 'document.pdf',
@@ -605,65 +614,147 @@ Pour obtenir une vérification complète avec toutes les métadonnées et inform
     );
   }
 
+  // Widget _buildTypeDropdown(TypeDocState state) {
+  //   final theme = Theme.of(context);
+  //
+  //   if (state.typeStatus == TypeStatus.loading) {
+  //     return const LinearProgressIndicator(minHeight: 1);
+  //   } else if (state.typeStatus == TypeStatus.error) {
+  //     return Text(
+  //       "Erreur lors du chargement des types.",
+  //       style: theme.textTheme.labelSmall?.copyWith(color: Colors.red),
+  //     );
+  //   }
+  //
+  //   return SizedBox(
+  //     width: 365,
+  //     child: DropdownButtonFormField<TypeDocModel>(
+  //       value: _selectedType,
+  //       decoration: InputDecoration(
+  //         contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 14),
+  //         hintText: "Choisir un type de document",
+  //         hintStyle: theme.textTheme.labelSmall?.copyWith(color: Colors.grey.shade600),
+  //         border: OutlineInputBorder(
+  //           borderRadius: BorderRadius.circular(5),
+  //           borderSide: BorderSide(color: theme.colorScheme.primary.withOpacity(0.5)),
+  //         ),
+  //         enabledBorder: OutlineInputBorder(
+  //           borderRadius: BorderRadius.circular(5),
+  //           borderSide: BorderSide(color: theme.colorScheme.primary.withOpacity(0.5)),
+  //         ),
+  //         focusedBorder: OutlineInputBorder(
+  //           borderRadius: BorderRadius.circular(5),
+  //           borderSide: BorderSide(color: theme.colorScheme.primary, width: 1.5),
+  //         ),
+  //       ),
+  //       isExpanded: true,
+  //       icon: const Icon(Icons.keyboard_arrow_down, color: Colors.grey),
+  //       items: state.listType.map((type) {
+  //         return DropdownMenuItem<TypeDocModel>(
+  //           value: type,
+  //           child: Text(
+  //             type.name,
+  //             style: theme.textTheme.labelSmall,
+  //           ),
+  //         );
+  //       }).toList(),
+  //       onChanged: (value) {
+  //         setState(() => _selectedType = value);
+  //       },
+  //       validator: (value) {
+  //         return value == null ? "Veuillez sélectionner un type." : null;
+  //       },
+  //     ),
+  //   );
+  // }
+
   Widget _buildTypeDropdown(TypeDocState state) {
     final theme = Theme.of(context);
-    final isLight = theme.brightness == Brightness.light;
 
     if (state.typeStatus == TypeStatus.loading) {
       return const LinearProgressIndicator(minHeight: 1);
-    } else if (state.typeStatus == TypeStatus.error) {
-      return Text(
-        "Erreur lors du chargement des types.",
-        style: theme.textTheme.labelSmall,
+    }
+
+    // ✅ En cas d’erreur, afficher un champ texte libre
+    if (state.typeStatus == TypeStatus.error) {
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            "Type du Document",
+            style: Theme.of(context).textTheme.labelSmall!.copyWith(fontWeight: FontWeight.bold),
+          ),
+          SizedBox(height: 5),
+          TextFormField(
+            controller: _manualTypeController,
+            validator: (value) {
+              if (value == null || value.isEmpty) {
+                return "Veuillez entrer le Type du document unique du document";
+              }
+              return null;
+            },
+            style: Theme.of(context).textTheme.labelSmall,
+            decoration: InputDecoration(
+              enabledBorder: OutlineInputBorder(
+                borderSide: BorderSide(color: Theme.of(context).colorScheme.primary),
+                borderRadius: BorderRadius.circular(5),
+              ),
+              focusedBorder: OutlineInputBorder(
+                borderSide: BorderSide(color: Theme.of(context).colorScheme.primary),
+                borderRadius: BorderRadius.circular(5),
+              ),
+              errorBorder: OutlineInputBorder(
+                borderSide: BorderSide(color: Colors.red),
+                borderRadius: BorderRadius.circular(5),
+              ),
+              hintText: "Type du document",
+              hintStyle: Theme.of(context).textTheme.displaySmall,
+            ),
+          ),
+        ],
       );
     }
 
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.start,
-      children: [
-        SizedBox(
-            // padding: const EdgeInsets.symmetric(horizontal: 12),
-            // decoration: BoxDecoration(
-            //   color: theme.cardColor,
-            //   borderRadius: BorderRadius.circular(5),
-            //   border: Border.all(color: Colors.grey.withValues(alpha: 0.5)),
-            //   boxShadow: [
-            //     BoxShadow(
-            //       color: Colors.grey.withOpacity(0.1),
-            //       blurRadius: 10,
-            //       offset: const Offset(0, 4),
-            //     ),
-            //   ],
-            // ),
-            width: 365,
-            height: 50,
-            child: DropdownButtonFormField<TypeDocModel>(
-              value: _selectedType,
-              hint: Text(
-                "Choisir un type",
-                style: TextStyle(fontSize: 13, color: Colors.grey.shade600), // ✅ Texte local
-              ),
-              items: state.listType.map((type) {
-                return DropdownMenuItem<TypeDocModel>(
-                  value: type,
-                  child: Text(
-                    type.name,
-                    style: theme.textTheme.labelSmall, // ✅ Texte des options
-                  ),
-                );
-              }).toList(),
-
-              borderRadius: BorderRadius.circular(4),
-              onChanged: (value) => setState(() => _selectedType = value),
-              validator: (value) => value == null ? "Veuillez sélectionner un type." : null,
-              isExpanded: false,
-              icon: const Icon(Icons.keyboard_arrow_down, color: Colors.grey), // ✅ Icône personnalisée
-              dropdownColor: theme.cardColor, // ✅ Couleur du menu déroulant
-              style: theme.textTheme.labelSmall, // ✅ Texte sélectionné
-            )
-            // largeur contrôlée, adaptée au web
+    return SizedBox(
+      width: 365,
+      child: DropdownButtonFormField<TypeDocModel>(
+        style: theme.textTheme.labelSmall,
+        value: _selectedType,
+        decoration: InputDecoration(
+          contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 14),
+          hintText: "Choisir un type de document",
+          hintStyle: theme.textTheme.displaySmall?.copyWith(color: Colors.grey.shade600),
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(5),
+            borderSide: BorderSide(color: theme.colorScheme.primary.withOpacity(0.5)),
+          ),
+          enabledBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(5),
+            borderSide: BorderSide(color: theme.colorScheme.primary.withOpacity(0.5)),
+          ),
+          focusedBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(5),
+            borderSide: BorderSide(color: theme.colorScheme.primary, width: 1.5),
+          ),
+        ),
+        isExpanded: true,
+        icon: const Icon(Icons.keyboard_arrow_down, color: Colors.grey),
+        items: state.listType.map((type) {
+          return DropdownMenuItem<TypeDocModel>(
+            value: type,
+            child: Text(
+              type.name,
+              style: theme.textTheme.labelSmall,
             ),
-      ],
+          );
+        }).toList(),
+        onChanged: (value) {
+          setState(() => _selectedType = value);
+        },
+        // validator: (value) {
+        //   return value == null ? "Veuillez sélectionner un type." : null;
+        // },
+      ),
     );
   }
 }
