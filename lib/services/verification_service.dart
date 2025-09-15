@@ -92,4 +92,67 @@ class VerificationService {
       };
     }
   }
+
+  static Future<Map<String, dynamic>> verifyDocWithFile(
+    String? identifier,
+    String? beneficiaire,
+    String? typeName,
+    String? date_information,
+    Uint8List? pdfBytes, {
+    String filename = 'document.pdf',
+  }) async {
+    try {
+      // final formData = FormData.fromMap({
+      //   'identifier': identifier,
+      //   'file': MultipartFile.fromBytes(
+      //     pdfBytes,
+      //     filename: filename,
+      //     contentType: MediaType('application', 'pdf'),
+      //   ),
+      // });
+      final Map<String, dynamic> data = {
+        'identifier': identifier,
+        'beneficiaire': beneficiaire,
+        'type_name': typeName,
+        'date_information': date_information
+      };
+
+      if (pdfBytes != null) {
+        data['file'] = MultipartFile.fromBytes(
+          pdfBytes.toList(),
+          filename: filename,
+          contentType: MediaType('application', 'pdf'),
+        );
+      }
+
+      final formData = FormData.fromMap(data);
+
+      final response = await api.post('/documents/verify-document', data: formData);
+      log("Voici la response de la requête: ${response}");
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        final data = response.data;
+        return {
+          'success': true,
+          'status': data['status'],
+          'message': data['message'],
+          'enteredData': data['entered_or_extracted_data'],
+          'description': data['document']?['description'],
+        };
+      } else {
+        return {
+          'success': response.data['success'],
+          'status': response.data['status'],
+          'message': response.data['message'],
+          'data': response.data,
+        };
+      }
+    } catch (e) {
+      log("Erreur lors de l’envoi : $e");
+      return {
+        'success': false,
+        'message': 'Erreur lors de l’envoi : $e',
+      };
+    }
+  }
 }

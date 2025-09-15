@@ -161,6 +161,162 @@ class Utils {
     );
   }
 
+  static Future<void> showVerificationModelNew({
+    required BuildContext context,
+    required bool isSuccess,
+    required String title,
+    required String message,
+    Map<String, dynamic>? enteredData,
+    String? description,
+  }) {
+    final color = isSuccess ? Colors.green : Colors.red;
+
+    return showDialog(
+      context: context,
+      barrierDismissible: true,
+      builder: (_) {
+        return Dialog(
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+          insetPadding: EdgeInsets.all(24),
+          child: Container(
+            padding: const EdgeInsets.all(24),
+            constraints: const BoxConstraints(maxWidth: 500),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(16),
+            ),
+            child: SingleChildScrollView(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  // ✅ Animation
+                  CircleAvatar(
+                    backgroundColor: color.withOpacity(0.1),
+                    radius: 40,
+                    child: Lottie.asset(
+                      isSuccess ? 'images/success.json' : 'images/failure.json',
+                      width: 252,
+                      height: 252,
+                      repeat: true,
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+
+                  // ✅ Titre
+                  Text(
+                    title,
+                    style: Theme.of(context).textTheme.labelLarge?.copyWith(
+                          fontWeight: FontWeight.bold,
+                          color: color,
+                        ),
+                    textAlign: TextAlign.center,
+                  ),
+                  const SizedBox(height: 12),
+
+                  // ✅ Message principal
+                  Text(
+                    message,
+                    style: Theme.of(context).textTheme.labelSmall,
+                    textAlign: TextAlign.center,
+                  ),
+                  const SizedBox(height: 24),
+
+                  // ✅ Données saisies
+                  if (enteredData != null && enteredData.isNotEmpty) ...[
+                    Align(
+                      alignment: Alignment.centerLeft,
+                      child: Text(
+                        "Données saisies :",
+                        style: Theme.of(context).textTheme.labelMedium?.copyWith(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 16,
+                            ),
+                      ),
+                    ),
+                    const SizedBox(height: 12),
+                    Container(
+                      width: double.infinity,
+                      padding: const EdgeInsets.all(16),
+                      decoration: BoxDecoration(
+                        color: Colors.grey.shade100,
+                        borderRadius: BorderRadius.circular(12),
+                        border: Border.all(color: Colors.grey.shade300),
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: enteredData.entries.map((entry) {
+                          return Padding(
+                            padding: const EdgeInsets.symmetric(vertical: 4),
+                            child: RichText(
+                              text: TextSpan(
+                                style: Theme.of(context).textTheme.labelMedium?.copyWith(
+                                      fontSize: 14,
+                                      color: Colors.black,
+                                    ),
+                                children: [
+                                  TextSpan(
+                                    text: "${_capitalize(entry.key)} : ",
+                                    style: Theme.of(context).textTheme.labelMedium?.copyWith(fontWeight: FontWeight.bold),
+                                  ),
+                                  TextSpan(text: "${entry.value ?? 'N/A'}"),
+                                ],
+                              ),
+                            ),
+                          );
+                        }).toList(),
+                      ),
+                    ),
+                    const SizedBox(height: 16),
+                  ],
+
+                  // ✅ Description du document si succès
+                  if (isSuccess && description != null && description.isNotEmpty) ...[
+                    Align(
+                      alignment: Alignment.centerLeft,
+                      child: Text(
+                        "Description du document :",
+                        style: Theme.of(context).textTheme.labelMedium?.copyWith(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 16,
+                            ),
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    Container(
+                      width: double.infinity,
+                      padding: const EdgeInsets.all(16),
+                      decoration: BoxDecoration(
+                        color: Colors.grey.shade100,
+                        borderRadius: BorderRadius.circular(12),
+                        border: Border.all(color: Colors.grey.shade300),
+                      ),
+                      child: Text(
+                        description,
+                        style: Theme.of(context).textTheme.labelMedium?.copyWith(fontSize: 14),
+                      ),
+                    ),
+                    const SizedBox(height: 16),
+                  ],
+
+                  // ✅ Bouton de fermeture
+                  ElevatedButton(
+                    onPressed: () => Navigator.of(context).pop(),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: color,
+                      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                    ),
+                    child: Text("Fermer", style: Theme.of(context).textTheme.labelMedium!.copyWith(color: Colors.white)),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        );
+      },
+    );
+  }
+
   static void showAddTypeDialog(BuildContext context, TextEditingController controller) {
     controller.clear();
 
@@ -331,5 +487,41 @@ class Utils {
         );
       },
     );
+  }
+
+  static String toUpperCaseInput(String input) {
+    return input.toUpperCase();
+  }
+
+  static String? formatManualDateInput(String rawInput) {
+    final regex = RegExp(r'^(\d{2})-(\d{2})-(\d{4})$');
+
+    if (!regex.hasMatch(rawInput)) {
+      return null; // Format incorrect
+    }
+
+    try {
+      final match = regex.firstMatch(rawInput);
+      final day = int.parse(match!.group(1)!);
+      final month = int.parse(match.group(2)!);
+      final year = int.parse(match.group(3)!);
+
+      // Vérifie que la date est valide
+      final date = DateTime(year, month, day);
+
+      // Si date invalide, Dart ajuste automatiquement la date => on vérifie manuellement
+      if (date.day != day || date.month != month || date.year != year) {
+        return null;
+      }
+
+      // Retourne la date formatée proprement (ex. : 22-07-2023)
+      final formatted = "${day.toString().padLeft(2, '0')}-"
+          "${month.toString().padLeft(2, '0')}-"
+          "${year.toString()}";
+
+      return formatted;
+    } catch (e) {
+      return null;
+    }
   }
 }

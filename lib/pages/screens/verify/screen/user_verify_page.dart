@@ -2,13 +2,19 @@ import 'dart:developer';
 import 'dart:io';
 import 'dart:typed_data';
 
+import 'package:doc_authentificator/cubits/types/type_doc_cubit.dart';
+import 'package:doc_authentificator/cubits/types/type_doc_state.dart';
 import 'package:doc_authentificator/pages/pdf_drop_zone_widget.dart';
 import 'package:doc_authentificator/services/verification_service.dart';
 import 'package:doc_authentificator/utils/app_colors.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../const/const.dart';
+import '../../../../models/type_doc_model.dart';
+import '../../../../utils/utilitaire.dart';
 import '../../../../utils/utils.dart';
 import '../../../hover_step_widget.dart';
 
@@ -21,10 +27,13 @@ class UserVerifyPage extends StatefulWidget {
 
 class _UserVerifyPageState extends State<UserVerifyPage> with TickerProviderStateMixin {
   final TextEditingController _identifierController = TextEditingController();
+  final TextEditingController _dateController = TextEditingController();
+  final TextEditingController _nameController = TextEditingController();
 
   Uint8List? _selectedFileBytes;
   String? _selectedFileName;
   bool _isLoading = false;
+  TypeDocModel? _selectedType;
 
   final _formKey = GlobalKey<FormState>();
 
@@ -246,37 +255,166 @@ class _UserVerifyPageState extends State<UserVerifyPage> with TickerProviderStat
                           crossAxisAlignment: CrossAxisAlignment.stretch,
                           children: [
                             Text(
-                              "Entrez l'identifiant du document",
+                              "Entrez les informations du document",
                               style: Theme.of(context).textTheme.labelSmall!.copyWith(fontWeight: FontWeight.bold),
                             ),
                             SizedBox(height: 8),
-                            TextFormField(
-                              controller: _identifierController,
-                              validator: (value) {
-                                if (value == null || value.isEmpty) {
-                                  return "Veuillez entrer l'identifiant unique du document";
-                                }
-                                return null;
-                              },
-                              style: Theme.of(context).textTheme.labelSmall,
-                              decoration: InputDecoration(
-                                enabledBorder: OutlineInputBorder(
-                                  borderSide: BorderSide(color: Theme.of(context).colorScheme.primary),
-                                  borderRadius: BorderRadius.circular(5),
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  "Identifiant",
+                                  style: Theme.of(context).textTheme.labelSmall!.copyWith(fontWeight: FontWeight.bold),
                                 ),
-                                focusedBorder: OutlineInputBorder(
-                                  borderSide: BorderSide(color: Theme.of(context).colorScheme.primary),
-                                  borderRadius: BorderRadius.circular(10),
+                                SizedBox(height: 5),
+                                TextFormField(
+                                  controller: _identifierController,
+                                  validator: (value) {
+                                    if (value == null || value.isEmpty) {
+                                      return "Veuillez entrer l'identifiant unique du document";
+                                    }
+                                    return null;
+                                  },
+                                  style: Theme.of(context).textTheme.labelSmall,
+                                  decoration: InputDecoration(
+                                    enabledBorder: OutlineInputBorder(
+                                      borderSide: BorderSide(color: Theme.of(context).colorScheme.primary),
+                                      borderRadius: BorderRadius.circular(5),
+                                    ),
+                                    focusedBorder: OutlineInputBorder(
+                                      borderSide: BorderSide(color: Theme.of(context).colorScheme.primary),
+                                      borderRadius: BorderRadius.circular(5),
+                                    ),
+                                    errorBorder: OutlineInputBorder(
+                                      borderSide: BorderSide(color: Colors.red),
+                                      borderRadius: BorderRadius.circular(5),
+                                    ),
+                                    hintText: "Identifiant unique du document",
+                                    hintStyle: Theme.of(context).textTheme.displaySmall,
+                                  ),
                                 ),
-                                errorBorder: OutlineInputBorder(
-                                  borderSide: BorderSide(color: Colors.red),
-                                  borderRadius: BorderRadius.circular(10),
-                                ),
-                                hintText: "Identifiant unique du document",
-                                hintStyle: Theme.of(context).textTheme.displaySmall,
-                              ),
+                              ],
                             ),
-                            SizedBox(height: 24),
+                            SizedBox(height: 5),
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  "Nom du Beneficiaire",
+                                  style: Theme.of(context).textTheme.labelSmall!.copyWith(fontWeight: FontWeight.bold),
+                                ),
+                                SizedBox(height: 5),
+                                TextFormField(
+                                  controller: _nameController,
+                                  // validator: (value) {
+                                  //   if (value == null || value.isEmpty) {
+                                  //     return "Veuillez entrer l'identifiant unique du document";
+                                  //   }
+                                  //   return null;
+                                  // },
+                                  style: Theme.of(context).textTheme.labelSmall,
+                                  onChanged: (value) {
+                                    final upper = Utils.toUpperCaseInput(value);
+                                    _nameController.value = TextEditingValue(
+                                      text: upper,
+                                      selection: TextSelection.collapsed(offset: upper.length),
+                                    );
+                                  },
+
+                                  decoration: InputDecoration(
+                                    enabledBorder: OutlineInputBorder(
+                                      borderSide: BorderSide(color: Theme.of(context).colorScheme.primary),
+                                      borderRadius: BorderRadius.circular(5),
+                                    ),
+                                    focusedBorder: OutlineInputBorder(
+                                      borderSide: BorderSide(color: Theme.of(context).colorScheme.primary),
+                                      borderRadius: BorderRadius.circular(5),
+                                    ),
+                                    errorBorder: OutlineInputBorder(
+                                      borderSide: BorderSide(color: Colors.red),
+                                      borderRadius: BorderRadius.circular(5),
+                                    ),
+                                    hintText: "Nom de famille du bénéficiaire",
+                                    hintStyle: Theme.of(context).textTheme.displaySmall,
+                                  ),
+                                ),
+                              ],
+                            ),
+                            SizedBox(height: 5),
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  "Selectionnez le Type du document",
+                                  style: Theme.of(context).textTheme.labelSmall!.copyWith(fontWeight: FontWeight.bold),
+                                ),
+                                SizedBox(height: 5),
+                                BlocBuilder<TypeDocCubit, TypeDocState>(
+                                  builder: (context, state) {
+                                    return _buildTypeDropdown(state);
+                                  },
+                                ),
+                              ],
+                            ),
+                            SizedBox(height: 5),
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  "Date de delivrance",
+                                  style: Theme.of(context).textTheme.labelSmall!.copyWith(fontWeight: FontWeight.bold),
+                                ),
+                                SizedBox(height: 5),
+                                TextFormField(
+                                  controller: _dateController,
+                                  inputFormatters: [
+                                    FilteringTextInputFormatter.digitsOnly,
+                                    LengthLimitingTextInputFormatter(10),
+                                    DateInputFormatter(), // ton formatter custom
+                                  ],
+                                  style: Theme.of(context).textTheme.labelSmall,
+                                  decoration: InputDecoration(
+                                    enabledBorder: OutlineInputBorder(
+                                      borderSide: BorderSide(color: Theme.of(context).colorScheme.primary),
+                                      borderRadius: BorderRadius.circular(5),
+                                    ),
+                                    focusedBorder: OutlineInputBorder(
+                                      borderSide: BorderSide(color: Theme.of(context).colorScheme.primary),
+                                      borderRadius: BorderRadius.circular(5),
+                                    ),
+                                    errorBorder: OutlineInputBorder(
+                                      borderSide: BorderSide(color: Colors.red),
+                                      borderRadius: BorderRadius.circular(5),
+                                    ),
+                                    hintText: "jj-mm-aaaa (ex. : 22-07-2023)",
+                                    hintStyle: Theme.of(context).textTheme.displaySmall,
+                                  ),
+                                ),
+                              ],
+                            ),
+                            SizedBox(height: 15),
+                            Row(
+                              children: [
+                                Expanded(
+                                  child: Divider(
+                                    color: Colors.grey[300],
+                                  ),
+                                ),
+                                Padding(
+                                  padding: const EdgeInsets.symmetric(horizontal: 5.0),
+                                  child: Text(
+                                    "Ou",
+                                    style: Theme.of(context).textTheme.labelSmall!.copyWith(color: Colors.grey[500]),
+                                  ),
+                                ),
+                                Expanded(
+                                  child: Divider(
+                                    color: Colors.grey[300],
+                                  ),
+                                ),
+                              ],
+                            ),
+                            SizedBox(height: 15),
                             Text(
                               "Téléversez votre fichier PDF",
                               style: Theme.of(context).textTheme.labelSmall!.copyWith(fontWeight: FontWeight.bold),
@@ -309,10 +447,10 @@ class _UserVerifyPageState extends State<UserVerifyPage> with TickerProviderStat
                                         Flexible(
                                           child: Text(
                                             _selectedFileName ?? 'Fichier sélectionné',
-                                            style: TextStyle(
-                                              color: Colors.green.shade700,
-                                              fontWeight: FontWeight.bold,
-                                            ),
+                                            style: Theme.of(context).textTheme.labelSmall!.copyWith(
+                                                  color: Colors.green.shade700,
+                                                  fontWeight: FontWeight.bold,
+                                                ),
                                             overflow: TextOverflow.ellipsis,
                                           ),
                                         ),
@@ -349,20 +487,41 @@ class _UserVerifyPageState extends State<UserVerifyPage> with TickerProviderStat
 
                                   try {
                                     final identifier = _identifierController.text;
-                                    final response = await VerificationService.verifyDocumentWithFile(
+                                    final name = _nameController.text;
+                                    final type = _selectedType!.name;
+                                    final date = _dateController.text;
+                                    // final response = await VerificationService.verifyDocumentWithFile(
+                                    //   identifier,
+                                    //
+                                    //   _selectedFileBytes,
+                                    //   filename: _selectedFileName ?? 'document.pdf',
+                                    // );
+                                    final response = await VerificationService.verifyDocWithFile(
                                       identifier,
+                                      name,
+                                      type,
+                                      date,
                                       _selectedFileBytes,
                                       filename: _selectedFileName ?? 'document.pdf',
                                     );
                                     log('🔍 STATUS: ${response['status']}');
 
                                     if (response['success'] == true && response['status'] == 'authentic') {
-                                      Utils.showVerificationModal(
+                                      await Utils.showVerificationModelNew(
                                         context: context,
-                                        isSuccess: true,
-                                        title: "Document Vérifié",
-                                        message: response['data']['message'] ?? "Le document est authentique.",
-                                        document: Map<String, dynamic>.from(response['data']['document'] ?? {}),
+                                        isSuccess: response['success'],
+                                        title: "Document trouvé",
+                                        message: response['message'],
+                                        enteredData: response['enteredData'],
+                                        description: response['description'],
+                                      );
+                                    } else if (response['status'] == 'false') {
+                                      await Utils.showVerificationModelNew(
+                                        context: context,
+                                        isSuccess: false,
+                                        title: "Vérification échouée",
+                                        message: response?['message'] ?? response['message'] ?? "Erreur inconnue.",
+                                        enteredData: response?['entered_or_extracted_data'],
                                       );
                                     } else if (response['status'] == 'invalid') {
                                       Utils.showVerificationModal(
@@ -443,6 +602,68 @@ Pour obtenir une vérification complète avec toutes les métadonnées et inform
           _buildFooter(),
         ],
       ),
+    );
+  }
+
+  Widget _buildTypeDropdown(TypeDocState state) {
+    final theme = Theme.of(context);
+    final isLight = theme.brightness == Brightness.light;
+
+    if (state.typeStatus == TypeStatus.loading) {
+      return const LinearProgressIndicator(minHeight: 1);
+    } else if (state.typeStatus == TypeStatus.error) {
+      return Text(
+        "Erreur lors du chargement des types.",
+        style: theme.textTheme.labelSmall,
+      );
+    }
+
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.start,
+      children: [
+        SizedBox(
+            // padding: const EdgeInsets.symmetric(horizontal: 12),
+            // decoration: BoxDecoration(
+            //   color: theme.cardColor,
+            //   borderRadius: BorderRadius.circular(5),
+            //   border: Border.all(color: Colors.grey.withValues(alpha: 0.5)),
+            //   boxShadow: [
+            //     BoxShadow(
+            //       color: Colors.grey.withOpacity(0.1),
+            //       blurRadius: 10,
+            //       offset: const Offset(0, 4),
+            //     ),
+            //   ],
+            // ),
+            width: 365,
+            height: 50,
+            child: DropdownButtonFormField<TypeDocModel>(
+              value: _selectedType,
+              hint: Text(
+                "Choisir un type",
+                style: TextStyle(fontSize: 13, color: Colors.grey.shade600), // ✅ Texte local
+              ),
+              items: state.listType.map((type) {
+                return DropdownMenuItem<TypeDocModel>(
+                  value: type,
+                  child: Text(
+                    type.name,
+                    style: theme.textTheme.labelSmall, // ✅ Texte des options
+                  ),
+                );
+              }).toList(),
+
+              borderRadius: BorderRadius.circular(4),
+              onChanged: (value) => setState(() => _selectedType = value),
+              validator: (value) => value == null ? "Veuillez sélectionner un type." : null,
+              isExpanded: false,
+              icon: const Icon(Icons.keyboard_arrow_down, color: Colors.grey), // ✅ Icône personnalisée
+              dropdownColor: theme.cardColor, // ✅ Couleur du menu déroulant
+              style: theme.textTheme.labelSmall, // ✅ Texte sélectionné
+            )
+            // largeur contrôlée, adaptée au web
+            ),
+      ],
     );
   }
 }
