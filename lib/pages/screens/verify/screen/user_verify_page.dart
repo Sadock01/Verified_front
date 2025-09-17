@@ -279,11 +279,11 @@ class _UserVerifyPageState extends State<UserVerifyPage> with TickerProviderStat
                                   style: Theme.of(context).textTheme.labelSmall,
                                   decoration: InputDecoration(
                                     enabledBorder: OutlineInputBorder(
-                                      borderSide: BorderSide(color: Theme.of(context).colorScheme.primary),
+                                      borderSide: BorderSide(color: Colors.grey[300]!),
                                       borderRadius: BorderRadius.circular(5),
                                     ),
                                     focusedBorder: OutlineInputBorder(
-                                      borderSide: BorderSide(color: Theme.of(context).colorScheme.primary),
+                                      borderSide: BorderSide(color: Colors.grey[300]!),
                                       borderRadius: BorderRadius.circular(5),
                                     ),
                                     errorBorder: OutlineInputBorder(
@@ -324,11 +324,11 @@ class _UserVerifyPageState extends State<UserVerifyPage> with TickerProviderStat
 
                                   decoration: InputDecoration(
                                     enabledBorder: OutlineInputBorder(
-                                      borderSide: BorderSide(color: Theme.of(context).colorScheme.primary),
+                                      borderSide: BorderSide(color: Colors.grey[300]!),
                                       borderRadius: BorderRadius.circular(5),
                                     ),
                                     focusedBorder: OutlineInputBorder(
-                                      borderSide: BorderSide(color: Theme.of(context).colorScheme.primary),
+                                      borderSide: BorderSide(color: Colors.grey[300]!),
                                       borderRadius: BorderRadius.circular(5),
                                     ),
                                     errorBorder: OutlineInputBorder(
@@ -376,11 +376,11 @@ class _UserVerifyPageState extends State<UserVerifyPage> with TickerProviderStat
                                   style: Theme.of(context).textTheme.labelSmall,
                                   decoration: InputDecoration(
                                     enabledBorder: OutlineInputBorder(
-                                      borderSide: BorderSide(color: Theme.of(context).colorScheme.primary),
+                                      borderSide: BorderSide(color: Colors.grey[300]!),
                                       borderRadius: BorderRadius.circular(5),
                                     ),
                                     focusedBorder: OutlineInputBorder(
-                                      borderSide: BorderSide(color: Theme.of(context).colorScheme.primary),
+                                      borderSide: BorderSide(color: Colors.grey[300]!),
                                       borderRadius: BorderRadius.circular(5),
                                     ),
                                     errorBorder: OutlineInputBorder(
@@ -543,8 +543,9 @@ class _UserVerifyPageState extends State<UserVerifyPage> with TickerProviderStat
                                       Utils.showVerificationModal(
                                         context: context,
                                         isSuccess: false,
-                                        title: "Une erreur est survenue",
-                                        message: "Veuillez au besoin contacter le service client.",
+                                        title: "Document non trouvé",
+                                        message:
+                                            "Il semble que le document associé à cet identifiant n'existe pas. Veuillez vérifier les informations et réessayer.",
                                       );
                                     } else if (response['status'] == "mi-authentic") {
                                       Utils.showVerificationModal(
@@ -696,11 +697,11 @@ Pour obtenir une vérification complète avec toutes les métadonnées et inform
             style: Theme.of(context).textTheme.labelSmall,
             decoration: InputDecoration(
               enabledBorder: OutlineInputBorder(
-                borderSide: BorderSide(color: Theme.of(context).colorScheme.primary),
+                borderSide: BorderSide(color: Colors.grey[300]!),
                 borderRadius: BorderRadius.circular(5),
               ),
               focusedBorder: OutlineInputBorder(
-                borderSide: BorderSide(color: Theme.of(context).colorScheme.primary),
+                borderSide: BorderSide(color: Colors.grey[300]!),
                 borderRadius: BorderRadius.circular(5),
               ),
               errorBorder: OutlineInputBorder(

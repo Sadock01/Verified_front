@@ -348,7 +348,7 @@ class Utils {
     );
   }
 
-  static void showAddTypeDialog(BuildContext context, TextEditingController controller) {
+  static Future<void> showAddTypeDialog(BuildContext context, TextEditingController controller) async {
     controller.clear();
 
     showDialog(

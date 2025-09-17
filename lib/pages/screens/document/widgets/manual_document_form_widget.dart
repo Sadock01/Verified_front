@@ -1,3 +1,4 @@
+import 'package:doc_authentificator/cubits/types/type_doc_cubit.dart';
 import 'package:doc_authentificator/models/type_doc_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -289,25 +290,27 @@ class _ManualDocumentFormState extends State<ManualDocumentForm> {
         Tooltip(
           message: "Ajouter un nouveau type",
           child: ElevatedButton.icon(
-            style: ElevatedButton.styleFrom(
-              backgroundColor: Theme.of(context).colorScheme.primary,
-              foregroundColor: Colors.white,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(5),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Theme.of(context).colorScheme.primary,
+                foregroundColor: Colors.white,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(5),
+                ),
+                padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
               ),
-              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
-            ),
-            icon: const Icon(
-              Icons.add,
-              size: 20,
-              color: Colors.white,
-            ),
-            label: Text(
-              "Ajouter",
-              style: Theme.of(context).textTheme.labelSmall!.copyWith(color: Colors.white),
-            ),
-            onPressed: () => Utils.showAddTypeDialog(context, _newTypeController),
-          ),
+              icon: const Icon(
+                Icons.add,
+                size: 20,
+                color: Colors.white,
+              ),
+              label: Text(
+                "Ajouter",
+                style: Theme.of(context).textTheme.labelSmall!.copyWith(color: Colors.white),
+              ),
+              onPressed: () async {
+                await Utils.showAddTypeDialog(context, _newTypeController);
+                context.read<TypeDocCubit>().getAllType(1);
+              }),
         ),
       ],
     );

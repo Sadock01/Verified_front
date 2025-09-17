@@ -7,7 +7,7 @@ import 'app_colors.dart';
 const Color _darkScaffold = Color(0xFF0F1824); // deep blue/black background
 const Color _darkCard = Color(0xFF1A2532); // table/card rows background
 const Color _darkBorder = Color(0xFF2B394A);
-const Color _accentBlue = Colors.grey;
+const Color _accentBlue = Colors.blueAccent;
 const Color _successGreen = Color(0xFF2ECC71);
 const Color _warningOrange = Color(0xFFF1A23B);
 const Color _dangerRed = Color(0xFFE55353);
@@ -40,7 +40,7 @@ final ThemeData lightTheme = ThemeData(
     fillColor: Colors.white,
     border: OutlineInputBorder(borderRadius: BorderRadius.circular(5), borderSide: BorderSide(color: Colors.grey[300]!)),
     enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(5), borderSide: BorderSide(color: Colors.grey[300]!)),
-    focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(5), borderSide: const BorderSide(color: _accentBlue)),
+    focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(5), borderSide: BorderSide(color: Colors.grey[300]!)),
   ),
   textTheme: _textTheme(Colors.black),
   dataTableTheme: DataTableThemeData(
