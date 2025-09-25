@@ -19,8 +19,10 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../../utils/shared_preferences_utils.dart';
+import '../../../../utils/utilitaire.dart';
 import '../../../../widgets/app_bar_drawer_widget.dart';
 import '../../../../widgets/new_drawer_dashboard.dart';
+import 'package:flutter/services.dart';
 
 class UpdateDocumentScreen extends StatefulWidget {
   final int documentId;
@@ -35,6 +37,7 @@ class _UpdateDocumentScreenState extends State<UpdateDocumentScreen> {
   late TextEditingController _identifierController;
   late TextEditingController _descriptionController;
   late TextEditingController _beneficiaryController;
+  late TextEditingController _dateInfo;
 
   TypeDocModel? _selectedType;
 
@@ -45,6 +48,7 @@ class _UpdateDocumentScreenState extends State<UpdateDocumentScreen> {
     _identifierController = TextEditingController();
     _descriptionController = TextEditingController();
     _beneficiaryController = TextEditingController();
+    _dateInfo = TextEditingController();
     // Charger le document depuis le cubit
     context.read<DocumentCubit>().getDocumentById(widget.documentId);
   }
@@ -62,6 +66,7 @@ class _UpdateDocumentScreenState extends State<UpdateDocumentScreen> {
     _identifierController.dispose();
     _descriptionController.dispose();
     _beneficiaryController.dispose();
+    _dateInfo.dispose();
     super.dispose();
   }
 
@@ -105,9 +110,9 @@ class _UpdateDocumentScreenState extends State<UpdateDocumentScreen> {
       },
       child: BlocBuilder<DocumentCubit, DocumentState>(
         builder: (context, docState) {
-          if (docState.selectedDocument == null) {
-            return const Center(child: Text("Document introuvable."));
-          }
+          // if (docState.selectedDocument == null) {
+          //   return const Center(child: Text("Document introuvable."));
+          // }
 
           final document = docState.selectedDocument!;
 
@@ -166,10 +171,9 @@ class _UpdateDocumentScreenState extends State<UpdateDocumentScreen> {
                               color: theme.cardColor,
                               boxShadow: [
                                 BoxShadow(
-                                  color: Colors.grey.withValues(alpha: 0.2),
-                                  spreadRadius: 2,
-                                  blurRadius: 5,
-                                  offset: const Offset(0, 3),
+                                  color: Colors.black12,
+                                  blurRadius: 20,
+                                  offset: Offset(0, 8),
                                 ),
                               ],
                             ),
@@ -208,6 +212,22 @@ class _UpdateDocumentScreenState extends State<UpdateDocumentScreen> {
                                         ),
                                       ),
                                     ],
+                                  ),
+                                  const SizedBox(height: 5),
+                                  TextFormField(
+                                    controller: _dateInfo,
+                                    inputFormatters: [
+                                      FilteringTextInputFormatter.digitsOnly,
+                                      LengthLimitingTextInputFormatter(10),
+                                      DateInputFormatter(), // ton formatter custom
+                                    ],
+                                    style: theme.textTheme.labelSmall,
+                                    decoration: InputDecoration(
+                                      hintStyle: theme.textTheme.labelSmall,
+                                      hintText: "jj-mm-aaaa (ex. : 22-07-2023)",
+                                      border: OutlineInputBorder(borderRadius: BorderRadius.circular(5)),
+                                    ),
+                                    validator: (value) => value == null || value.isEmpty ? "Veuillez entrer la date de delivrance" : null,
                                   ),
                                   const SizedBox(height: 10),
                                   TextFormField(
@@ -279,6 +299,7 @@ class _UpdateDocumentScreenState extends State<UpdateDocumentScreen> {
                                                   identifier: _identifierController.text,
                                                   descriptionDocument: _descriptionController.text,
                                                   beneficiaire: _beneficiaryController.text,
+                                                  dateInfo: _dateInfo.text,
                                                   typeId: _selectedType!.id,
                                                 ),
                                               );

@@ -3,7 +3,8 @@ import 'package:dio/dio.dart';
 class ApiConfig {
   static api() {
     final options = BaseOptions(
-      baseUrl: 'https://api-verified.monetisbankplc.com/api/',
+      baseUrl: "https://timidly-undandled-tu.ngrok-free.dev/api/",
+      // baseUrl: 'https://api-verified.monetisbankplc.com/api/',
       connectTimeout: const Duration(seconds: 30),
       receiveTimeout: const Duration(seconds: 30),
       validateStatus: (status) {

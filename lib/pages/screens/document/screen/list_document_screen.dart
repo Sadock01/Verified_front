@@ -55,7 +55,7 @@ class _ListDocumentScreenState extends State<ListDocumentScreen> {
                   LayoutBuilder(
                     builder: (context, constraints) {
                       double width = constraints.maxWidth;
-                      if (width > 1150) {
+                      if (isLargeScreen) {
                         return SizedBox(height: 60, child: AppBarDrawerWidget());
                       } else {
                         return AppBarVendorWidget();
@@ -132,7 +132,7 @@ class _ListDocumentScreenState extends State<ListDocumentScreen> {
                                       "assets/images/filtre.png",
                                       width: 18,
                                       height: 18,
-                                      color: Colors.black,
+                                      color: Colors.grey[300],
                                     ),
                                     Text(
                                       "Filter",

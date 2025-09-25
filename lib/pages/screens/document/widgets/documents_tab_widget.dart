@@ -13,6 +13,8 @@ class DocumentsTabWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final isLight = theme.brightness == Brightness.light;
     final documents = state.listDocuments;
     return CustomDataTable(
       columns: _buildColumns(context),

@@ -50,7 +50,7 @@ class DocumentService {
     final token = SharedPreferencesUtils.getString('auth_token');
     api.options.headers['AUTHORIZATION'] = 'Bearer $token';
     log("il est la?? ${documentsModel.toJson()}");
-    final response = await api.post("/documents/create", data: documentsModel.toJson());
+    final response = await api.post("/documents/add", data: documentsModel.toJson());
     log("Il a commencé à ajouter un document");
     log("$response");
     if (response.statusCode == 200 || response.statusCode == 201) {
@@ -63,6 +63,39 @@ class DocumentService {
       log("${response.statusCode}");
       log("la response du backend $response");
       throw Exception("Echec lors de l'ajout d'un document");
+    }
+  }
+  static Future<Map<String, dynamic>> addListDocuments(List<DocumentsModel> documentsList) async {
+    final token = SharedPreferencesUtils.getString('auth_token');
+    api.options.headers['AUTHORIZATION'] = 'Bearer $token';
+
+    // Transformation en liste de JSON
+    final documentsJsonList = documentsList.map((doc) => doc.toJson()).toList();
+
+    log("Données envoyées : $documentsJsonList");
+
+    try {
+      final response = await api.post(
+        "/documents/create",
+        data: {
+          'documents': documentsJsonList,
+        },
+      );
+
+      log("Réponse du backend : $response");
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        return {
+          'success': response.data['success'] ?? [],
+          'failed': response.data['failed'] ?? [],
+        };
+      } else {
+        log("Erreur HTTP ${response.statusCode}");
+        throw Exception("Échec de l'ajout des documents");
+      }
+    } catch (e) {
+      log("Exception lors de l'envoi des documents : $e");
+      throw Exception("Erreur lors de l'envoi des documents : $e");
     }
   }
 

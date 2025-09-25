@@ -124,25 +124,15 @@ class _NewDocumentScreenState extends State<NewDocumentScreen> with SingleTicker
                     children: [
                       AppBarDrawerWidget(),
                       Expanded(
-                        child: Column(
-                          children: [
-                            Container(
-                              margin: EdgeInsets.symmetric(horizontal: 30, vertical: 10),
-                              width: double.infinity,
-                              padding: const EdgeInsets.all(10),
-                              decoration: BoxDecoration(
-                                color: Colors.amber.withValues(alpha: 0.15),
-                                borderRadius: BorderRadius.circular(6),
-                                border: Border.all(color: Colors.amber.withValues(alpha: 0.4)),
+                        child: SingleChildScrollView(
+                          child: Column(
+                            children: [
+                          
+                              ManualDocumentForm(
+                                state: state,
                               ),
-                              child: Text(
-                                  'Vous êtes en train d’enregistrer manuellement ce document. Les informations saisies ici seront celles visibles lors de sa vérification..',
-                                  style: Theme.of(context).textTheme.displaySmall),
-                            ),
-                            ManualDocumentForm(
-                              state: state,
-                            ),
-                          ],
+                            ],
+                          ),
                         ),
                       ),
                     ],

@@ -1,5 +1,6 @@
 import 'dart:developer';
 
+import 'package:doc_authentificator/utils/app_colors.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../models/documents_model.dart';
@@ -12,37 +13,51 @@ class DocumentActionButtons extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final isLight = theme.brightness == Brightness.light;
     return Row(
       children: [
-        Tooltip(
-          message: "Modifier document",
-          child: IconButton(
-            icon: Image.asset(
-              "assets/images/editer.png",
-              width: 22,
-              height: 22,
-              color: Theme.of(context).colorScheme.primary,
-            ),
-            onPressed: () {
+        InkWell(
+            onTap: () {
               context.go('/document/update/${document.id}');
               log("l'id du doc updated: ${document.id}");
             },
-          ),
-        ),
-        Tooltip(
-          message: "Afficher document",
-          child: IconButton(
-            icon: Image.asset(
-              "assets/images/vue.png",
-              width: 22,
-              height: 22,
-              color: Colors.black,
+            child: Row(
+              children: [
+
+                  Image.asset(
+                    "assets/images/editer.png",
+                    width: 22,
+                    height: 22,
+                    color:  Colors.grey[300],
+                  ),
+
+
+                Text("Editer",style: Theme.of(context).textTheme.displaySmall,)
+              ],
             ),
-            onPressed: () {
+          ),
+
+        SizedBox(width: 8),
+         InkWell(
+            onTap: () {
               context.go('/document/view/${document.identifier}');
             },
+            child: Row(
+              children: [
+               Image.asset(
+                    "assets/images/vue.png",
+                    width: 22,
+                    height: 22,
+                    color: Colors.grey[300],
+                  ),
+
+
+                Text("Afficher",style: Theme.of(context).textTheme.displaySmall,)
+              ],
+            ),
           ),
-        ),
+
       ],
     );
   }

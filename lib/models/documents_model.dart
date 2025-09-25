@@ -6,6 +6,7 @@ class DocumentsModel extends Equatable {
     required String identifier,
     required String descriptionDocument,
     String? beneficiaire,
+    String? dateInfo,
     int? typeId,
     String? typeName,
   })  : _id = id,
@@ -13,13 +14,15 @@ class DocumentsModel extends Equatable {
         _descriptionDocument = descriptionDocument,
         _typeId = typeId,
         _typeName = typeName,
-        _beneficiaire = beneficiaire;
+        _beneficiaire = beneficiaire,
+  _dateInfo = dateInfo;
   final int? _id;
   final String _identifier;
   final String _descriptionDocument;
   final int? _typeId;
   final String? _typeName;
   final String? _beneficiaire;
+  final String? _dateInfo;
 
   int? get id => _id;
   String get identifier => _identifier;
@@ -27,6 +30,7 @@ class DocumentsModel extends Equatable {
   int? get typeId => _typeId;
   String? get typeName => _typeName;
   String? get beneficiaire => _beneficiaire;
+  String? get dateInfo => _dateInfo;
 
   factory DocumentsModel.fromJson(Map<String, dynamic> json) {
     return DocumentsModel(
@@ -35,7 +39,8 @@ class DocumentsModel extends Equatable {
         descriptionDocument: json['description'],
         typeId: json['type_id'],
         typeName: json['type_name'],
-        beneficiaire: json['beneficiaire']);
+        beneficiaire: json['beneficiaire'],
+    dateInfo: json['date_information']);
   }
 
   factory DocumentsModel.fromMap(Map<String, dynamic> map) {
@@ -45,11 +50,12 @@ class DocumentsModel extends Equatable {
         descriptionDocument: map['description'],
         typeId: map['typeId'],
         typeName: map['type_name'],
-        beneficiaire: map['beneficiaire']);
+        beneficiaire: map['beneficiaire'],
+    dateInfo: map['date_information']);
   }
 
   Map<String, dynamic> toMap() {
-    return {"id": _id, "identifier": _identifier, "description": _descriptionDocument, "typeId": _typeId, "beneficiaire": _beneficiaire};
+    return {"id": _id, "identifier": _identifier, "description": _descriptionDocument, "typeId": _typeId, "beneficiaire": _beneficiaire, "dateInfo": _dateInfo};
   }
 
   Map<String, dynamic> toJson() {
@@ -58,7 +64,8 @@ class DocumentsModel extends Equatable {
       'description': _descriptionDocument,
       'type_id': _typeId,
       'type_name': _typeName,
-      'beneficiaire': _beneficiaire
+      'beneficiaire': _beneficiaire,
+      'date_information': _dateInfo
     };
   }
 
@@ -69,6 +76,7 @@ class DocumentsModel extends Equatable {
     int? typeId,
     String? typeName,
     String? beneficiaire,
+    String? dateInfo,
   }) {
     return DocumentsModel(
         id: id ?? _id,
@@ -76,11 +84,12 @@ class DocumentsModel extends Equatable {
         descriptionDocument: descriptionDocument ?? _descriptionDocument,
         typeId: typeId ?? _typeId,
         typeName: typeName ?? _typeName,
-        beneficiaire: beneficiaire ?? _beneficiaire);
+        beneficiaire: beneficiaire ?? _beneficiaire,
+    dateInfo: dateInfo ?? _dateInfo);
   }
 
   @override
   List<Object?> get props {
-    return [_id, _identifier, descriptionDocument, typeId, _beneficiaire];
+    return [_id, _identifier, descriptionDocument, typeId, _beneficiaire,dateInfo];
   }
 }

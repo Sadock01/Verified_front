@@ -153,7 +153,7 @@ class _UserVerifyPageState extends State<UserVerifyPage> with TickerProviderStat
       height: 50,
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(10),
+
         boxShadow: [
           BoxShadow(
             color: Colors.grey.withValues(alpha: 0.2), // Couleur de l'ombre
@@ -198,418 +198,430 @@ class _UserVerifyPageState extends State<UserVerifyPage> with TickerProviderStat
         children: [
           _buildHeader(context),
           Expanded(
-            child: Center(
-              child: SingleChildScrollView(
-                padding: EdgeInsets.symmetric(horizontal: 24, vertical: 30),
-                child: Column(
-                  children: [
-                    Text(
-                      "Vérifiez l’authenticité d’un document en 3 étapes simples",
-                      style: theme.textTheme.labelLarge?.copyWith(fontWeight: FontWeight.bold),
-                      textAlign: TextAlign.center,
-                    ),
-                    SizedBox(height: 30),
-                    // Les étapes animées
-                    Wrap(
-                      alignment: WrapAlignment.center,
+            child: SingleChildScrollView(
+
+              child: Column(
+                children: [
+                  Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 24, vertical: 30),
+                    child: Column(
                       children: [
-                        HoverAnimatedStep(
-                          number: 1,
-                          title: "Option 1 : Remplir manuellement",
-                          desc: "Indiquez l'identifiant, la date de délivrance, le nom du bénéficiaire et le type de document.",
-                          color: Colors.deepPurple,
-                          icon: Icons.confirmation_number,
+                        Text(
+                          "Vérifiez l’authenticité d’un document en 3 étapes simples",
+                          style: theme.textTheme.labelLarge?.copyWith(fontWeight: FontWeight.bold),
+                          textAlign: TextAlign.center,
                         ),
-                        HoverAnimatedStep(
-                          number: 2,
-                          title: "Option 2 : Téléverser un PDF",
-                          desc: "Importez directement le fichier PDF original du document.",
-                          color: Colors.indigo,
-                          icon: Icons.upload_file,
-                        ),
-                        HoverAnimatedStep(
-                          number: 3,
-                          title: "Vérifiez l'authenticité",
-                          desc: "Lancez la vérification avec nos services sécurisés.",
-                          color: Colors.teal,
-                          icon: Icons.verified,
-                        ),
-                      ],
-                    ),
-
-                    SizedBox(height: 50),
-
-                    // Formulaire
-                    Form(
-                      key: _formKey,
-                      child: Container(
-                        constraints: BoxConstraints(maxWidth: 600),
-                        padding: EdgeInsets.all(24),
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(5),
-                          boxShadow: [
-                            BoxShadow(color: Colors.grey.withOpacity(0.2), blurRadius: 20, offset: Offset(0, 8)),
+                        SizedBox(height: 30),
+                        // Les étapes animées
+                        Wrap(
+                          alignment: WrapAlignment.center,
+                          children: [
+                            HoverAnimatedStep(
+                              number: 1,
+                              title: "Option 1 : Remplir manuellement",
+                              desc: "Indiquez l'identifiant, la date de délivrance, le nom du bénéficiaire et le type de document.",
+                              color: Colors.deepPurple,
+                              icon: Icons.confirmation_number,
+                            ),
+                            HoverAnimatedStep(
+                              number: 2,
+                              title: "Option 2 : Téléverser un PDF",
+                              desc: "Importez directement le fichier PDF original du document.",
+                              color: Colors.indigo,
+                              icon: Icons.upload_file,
+                            ),
+                            HoverAnimatedStep(
+                              number: 3,
+                              title: "Vérifiez l'authenticité",
+                              desc: "Lancez la vérification avec nos services sécurisés.",
+                              color: Colors.teal,
+                              icon: Icons.verified,
+                            ),
                           ],
                         ),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.stretch,
-                          children: [
-                            Text(
-                              "Entrez les informations du document",
-                              style: Theme.of(context).textTheme.labelSmall!.copyWith(fontWeight: FontWeight.bold),
-                            ),
-                            SizedBox(height: 15),
-                            Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  "Identifiant",
-                                  style: Theme.of(context).textTheme.labelSmall!.copyWith(fontWeight: FontWeight.bold),
-                                ),
-                                SizedBox(height: 5),
-                                TextFormField(
-                                  controller: _identifierController,
-                                  validator: (value) {
-                                    if (value == null || value.isEmpty) {
-                                      return "Veuillez entrer l'identifiant unique du document";
-                                    }
-                                    return null;
-                                  },
-                                  style: Theme.of(context).textTheme.labelSmall,
-                                  decoration: InputDecoration(
-                                    enabledBorder: OutlineInputBorder(
-                                      borderSide: BorderSide(color: Colors.grey[300]!),
-                                      borderRadius: BorderRadius.circular(5),
-                                    ),
-                                    focusedBorder: OutlineInputBorder(
-                                      borderSide: BorderSide(color: Colors.grey[300]!),
-                                      borderRadius: BorderRadius.circular(5),
-                                    ),
-                                    errorBorder: OutlineInputBorder(
-                                      borderSide: BorderSide(color: Colors.red),
-                                      borderRadius: BorderRadius.circular(5),
-                                    ),
-                                    hintText: "Identifiant unique du document",
-                                    hintStyle: Theme.of(context).textTheme.displaySmall,
-                                  ),
-                                ),
-                              ],
-                            ),
-                            SizedBox(height: 5),
-                            Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  "Nom du Beneficiaire",
-                                  style: Theme.of(context).textTheme.labelSmall!.copyWith(fontWeight: FontWeight.bold),
-                                ),
-                                SizedBox(height: 5),
-                                TextFormField(
-                                  controller: _nameController,
-                                  // validator: (value) {
-                                  //   if (value == null || value.isEmpty) {
-                                  //     return "Veuillez entrer l'identifiant unique du document";
-                                  //   }
-                                  //   return null;
-                                  // },
-                                  style: Theme.of(context).textTheme.labelSmall,
-                                  onChanged: (value) {
-                                    final upper = Utils.toUpperCaseInput(value);
-                                    _nameController.value = TextEditingValue(
-                                      text: upper,
-                                      selection: TextSelection.collapsed(offset: upper.length),
-                                    );
-                                  },
 
-                                  decoration: InputDecoration(
-                                    enabledBorder: OutlineInputBorder(
-                                      borderSide: BorderSide(color: Colors.grey[300]!),
-                                      borderRadius: BorderRadius.circular(5),
-                                    ),
-                                    focusedBorder: OutlineInputBorder(
-                                      borderSide: BorderSide(color: Colors.grey[300]!),
-                                      borderRadius: BorderRadius.circular(5),
-                                    ),
-                                    errorBorder: OutlineInputBorder(
-                                      borderSide: BorderSide(color: Colors.red),
-                                      borderRadius: BorderRadius.circular(5),
-                                    ),
-                                    hintText: "Nom de famille du bénéficiaire",
-                                    hintStyle: Theme.of(context).textTheme.displaySmall,
-                                  ),
-                                ),
+                        SizedBox(height: 50),
+
+                        // Formulaire
+                        Form(
+                          key: _formKey,
+                          child: Container(
+                            constraints: BoxConstraints(maxWidth: 600),
+                            padding: EdgeInsets.all(24),
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(5),
+                              boxShadow: [
+                                BoxShadow(color: Colors.grey.withOpacity(0.2), blurRadius: 20, offset: Offset(0, 8)),
                               ],
                             ),
-                            SizedBox(height: 5),
-                            Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.stretch,
                               children: [
                                 Text(
-                                  "Selectionnez le Type du document",
+                                  "Entrez les informations du document",
                                   style: Theme.of(context).textTheme.labelSmall!.copyWith(fontWeight: FontWeight.bold),
                                 ),
-                                SizedBox(height: 5),
-                                BlocBuilder<TypeDocCubit, TypeDocState>(
-                                  builder: (context, state) {
-                                    return _buildTypeDropdown(state);
-                                  },
-                                ),
-                              ],
-                            ),
-                            SizedBox(height: 5),
-                            Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  "Date de delivrance",
-                                  style: Theme.of(context).textTheme.labelSmall!.copyWith(fontWeight: FontWeight.bold),
-                                ),
-                                SizedBox(height: 5),
-                                TextFormField(
-                                  controller: _dateController,
-                                  inputFormatters: [
-                                    FilteringTextInputFormatter.digitsOnly,
-                                    LengthLimitingTextInputFormatter(10),
-                                    DateInputFormatter(), // ton formatter custom
+                                SizedBox(height: 15),
+                                Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      "Identifiant",
+                                      style: Theme.of(context).textTheme.labelSmall!.copyWith(fontWeight: FontWeight.bold),
+                                    ),
+                                    SizedBox(height: 5),
+                                    TextFormField(
+                                      controller: _identifierController,
+                                      validator: (value) {
+                                        if (value == null || value.isEmpty) {
+                                          return "Veuillez entrer l'identifiant unique du document";
+                                        }
+                                        return null;
+                                      },
+                                      style: Theme.of(context).textTheme.labelSmall,
+                                      decoration: InputDecoration(
+
+                                        enabledBorder: OutlineInputBorder(
+                                          borderSide: BorderSide(color: Colors.grey[300]!),
+                                          borderRadius: BorderRadius.circular(5),
+                                        ),
+                                        focusedBorder: OutlineInputBorder(
+                                          borderSide: BorderSide(color: Colors.grey[300]!),
+                                          borderRadius: BorderRadius.circular(5),
+                                        ),
+                                        errorBorder: OutlineInputBorder(
+                                          borderSide: BorderSide(color: Colors.red),
+                                          borderRadius: BorderRadius.circular(5),
+                                        ),
+                                        hintText: "Identifiant unique du document",
+                                        hintStyle: Theme.of(context).textTheme.displaySmall,
+                                      ),
+                                    ),
                                   ],
-                                  style: Theme.of(context).textTheme.labelSmall,
-                                  decoration: InputDecoration(
-                                    enabledBorder: OutlineInputBorder(
-                                      borderSide: BorderSide(color: Colors.grey[300]!),
-                                      borderRadius: BorderRadius.circular(5),
-                                    ),
-                                    focusedBorder: OutlineInputBorder(
-                                      borderSide: BorderSide(color: Colors.grey[300]!),
-                                      borderRadius: BorderRadius.circular(5),
-                                    ),
-                                    errorBorder: OutlineInputBorder(
-                                      borderSide: BorderSide(color: Colors.red),
-                                      borderRadius: BorderRadius.circular(5),
-                                    ),
-                                    hintText: "jj-mm-aaaa (ex. : 22-07-2023)",
-                                    hintStyle: Theme.of(context).textTheme.displaySmall,
-                                  ),
                                 ),
-                              ],
-                            ),
-                            SizedBox(height: 15),
-                            Row(
-                              children: [
-                                Expanded(
-                                  child: Divider(
-                                    color: Colors.grey[300],
-                                  ),
-                                ),
-                                Padding(
-                                  padding: const EdgeInsets.symmetric(horizontal: 5.0),
-                                  child: Text(
-                                    "Ou",
-                                    style: Theme.of(context).textTheme.labelSmall!.copyWith(color: Colors.grey[500]),
-                                  ),
-                                ),
-                                Expanded(
-                                  child: Divider(
-                                    color: Colors.grey[300],
-                                  ),
-                                ),
-                              ],
-                            ),
-                            SizedBox(height: 15),
-                            Text(
-                              "Téléversez votre fichier PDF",
-                              style: Theme.of(context).textTheme.labelSmall!.copyWith(fontWeight: FontWeight.bold),
-                            ),
-                            SizedBox(height: 8),
-                            SizedBox(height: 8),
-                            _selectedFileBytes == null
-                                ? PdfDropZone(
-                                    selectedFileBytes: _selectedFileBytes,
-                                    selectedFileName: _selectedFileName,
-                                    onFilePicked: (bytes, name) {
-                                      setState(() {
-                                        _selectedFileBytes = bytes;
-                                        _selectedFileName = name;
-                                      });
-                                    },
-                                  )
-                                : Container(
-                                    padding: EdgeInsets.all(12),
-                                    decoration: BoxDecoration(
-                                      color: Colors.green.shade100,
-                                      borderRadius: BorderRadius.circular(8),
-                                      border: Border.all(color: Colors.green.shade700),
+                                SizedBox(height: 5),
+                                Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      "Nom du Beneficiaire",
+                                      style: Theme.of(context).textTheme.labelSmall!.copyWith(fontWeight: FontWeight.bold),
                                     ),
-                                    child: Row(
-                                      mainAxisSize: MainAxisSize.min,
-                                      children: [
-                                        Icon(Icons.check_circle, color: Colors.green.shade700),
-                                        SizedBox(width: 8),
-                                        Flexible(
-                                          child: Text(
-                                            _selectedFileName ?? 'Fichier sélectionné',
-                                            style: Theme.of(context).textTheme.labelSmall!.copyWith(
-                                                  color: Colors.green.shade700,
-                                                  fontWeight: FontWeight.bold,
-                                                ),
-                                            overflow: TextOverflow.ellipsis,
-                                          ),
+                                    SizedBox(height: 5),
+                                    TextFormField(
+                                      controller: _nameController,
+                                      // validator: (value) {
+                                      //   if (value == null || value.isEmpty) {
+                                      //     return "Veuillez entrer l'identifiant unique du document";
+                                      //   }
+                                      //   return null;
+                                      // },
+                                      style: Theme.of(context).textTheme.labelSmall,
+                                      onChanged: (value) {
+                                        final upper = Utils.toUpperCaseInput(value);
+                                        _nameController.value = TextEditingValue(
+                                          text: upper,
+                                          selection: TextSelection.collapsed(offset: upper.length),
+                                        );
+                                      },
+
+                                      decoration: InputDecoration(
+
+                                        enabledBorder: OutlineInputBorder(
+                                          borderSide: BorderSide(color: Colors.grey[300]!),
+                                          borderRadius: BorderRadius.circular(5),
                                         ),
-                                        SizedBox(width: 8),
-                                        IconButton(
-                                          icon: Icon(Icons.close, color: Colors.green.shade700),
-                                          onPressed: () {
-                                            setState(() {
-                                              _selectedFileBytes = null;
-                                              _selectedFileName = null;
-                                            });
-                                          },
+                                        focusedBorder: OutlineInputBorder(
+                                          borderSide: BorderSide(color: Colors.grey[300]!),
+                                          borderRadius: BorderRadius.circular(5),
                                         ),
+                                        errorBorder: OutlineInputBorder(
+                                          borderSide: BorderSide(color: Colors.red),
+                                          borderRadius: BorderRadius.circular(5),
+                                        ),
+                                        hintText: "Nom de famille du bénéficiaire",
+                                        hintStyle: Theme.of(context).textTheme.displaySmall,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                SizedBox(height: 5),
+                                Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      "Selectionnez le Type du document",
+                                      style: Theme.of(context).textTheme.labelSmall!.copyWith(fontWeight: FontWeight.bold),
+                                    ),
+                                    SizedBox(height: 5),
+                                    BlocBuilder<TypeDocCubit, TypeDocState>(
+                                      builder: (context, state) {
+                                        return _buildTypeDropdown(state);
+                                      },
+                                    ),
+                                  ],
+                                ),
+                                SizedBox(height: 5),
+                                Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      "Date de delivrance",
+                                      style: Theme.of(context).textTheme.labelSmall!.copyWith(fontWeight: FontWeight.bold),
+                                    ),
+                                    SizedBox(height: 5),
+                                    TextFormField(
+                                      controller: _dateController,
+                                      inputFormatters: [
+                                        FilteringTextInputFormatter.digitsOnly,
+                                        LengthLimitingTextInputFormatter(10),
+                                        DateInputFormatter(), // ton formatter custom
                                       ],
+                                      style: Theme.of(context).textTheme.labelSmall,
+                                      decoration: InputDecoration(
+
+                                        enabledBorder: OutlineInputBorder(
+                                          borderSide: BorderSide(color: Colors.grey[300]!),
+                                          borderRadius: BorderRadius.circular(5),
+                                        ),
+                                        focusedBorder: OutlineInputBorder(
+                                          borderSide: BorderSide(color: Colors.grey[300]!),
+                                          borderRadius: BorderRadius.circular(5),
+                                        ),
+                                        errorBorder: OutlineInputBorder(
+                                          borderSide: BorderSide(color: Colors.red),
+                                          borderRadius: BorderRadius.circular(5),
+                                        ),
+                                        hintText: "jj-mm-aaaa (ex. : 22-07-2023)",
+                                        hintStyle: Theme.of(context).textTheme.displaySmall,
+                                      ),
                                     ),
-                                  ),
-                            SizedBox(height: 32),
-                            ElevatedButton(
-                              onPressed: () async {
-                                if (_formKey.currentState?.validate() ?? false) {
-                                  // if (_selectedFileBytes == null) {
-                                  //   Utils.showVerificationModal(
-                                  //     context: context,
-                                  //     isSuccess: false,
-                                  //     title: "Fichier manquant",
-                                  //     message: "Veuillez téléverser un fichier PDF pour lancer la vérification.",
-                                  //   );
-                                  //   return;
-                                  // }
+                                  ],
+                                ),
+                                SizedBox(height: 15),
+                                Row(
+                                  children: [
+                                    Expanded(
+                                      child: Divider(
+                                        color: Colors.grey[300],
+                                      ),
+                                    ),
+                                    Padding(
+                                      padding: const EdgeInsets.symmetric(horizontal: 5.0),
+                                      child: Text(
+                                        "Ou",
+                                        style: Theme.of(context).textTheme.labelSmall!.copyWith(color: Colors.grey[500]),
+                                      ),
+                                    ),
+                                    Expanded(
+                                      child: Divider(
+                                        color: Colors.grey[300],
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                SizedBox(height: 15),
+                                Text(
+                                  "Téléversez votre fichier PDF",
+                                  style: Theme.of(context).textTheme.labelSmall!.copyWith(fontWeight: FontWeight.bold),
+                                ),
+                                SizedBox(height: 8),
+                                SizedBox(height: 8),
+                                _selectedFileBytes == null
+                                    ? PdfDropZone(
+                                        selectedFileBytes: _selectedFileBytes,
+                                        selectedFileName: _selectedFileName,
+                                        onFilePicked: (bytes, name) {
+                                          setState(() {
+                                            _selectedFileBytes = bytes;
+                                            _selectedFileName = name;
+                                          });
+                                        },
+                                      )
+                                    : Container(
+                                        padding: EdgeInsets.all(12),
+                                        decoration: BoxDecoration(
+                                          color: Colors.green.shade100,
+                                          borderRadius: BorderRadius.circular(8),
+                                          border: Border.all(color: Colors.green.shade700),
+                                        ),
+                                        child: Row(
+                                          mainAxisSize: MainAxisSize.min,
+                                          children: [
+                                            Icon(Icons.check_circle, color: Colors.green.shade700),
+                                            SizedBox(width: 8),
+                                            Flexible(
+                                              child: Text(
+                                                _selectedFileName ?? 'Fichier sélectionné',
+                                                style: Theme.of(context).textTheme.labelSmall!.copyWith(
+                                                      color: Colors.green.shade700,
+                                                      fontWeight: FontWeight.bold,
+                                                    ),
+                                                overflow: TextOverflow.ellipsis,
+                                              ),
+                                            ),
+                                            SizedBox(width: 8),
+                                            IconButton(
+                                              icon: Icon(Icons.close, color: Colors.green.shade700),
+                                              onPressed: () {
+                                                setState(() {
+                                                  _selectedFileBytes = null;
+                                                  _selectedFileName = null;
+                                                });
+                                              },
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                SizedBox(height: 32),
+                                ElevatedButton(
+                                  onPressed: () async {
+                                    if (_formKey.currentState?.validate() ?? false) {
+                                      // if (_selectedFileBytes == null) {
+                                      //   Utils.showVerificationModal(
+                                      //     context: context,
+                                      //     isSuccess: false,
+                                      //     title: "Fichier manquant",
+                                      //     message: "Veuillez téléverser un fichier PDF pour lancer la vérification.",
+                                      //   );
+                                      //   return;
+                                      // }
 
-                                  setState(() {
-                                    _isLoading = true;
-                                  });
+                                      setState(() {
+                                        _isLoading = true;
+                                      });
 
-                                  try {
-                                    final identifier = _identifierController.text;
-                                    final name = _nameController.text;
-                                    String? typeName;
+                                      try {
+                                        final identifier = _identifierController.text;
+                                        final name = _nameController.text;
+                                        String? typeName;
 
-                                    if (_selectedType != null) {
-                                      typeName = _selectedType!.name;
-                                    } else if (_manualTypeController.text.isNotEmpty) {
-                                      typeName = _manualTypeController.text.trim();
-                                    }
+                                        if (_selectedType != null) {
+                                          typeName = _selectedType!.name;
+                                        } else if (_manualTypeController.text.isNotEmpty) {
+                                          typeName = _manualTypeController.text.trim();
+                                        }
 
-                                    // final type = _selectedType!.name;
-                                    final date = _dateController.text;
-                                    // final response = await VerificationService.verifyDocumentWithFile(
-                                    //   identifier,
-                                    //
-                                    //   _selectedFileBytes,
-                                    //   filename: _selectedFileName ?? 'document.pdf',
-                                    // );
-                                    final response = await VerificationService.verifyDocWithFile(
-                                      identifier,
-                                      name,
-                                      typeName,
-                                      date,
-                                      _selectedFileBytes,
-                                      filename: _selectedFileName ?? 'document.pdf',
-                                    );
-                                    log('🔍 STATUS: ${response['status']}');
+                                        // final type = _selectedType!.name;
+                                        final date = _dateController.text;
+                                        // final response = await VerificationService.verifyDocumentWithFile(
+                                        //   identifier,
+                                        //
+                                        //   _selectedFileBytes,
+                                        //   filename: _selectedFileName ?? 'document.pdf',
+                                        // );
+                                        final response = await VerificationService.verifyDocWithFile(
+                                          identifier,
+                                          name,
+                                          typeName,
+                                          date,
+                                          _selectedFileBytes,
+                                          filename: _selectedFileName ?? 'document.pdf',
+                                        );
+                                        log('🔍 STATUS: ${response['status']}');
 
-                                    if (response['success'] == true && response['status'] == 'authentic') {
-                                      await Utils.showVerificationModelNew(
-                                        context: context,
-                                        isSuccess: response['success'],
-                                        title: "Document trouvé",
-                                        message: response['message'],
-                                        enteredData: response['enteredData'],
-                                        description: response['description'],
-                                      );
-                                    } else if (response['status'] == 'false') {
-                                      await Utils.showVerificationModelNew(
-                                        context: context,
-                                        isSuccess: false,
-                                        title: "Vérification échouée",
-                                        message: response?['message'] ?? response['message'] ?? "Erreur inconnue.",
-                                        enteredData: response?['entered_or_extracted_data'],
-                                      );
-                                    } else if (response['status'] == 'invalid') {
-                                      Utils.showVerificationModal(
-                                        context: context,
-                                        isSuccess: false,
-                                        title: "Échec de Vérification",
-                                        message: response['message'] ?? "Le document n'a pas pu être vérifié.",
-                                      );
-                                    } else if (response['status'] == null) {
-                                      Utils.showVerificationModal(
-                                        context: context,
-                                        isSuccess: false,
-                                        title: "Document non trouvé",
-                                        message:
-                                            "Il semble que le document associé à cet identifiant n'existe pas. Veuillez vérifier les informations et réessayer.",
-                                      );
-                                    } else if (response['status'] == "mi-authentic") {
-                                      Utils.showVerificationModal(
-                                        context: context,
-                                        isSuccess: true,
-                                        title: "Document Vérifié",
-                                        message: """Document trouvé
+                                        if (response['success'] == true && response['status'] == 'authentic') {
+                                          await Utils.showVerificationModelNew(
+                                            context: context,
+                                            isSuccess: response['success'],
+                                            title: "Document trouvé",
+                                            message: response['message'],
+                                            enteredData: response['enteredData'],
+                                            description: response['description'],
+                                          );
+                                        } else if (response['status'] == 'false') {
+                                          await Utils.showVerificationModelNew(
+                                            context: context,
+                                            isSuccess: false,
+                                            title: "Vérification échouée",
+                                            message: response?['message'] ?? response['message'] ?? "Erreur inconnue.",
+                                            enteredData: response?['entered_or_extracted_data'],
+                                          );
+                                        } else if (response['status'] == 'invalid') {
+                                          Utils.showVerificationModal(
+                                            context: context,
+                                            isSuccess: false,
+                                            title: "Échec de Vérification",
+                                            message: response['message'] ?? "Le document n'a pas pu être vérifié.",
+                                          );
+                                        } else if (response['status'] == null) {
+                                          Utils.showVerificationModal(
+                                            context: context,
+                                            isSuccess: false,
+                                            title: "Document non trouvé",
+                                            message:
+                                                "Il semble que le document associé à cet identifiant n'existe pas. Veuillez vérifier les informations et réessayer.",
+                                          );
+                                        } else if (response['status'] == "mi-authentic") {
+                                          Utils.showVerificationModal(
+                                            context: context,
+                                            isSuccess: true,
+                                            title: "Document Vérifié",
+                                            message: """Document trouvé
 Vous venez d’effectuer une vérification publique limitée basée uniquement sur l’identifiant du document.
 Cette vérification confirme que le document est bien enregistré et authentique dans notre base, mais ne donne pas accès aux détails sensibles.
 
 Pour obtenir une vérification complète avec toutes les métadonnées et informations, merci de téléverser une copie originale du document ou de vous connecter avec un compte autorisé.""",
-                                      );
-                                    } else {
-                                      Utils.showVerificationModal(
-                                        context: context,
-                                        isSuccess: false,
-                                        title: "Échec de Vérification",
-                                        message: response['message'] ?? "Le document n'a pas pu être vérifié.",
-                                        reasons: Map<String, dynamic>.from(response['data']['reasons'] ?? {}),
-                                      );
+                                          );
+                                        } else {
+                                          Utils.showVerificationModal(
+                                            context: context,
+                                            isSuccess: false,
+                                            title: "Échec de Vérification",
+                                            message: response['message'] ?? "Le document n'a pas pu être vérifié.",
+                                            reasons: Map<String, dynamic>.from(response['data']['reasons'] ?? {}),
+                                          );
+                                        }
+                                      } catch (e) {
+                                        Utils.showVerificationModal(
+                                          context: context,
+                                          isSuccess: false,
+                                          title: "Échec de Vérification",
+                                          message: "Une erreur est survenue : $e",
+                                        );
+                                      } finally {
+                                        setState(() {
+                                          _isLoading = false;
+                                        });
+                                      }
                                     }
-                                  } catch (e) {
-                                    Utils.showVerificationModal(
-                                      context: context,
-                                      isSuccess: false,
-                                      title: "Échec de Vérification",
-                                      message: "Une erreur est survenue : $e",
-                                    );
-                                  } finally {
-                                    setState(() {
-                                      _isLoading = false;
-                                    });
-                                  }
-                                }
-                              },
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: AppColors.PRIMARY_BLUE_COLOR,
-                                padding: EdgeInsets.symmetric(vertical: 16),
-                                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)),
-                              ),
-                              child: _isLoading
-                                  ? SizedBox(
-                                      height: 24,
-                                      width: 24,
-                                      child: CircularProgressIndicator(
-                                        color: Colors.white,
-                                        strokeWidth: 3,
-                                      ),
-                                    )
-                                  : Text(
-                                      "Vérifier l'authenticité",
-                                      style: Theme.of(context).textTheme.labelSmall!.copyWith(fontSize: 18, color: Colors.white),
-                                    ),
+                                  },
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: AppColors.PRIMARY_BLUE_COLOR,
+                                    padding: EdgeInsets.symmetric(vertical: 16),
+                                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)),
+                                  ),
+                                  child: _isLoading
+                                      ? SizedBox(
+                                          height: 24,
+                                          width: 24,
+                                          child: CircularProgressIndicator(
+                                            color: Colors.white,
+                                            strokeWidth: 3,
+                                          ),
+                                        )
+                                      : Text(
+                                          "Vérifier l'authenticité",
+                                          style: Theme.of(context).textTheme.labelSmall!.copyWith(fontSize: 18, color: Colors.white),
+                                        ),
+                                ),
+                              ],
                             ),
-                          ],
+                          ),
                         ),
-                      ),
+
+                      ],
                     ),
-                  ],
-                ),
+                  ),
+                  _buildFooter(),
+                ],
               ),
+
             ),
           ),
-          _buildFooter(),
+
+
         ],
       ),
     );
@@ -676,7 +688,7 @@ Pour obtenir une vérification complète avec toutes les métadonnées et inform
       return const LinearProgressIndicator(minHeight: 1);
     }
 
-    // ✅ En cas d’erreur, afficher un champ texte libre
+
     if (state.typeStatus == TypeStatus.error) {
       return Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -695,7 +707,8 @@ Pour obtenir une vérification complète avec toutes les métadonnées et inform
               return null;
             },
             style: Theme.of(context).textTheme.labelSmall,
-            decoration: InputDecoration(
+            decoration: InputDecoration( filled: true,
+              fillColor: Colors.white,
               enabledBorder: OutlineInputBorder(
                 borderSide: BorderSide(color: Colors.grey[300]!),
                 borderRadius: BorderRadius.circular(5),

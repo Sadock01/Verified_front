@@ -50,6 +50,24 @@ class DocumentRepository {
     }
   }
 
+  Future<Map<String, dynamic>> addDocuments(List<DocumentsModel> documentsList) async {
+    try {
+      final response = await DocumentService.addListDocuments(documentsList);
+
+      return {
+        'status_code': 200,
+        'message': 'Documents ajoutés avec succès',
+      };
+    } catch (e) {
+      return {
+        'status_code': 500,
+        'message': "Échec de l'ajout des documents : $e",
+      };
+    }
+  }
+
+
+
   Future<Map<String, dynamic>> updateDocument(
       int documentId, DocumentsModel documentsModel) async {
     try {

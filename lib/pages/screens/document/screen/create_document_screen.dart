@@ -84,6 +84,7 @@ class _CreateDocumentScreenState extends State<CreateDocumentScreen> with Single
 
   @override
   Widget build(BuildContext context) {
+    final isLargeScreen = MediaQuery.of(context).size.width > 1150;
     final theme = Theme.of(context);
     return BlocListener<DocumentCubit, DocumentState>(
       listener: (context, state) {
@@ -116,13 +117,24 @@ class _CreateDocumentScreenState extends State<CreateDocumentScreen> with Single
       child: BlocBuilder<TypeDocCubit, TypeDocState>(
         builder: (context, state) {
           return Scaffold(
-            body: Row(
-              children: [
-                NewDrawerDashboard(),
-                Expanded(
-                  child: Column(
-                    children: [
-                      AppBarDrawerWidget(),
+              drawer: isLargeScreen ? null : const NewDrawerDashboard(),
+              body: SafeArea(
+                child: Row(
+                  children: [
+                    if (isLargeScreen) const NewDrawerDashboard(),
+                    Expanded(
+                      child: Column(
+                        children: [
+                      LayoutBuilder(
+                        builder: (context, constraints) {
+                          double width = constraints.maxWidth;
+                          if (isLargeScreen) {
+                            return SizedBox(height: 60, child: AppBarDrawerWidget());
+                          } else {
+                            return AppBarVendorWidget();
+                          }
+                        },
+                      ),
                       // Container(
                       //   margin: const EdgeInsets.all(16),
                       //   padding: const EdgeInsets.all(10),
@@ -150,29 +162,30 @@ class _CreateDocumentScreenState extends State<CreateDocumentScreen> with Single
                           controller: _tabController,
                           children: [
                             extractedEntitiesList != null
-                                ? ExtractedExcelDataSummary(
-                                    extractedDocuments: extractedEntitiesList!,
-                                    onCancel: () {
-                                      setState(() => extractedEntitiesList = null);
-                                    },
-                                    onConfirm: () {
-                                      for (final item in extractedEntitiesList!) {
-                                        final entity = item['entities'] as Map<String, dynamic>;
+                                // ?
+                            ?ExtractedExcelDataSummary(
+                              extractedDocuments: extractedEntitiesList!,
+                              onCancel: () {
+                                setState(() => extractedEntitiesList = null);
+                              },
+                              onConfirm: () {
+                                final documentsToSend = extractedEntitiesList!
+                                    .map((item) {
+                                  final entity = item['entities'] as Map<String, dynamic>;
+                                  return DocumentsModel(
+                                    identifier: entity['identifier'] ?? '',
+                                    descriptionDocument: entity['description'] ?? '',
+                                    typeName: entity['type_document'] ?? '',
+                                    beneficiaire: entity['beneficiaire'] ?? '',
+                                  );
+                                })
+                                    .toList();
 
-                                        context.read<DocumentCubit>().addDocument(
-                                              DocumentsModel(
-                                                identifier: entity['identifier'] ?? '',
-                                                descriptionDocument: entity['description'] ?? '',
-                                                typeName: entity['type_document'] ?? '',
-                                                beneficiaire: entity['beneficiaire'] ?? '',
-                                              ),
-                                            );
-                                      }
+                                context.read<DocumentCubit>().addDocuments(documentsToSend);
 
-                                      setState(() => extractedEntitiesList = null);
-                                    },
-                                  )
-                                : UploadExcelWidget(
+                                setState(() => extractedEntitiesList = null);
+                              },
+                            ): UploadExcelWidget(
                                     onExtracted: (data) {
                                       setState(() {
                                         extractedEntitiesList = data;
@@ -208,7 +221,7 @@ class _CreateDocumentScreenState extends State<CreateDocumentScreen> with Single
                 ),
               ],
             ),
-          );
+          ));
         },
       ),
     );

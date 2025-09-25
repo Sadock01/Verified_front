@@ -57,6 +57,35 @@ class DocumentCubit extends Cubit<DocumentState> {
     }
   }
 
+  Future<void> addDocuments(List<DocumentsModel> documentsList) async {
+    try {
+      emit(state.copyWith(
+        documentStatus: DocumentStatus.loading,
+        errorMessage: "",
+      ));
+
+      final response = await documentRepository.addDocuments(documentsList);
+
+      if (response['status_code'] == 200) {
+        emit(state.copyWith(
+          documentStatus: DocumentStatus.sucess,
+          errorMessage: response['message'] ?? 'Documents ajoutés.',
+        ));
+      } else {
+        emit(state.copyWith(
+          documentStatus: DocumentStatus.error,
+          errorMessage: response['message'] ?? 'Erreur lors de l’ajout.',
+        ));
+      }
+    } catch (e) {
+      emit(state.copyWith(
+        documentStatus: DocumentStatus.error,
+        errorMessage: "Erreur : $e",
+      ));
+    }
+  }
+
+
   Future<void> updateDocument(
       int documentId, DocumentsModel documentsModel) async {
     try {

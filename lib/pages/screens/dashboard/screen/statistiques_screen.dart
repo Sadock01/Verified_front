@@ -86,7 +86,7 @@ class _StatistiquesScreenState extends State<StatistiquesScreen> {
                   LayoutBuilder(
                     builder: (context, constraints) {
                       double width = constraints.maxWidth;
-                      if (width > 900) {
+                      if (isLargeScreen) {
                         return SizedBox(height: 60, child: AppBarDrawerWidget());
                       } else {
                         return AppBarVendorWidget();

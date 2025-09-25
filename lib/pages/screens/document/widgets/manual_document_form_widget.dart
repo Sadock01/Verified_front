@@ -1,11 +1,14 @@
+import 'dart:developer';
+
 import 'package:doc_authentificator/cubits/types/type_doc_cubit.dart';
 import 'package:doc_authentificator/models/type_doc_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-
+import 'package:flutter/services.dart';
 import '../../../../cubits/documents/document_cubit.dart';
 import '../../../../cubits/types/type_doc_state.dart';
 import '../../../../models/documents_model.dart';
+import '../../../../utils/utilitaire.dart';
 import '../../../../utils/utils.dart';
 import 'custom_text_field.dart';
 
@@ -23,6 +26,7 @@ class _ManualDocumentFormState extends State<ManualDocumentForm> {
   final _identifierController = TextEditingController();
   final _descriptionController = TextEditingController();
   final _beneficiaireController = TextEditingController();
+  final _dateInfo = TextEditingController();
   final TextEditingController _newTypeController = TextEditingController();
 
   bool _isAutoDescription = false;
@@ -64,165 +68,199 @@ class _ManualDocumentFormState extends State<ManualDocumentForm> {
             ),
           ],
         ),
-        child: Form(
-          key: _formKey,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              Text(
-                "Saisie manuelle du document",
-                style: theme.textTheme.labelSmall!.copyWith(fontWeight: FontWeight.bold),
+        child: Column(
+          children: [
+            Container(
+              margin: const EdgeInsets.symmetric(vertical: 10),
+              width: double.infinity,
+              padding: const EdgeInsets.all(10),
+              decoration: BoxDecoration(
+                color: Colors.amber.withValues(alpha: 0.15),
+                borderRadius: BorderRadius.circular(6),
+                border: Border.all(color: Colors.amber.withValues(alpha: 0.4)),
               ),
-              const SizedBox(height: 24),
-              Text("Identifiant du document", style: theme.textTheme.labelSmall),
-              const SizedBox(height: 8),
-              Row(
+              child: Text(
+                  'Vous êtes en train d’enregistrer manuellement ce document. Les informations saisies ici seront celles visibles lors de sa vérification..',
+                  style: Theme.of(context).textTheme.displaySmall),
+            ),
+            Form(
+              key: _formKey,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  Expanded(
-                    flex: 2,
-                    child: TextFormField(
-                      controller: _identifierController,
-                      style: theme.textTheme.labelSmall,
-                      decoration: InputDecoration(
-                        hintStyle: theme.textTheme.labelSmall,
-                        hintText: "Ex: DOC-2025-XYZ",
-                        border: OutlineInputBorder(borderRadius: BorderRadius.circular(5)),
-                      ),
-                      validator: (value) => value == null || value.isEmpty ? "Veuillez entrer l'identifiant." : null,
-                    ),
+                  Text(
+                    "Saisie manuelle du document",
+                    style: theme.textTheme.labelSmall!.copyWith(fontWeight: FontWeight.bold),
                   ),
-                  const SizedBox(width: 10),
-                  Expanded(
-                    flex: 2,
-                    child: TextFormField(
-                      controller: _beneficiaireController,
-                      style: theme.textTheme.labelSmall,
-                      decoration: InputDecoration(
-                        hintStyle: theme.textTheme.labelSmall,
-                        hintText: "Ex: John Doe",
-                        border: OutlineInputBorder(borderRadius: BorderRadius.circular(5)),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 24),
-              Text("Méthode de description", style: theme.textTheme.labelLarge),
-              const SizedBox(height: 8),
-              Row(
-                children: [
-                  Radio<bool>(
-                    value: false,
-                    groupValue: _isAutoDescription,
-                    onChanged: (val) => setState(() {
-                      _isAutoDescription = val!;
-                      _isDescriptionReady = false;
-                    }),
-                  ),
-                  Text("Saisie manuelle", style: theme.textTheme.labelSmall),
-                  const SizedBox(width: 20),
-                  Radio<bool>(
-                    value: true,
-                    groupValue: _isAutoDescription,
-                    onChanged: (val) => setState(() => _isAutoDescription = val!),
-                  ),
-                  Text("Génération guidée", style: theme.textTheme.labelSmall),
-                ],
-              ),
-              const SizedBox(height: 8),
-              _isAutoDescription
-                  ? !_isDescriptionReady
-                      ? Align(
-                          alignment: Alignment.centerLeft,
-                          child: ElevatedButton.icon(
-                            icon: const Icon(Icons.auto_fix_high, color: Colors.white),
-                            onPressed: () async {
-                              showDescriptionDialog();
-                              setState(() {
-                                _isDescriptionReady = _descriptionController.text.isNotEmpty;
-                              });
-                            },
-                            label: Text(
-                              "Générer une description",
-                              style: theme.textTheme.labelSmall!.copyWith(color: Colors.white),
-                            ),
-                            style: ElevatedButton.styleFrom(
-                              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-                              backgroundColor: theme.colorScheme.primary,
-                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)),
-                              foregroundColor: Colors.white,
-                            ),
+                  const SizedBox(height: 24),
+                  Text("Identifiant du document", style: theme.textTheme.labelSmall),
+                  const SizedBox(height: 8),
+                  Row(
+                    children: [
+                      Expanded(
+                        flex: 2,
+                        child: TextFormField(
+                          controller: _identifierController,
+                          style: theme.textTheme.labelSmall,
+                          decoration: InputDecoration(
+                            hintStyle: theme.textTheme.labelSmall,
+                            hintText: "Ex: DOC-2025-XYZ",
+                            border: OutlineInputBorder(borderRadius: BorderRadius.circular(5)),
                           ),
-                        )
-                      : Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text("Description générée :", style: theme.textTheme.labelSmall!.copyWith(fontWeight: FontWeight.bold)),
-                            const SizedBox(height: 8),
-                            Container(
-                              padding: const EdgeInsets.all(12),
-                              decoration: BoxDecoration(
-                                color: Colors.grey.shade100,
-                                borderRadius: BorderRadius.circular(5),
-                                border: Border.all(color: Colors.grey.shade300),
-                              ),
-                              child: Text(_descriptionController.text, style: theme.textTheme.labelSmall),
-                            ),
-                            const SizedBox(height: 8),
-                            TextButton(
-                              onPressed: () => setState(() {
-                                _isAutoDescription = false;
-                                _isDescriptionReady = false;
-                              }),
-                              child: Text("Modifier la description", style: theme.textTheme.labelSmall!.copyWith(color: theme.colorScheme.primary)),
-                            ),
-                          ],
-                        )
-                  : TextFormField(
-                      controller: _descriptionController,
-                      maxLines: 4,
-                      style: theme.textTheme.labelSmall,
-                      decoration: InputDecoration(
-                        hintStyle: theme.textTheme.labelSmall,
-                        hintText: "Ex: Attestation délivrée par...",
-                        border: OutlineInputBorder(borderRadius: BorderRadius.circular(5)),
+                          validator: (value) => value == null || value.isEmpty ? "Veuillez entrer l'identifiant." : null,
+                        ),
                       ),
-                      validator: (value) => value == null || value.isEmpty ? "Veuillez entrer une description." : null,
-                    ),
-              const SizedBox(height: 24),
-              Text("Type de document", style: theme.textTheme.labelSmall),
-              const SizedBox(height: 8),
-              _buildTypeDropdown(widget.state),
-              const SizedBox(height: 30),
-              SizedBox(
-                width: double.infinity,
-                child: ElevatedButton.icon(
-                  icon: const Icon(Icons.save, color: Colors.white),
-                  onPressed: () {
-                    if (_formKey.currentState!.validate() && _selectedType != null) {
-                      context.read<DocumentCubit>().addDocument(
-                            DocumentsModel(
-                                identifier: _identifierController.text,
-                                descriptionDocument: _descriptionController.text,
-                                typeId: _selectedType!.id,
-                                typeName: _selectedType!.name,
-                                beneficiaire: _beneficiaireController.text),
-                          );
-                    }
-                  },
-                  label: Text("Enregistrer", style: theme.textTheme.labelSmall!.copyWith(color: Colors.white)),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: theme.colorScheme.primary,
-                    padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)),
+                      const SizedBox(width: 10),
+                      Expanded(
+                        flex: 2,
+                        child: TextFormField(
+                          controller: _beneficiaireController,
+                          style: theme.textTheme.labelSmall,
+                          decoration: InputDecoration(
+                            hintStyle: theme.textTheme.labelSmall,
+                            hintText: "Ex: John Doe",
+                            border: OutlineInputBorder(borderRadius: BorderRadius.circular(5)),
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
-                ),
+                  const SizedBox(height: 5),
+                  TextFormField(
+                    controller: _dateInfo,
+                    inputFormatters: [
+                      FilteringTextInputFormatter.digitsOnly,
+                      LengthLimitingTextInputFormatter(10),
+                      DateInputFormatter(), // ton formatter custom
+                    ],
+                    style: theme.textTheme.labelSmall,
+                    decoration: InputDecoration(
+                      hintStyle: theme.textTheme.labelSmall,
+                      hintText: "jj-mm-aaaa (ex. : 22-07-2023)",
+                      border: OutlineInputBorder(borderRadius: BorderRadius.circular(5)),
+                    ),
+                    validator: (value) => value == null || value.isEmpty ? "Veuillez entrer la date de delivrance" : null,
+                  ),
+                  const SizedBox(height: 24),
+                  Text("Méthode de description", style: theme.textTheme.labelLarge),
+                  const SizedBox(height: 8),
+                  Row(
+                    children: [
+                      Radio<bool>(
+                        value: false,
+                        groupValue: _isAutoDescription,
+                        onChanged: (val) => setState(() {
+                          _isAutoDescription = val!;
+                          _isDescriptionReady = false;
+                        }),
+                      ),
+                      Text("Saisie manuelle", style: theme.textTheme.labelSmall),
+                      const SizedBox(width: 20),
+                      Radio<bool>(
+                        value: true,
+                        groupValue: _isAutoDescription,
+                        onChanged: (val) => setState(() => _isAutoDescription = val!),
+                      ),
+                      Text("Génération guidée", style: theme.textTheme.labelSmall),
+                    ],
+                  ),
+                  const SizedBox(height: 8),
+                  _isAutoDescription
+                      ? !_isDescriptionReady
+                          ? Align(
+                              alignment: Alignment.centerLeft,
+                              child: ElevatedButton.icon(
+                                icon: const Icon(Icons.auto_fix_high, color: Colors.white),
+                                onPressed: () async {
+                                  showDescriptionDialog();
+                                  setState(() {
+                                    _isDescriptionReady = _descriptionController.text.isNotEmpty;
+                                  });
+                                },
+                                label: Text(
+                                  "Générer une description",
+                                  style: theme.textTheme.labelSmall!.copyWith(color: Colors.white),
+                                ),
+                                style: ElevatedButton.styleFrom(
+                                  padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                                  backgroundColor: theme.colorScheme.primary,
+                                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)),
+                                  foregroundColor: Colors.white,
+                                ),
+                              ),
+                            )
+                          : Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text("Description générée :", style: theme.textTheme.labelSmall!.copyWith(fontWeight: FontWeight.bold)),
+                                const SizedBox(height: 8),
+                                Container(
+                                  padding: const EdgeInsets.all(12),
+                                  decoration: BoxDecoration(
+                                    color: Colors.grey.shade100,
+                                    borderRadius: BorderRadius.circular(5),
+                                    border: Border.all(color: Colors.grey.shade300),
+                                  ),
+                                  child: Text(_descriptionController.text, style: theme.textTheme.labelSmall),
+                                ),
+                                const SizedBox(height: 8),
+                                TextButton(
+                                  onPressed: () => setState(() {
+                                    _isAutoDescription = false;
+                                    _isDescriptionReady = false;
+                                  }),
+                                  child: Text("Modifier la description", style: theme.textTheme.labelSmall!.copyWith(color: theme.colorScheme.primary)),
+                                ),
+                              ],
+                            )
+                      : TextFormField(
+                          controller: _descriptionController,
+                          maxLines: 4,
+                          style: theme.textTheme.labelSmall,
+                          decoration: InputDecoration(
+                            hintStyle: theme.textTheme.labelSmall,
+                            hintText: "Ex: Attestation délivrée par...",
+                            border: OutlineInputBorder(borderRadius: BorderRadius.circular(5)),
+                          ),
+                          validator: (value) => value == null || value.isEmpty ? "Veuillez entrer une description." : null,
+                        ),
+                  const SizedBox(height: 24),
+                  Text("Type de document", style: theme.textTheme.labelSmall),
+                  const SizedBox(height: 8),
+                  _buildTypeDropdown(widget.state),
+                  const SizedBox(height: 30),
+                  SizedBox(
+                    width: double.infinity,
+                    child: ElevatedButton.icon(
+                      icon: const Icon(Icons.save, color: Colors.white),
+                      onPressed: () {
+                        if (_formKey.currentState!.validate() && _selectedType != null) {
+                          context.read<DocumentCubit>().addDocument(
+                                DocumentsModel(
+                                    identifier: _identifierController.text,
+                                    descriptionDocument: _descriptionController.text,
+                                    typeId: _selectedType!.id,
+                                    typeName: _selectedType!.name,
+                                    dateInfo: _dateInfo.text,
+                                    beneficiaire: _beneficiaireController.text),
+                              );
+                        }
+                      },
+                      label: Text("Enregistrer", style: theme.textTheme.labelSmall!.copyWith(color: Colors.white)),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: theme.colorScheme.primary,
+                        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)),
+                      ),
+                    ),
+                  ),
+                  SizedBox(
+                    height: 40,
+                  )
+                ],
               ),
-              SizedBox(
-                height: 40,
-              )
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );
@@ -230,6 +268,7 @@ class _ManualDocumentFormState extends State<ManualDocumentForm> {
 
   Widget _buildTypeDropdown(TypeDocState state) {
     final theme = Theme.of(context);
+    log("type status: ${state.typeStatus}");
     final isLight = theme.brightness == Brightness.light;
 
     if (state.typeStatus == TypeStatus.loading) {
@@ -241,10 +280,11 @@ class _ManualDocumentFormState extends State<ManualDocumentForm> {
       );
     }
 
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.start,
-      children: [
-        SizedBox(
+    else if(state.typeStatus == TypeStatus.loaded) {
+      return Row(
+        mainAxisAlignment: MainAxisAlignment.start,
+        children: [
+          SizedBox(
             // padding: const EdgeInsets.symmetric(horizontal: 12),
             // decoration: BoxDecoration(
             //   color: theme.cardColor,
@@ -258,62 +298,65 @@ class _ManualDocumentFormState extends State<ManualDocumentForm> {
             //     ),
             //   ],
             // ),
-            width: 365,
-            height: 50,
-            child: DropdownButtonFormField<TypeDocModel>(
-              value: _selectedType,
-              hint: Text(
-                "Choisir un type",
-                style: TextStyle(fontSize: 13, color: Colors.grey.shade600), // ✅ Texte local
-              ),
-              items: state.listType.map((type) {
-                return DropdownMenuItem<TypeDocModel>(
-                  value: type,
-                  child: Text(
-                    type.name,
-                    style: theme.textTheme.labelSmall, // ✅ Texte des options
-                  ),
-                );
-              }).toList(),
-
-              borderRadius: BorderRadius.circular(4),
-              onChanged: (value) => setState(() => _selectedType = value),
-              validator: (value) => value == null ? "Veuillez sélectionner un type." : null,
-              isExpanded: false,
-              icon: const Icon(Icons.keyboard_arrow_down, color: Colors.grey), // ✅ Icône personnalisée
-              dropdownColor: theme.cardColor, // ✅ Couleur du menu déroulant
-              style: theme.textTheme.labelSmall, // ✅ Texte sélectionné
-            )
-            // largeur contrôlée, adaptée au web
-            ),
-        const SizedBox(width: 12),
-        Tooltip(
-          message: "Ajouter un nouveau type",
-          child: ElevatedButton.icon(
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Theme.of(context).colorScheme.primary,
-                foregroundColor: Colors.white,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(5),
+              width: 365,
+              height: 50,
+              child: DropdownButtonFormField<TypeDocModel>(
+                value: _selectedType,
+                hint: Text(
+                  "Choisir un type",
+                  style: TextStyle(fontSize: 13, color: Colors.grey.shade600), // ✅ Texte local
                 ),
-                padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
-              ),
-              icon: const Icon(
-                Icons.add,
-                size: 20,
-                color: Colors.white,
-              ),
-              label: Text(
-                "Ajouter",
-                style: Theme.of(context).textTheme.labelSmall!.copyWith(color: Colors.white),
-              ),
-              onPressed: () async {
-                await Utils.showAddTypeDialog(context, _newTypeController);
-                context.read<TypeDocCubit>().getAllType(1);
-              }),
-        ),
-      ],
-    );
+                items: state.listType.map((type) {
+                  return DropdownMenuItem<TypeDocModel>(
+                    value: type,
+                    child: Text(
+                      type.name,
+                      style: theme.textTheme.labelSmall, // ✅ Texte des options
+                    ),
+                  );
+                }).toList(),
+
+                borderRadius: BorderRadius.circular(4),
+                onChanged: (value) => setState(() => _selectedType = value),
+                validator: (value) => value == null ? "Veuillez sélectionner un type." : null,
+                isExpanded: false,
+                icon: const Icon(Icons.keyboard_arrow_down, color: Colors.grey), // ✅ Icône personnalisée
+                dropdownColor: theme.cardColor, // ✅ Couleur du menu déroulant
+                style: theme.textTheme.labelSmall, // ✅ Texte sélectionné
+              )
+            // largeur contrôlée, adaptée au web
+          ),
+          const SizedBox(width: 12),
+          Tooltip(
+            message: "Ajouter un nouveau type",
+            child: ElevatedButton.icon(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Theme.of(context).colorScheme.primary,
+                  foregroundColor: Colors.white,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(5),
+                  ),
+                  padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+                ),
+                icon: const Icon(
+                  Icons.add,
+                  size: 20,
+                  color: Colors.white,
+                ),
+                label: Text(
+                  "Ajouter",
+                  style: Theme.of(context).textTheme.labelSmall!.copyWith(color: Colors.white),
+                ),
+                onPressed: () async {
+                  await Utils.showAddTypeDialog(context, _newTypeController);
+                  context.read<TypeDocCubit>().getAllType(1);
+                }),
+          ),
+        ],
+      );
+    }else {
+      return SizedBox.shrink();
+    }
   }
 
   void showDescriptionDialog() {
@@ -346,13 +389,148 @@ class _ManualDocumentFormState extends State<ManualDocumentForm> {
                       const SizedBox(height: 24),
 
                       // Champs
-                      CustomTextField(label: "Quel est le type du document ?", onChanged: (v) => reponse1 = v),
-                      const SizedBox(height: 12),
-                      CustomTextField(label: "À qui est destiné ce document ?", onChanged: (v) => reponse2 = v),
-                      const SizedBox(height: 12),
-                      CustomTextField(label: "Quel organisme a délivré le document ?", onChanged: (v) => reponse3 = v),
-                      const SizedBox(height: 12),
-                      CustomTextField(label: "Informations supplémentaires ?", onChanged: (v) => reponse4 = v),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                      "Quel est le type du document ?",
+                            style: Theme.of(context).textTheme.labelSmall!.copyWith(fontWeight: FontWeight.bold),
+                          ),
+                          SizedBox(height: 5),
+                          TextFormField(
+
+                              onChanged: (v) => reponse1 = v,
+                            style: Theme.of(context).textTheme.labelSmall,
+                            decoration: InputDecoration(
+
+                              enabledBorder: OutlineInputBorder(
+                                borderSide: BorderSide(color: Colors.grey[300]!),
+                                borderRadius: BorderRadius.circular(5),
+                              ),
+                              focusedBorder: OutlineInputBorder(
+                                borderSide: BorderSide(color: Colors.grey[300]!),
+                                borderRadius: BorderRadius.circular(5),
+                              ),
+                              errorBorder: OutlineInputBorder(
+                                borderSide: BorderSide(color: Colors.red),
+                                borderRadius: BorderRadius.circular(5),
+                              ),
+                              hintText: "Type du document",
+                              hintStyle: Theme.of(context).textTheme.displaySmall,
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 5),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                      "À qui est destiné ce document ?",
+                            style: Theme.of(context).textTheme.labelSmall!.copyWith(fontWeight: FontWeight.bold),
+                          ),
+                          SizedBox(height: 5),
+                          TextFormField(
+
+                              onChanged: (v) => reponse2 = v,
+                            style: Theme.of(context).textTheme.labelSmall,
+                            decoration: InputDecoration(
+
+                              enabledBorder: OutlineInputBorder(
+                                borderSide: BorderSide(color: Colors.grey[300]!),
+                                borderRadius: BorderRadius.circular(5),
+                              ),
+                              focusedBorder: OutlineInputBorder(
+                                borderSide: BorderSide(color: Colors.grey[300]!),
+                                borderRadius: BorderRadius.circular(5),
+                              ),
+                              errorBorder: OutlineInputBorder(
+                                borderSide: BorderSide(color: Colors.red),
+                                borderRadius: BorderRadius.circular(5),
+                              ),
+                              hintText: "Béneficiaire du document",
+                              hintStyle: Theme.of(context).textTheme.displaySmall,
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 5),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                      "Quel organisme a délivré le document ?",
+                            style: Theme.of(context).textTheme.labelSmall!.copyWith(fontWeight: FontWeight.bold),
+                          ),
+                          SizedBox(height: 5),
+                          TextFormField(
+                            controller: _identifierController,
+                            validator: (value) {
+                              if (value == null || value.isEmpty) {
+                                return "Veuillez entrer l'identifiant unique du document";
+                              }
+                              return null;
+                            },
+                              onChanged: (v) => reponse3 = v,
+
+                            style: Theme.of(context).textTheme.labelSmall,
+                            decoration: InputDecoration(
+
+                              enabledBorder: OutlineInputBorder(
+                                borderSide: BorderSide(color: Colors.grey[300]!),
+                                borderRadius: BorderRadius.circular(5),
+                              ),
+                              focusedBorder: OutlineInputBorder(
+                                borderSide: BorderSide(color: Colors.grey[300]!),
+                                borderRadius: BorderRadius.circular(5),
+                              ),
+                              errorBorder: OutlineInputBorder(
+                                borderSide: BorderSide(color: Colors.red),
+                                borderRadius: BorderRadius.circular(5),
+                              ),
+                              hintText: "Identifiant unique du document",
+                              hintStyle: Theme.of(context).textTheme.displaySmall,
+                            ),
+                          ),
+                        ],
+                      ),
+
+
+                      const SizedBox(height: 5),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            "Informations supplémentaires ?",
+                            style: Theme.of(context).textTheme.labelSmall!.copyWith(fontWeight: FontWeight.bold),
+                          ),
+                          SizedBox(height: 5),
+                          TextFormField(
+
+
+                              onChanged: (v) => reponse4 = v,
+                            style: Theme.of(context).textTheme.labelSmall,
+                            decoration: InputDecoration(
+
+                              enabledBorder: OutlineInputBorder(
+                                borderSide: BorderSide(color: Colors.grey[300]!),
+                                borderRadius: BorderRadius.circular(5),
+                              ),
+                              focusedBorder: OutlineInputBorder(
+                                borderSide: BorderSide(color: Colors.grey[300]!),
+                                borderRadius: BorderRadius.circular(5),
+                              ),
+                              errorBorder: OutlineInputBorder(
+                                borderSide: BorderSide(color: Colors.red),
+                                borderRadius: BorderRadius.circular(5),
+                              ),
+                              hintText: "Informations supplémentaires",
+                              hintStyle: Theme.of(context).textTheme.displaySmall,
+                            ),
+                          ),
+                        ],
+                      ),
+
 
                       const SizedBox(height: 30),
                       SizedBox(
