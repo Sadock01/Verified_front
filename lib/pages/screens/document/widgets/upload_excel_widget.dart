@@ -103,7 +103,7 @@ class _UploadExcelWidgetState extends State<UploadExcelWidget> {
                           Flexible(
                             child: Text(
                               _selectedFileName ?? 'Fichier sélectionné',
-                              style: TextStyle(
+                              style: Theme.of(context).textTheme.labelSmall!.copyWith(
                                 color: Colors.green.shade700,
                                 fontWeight: FontWeight.bold,
                               ),

@@ -45,7 +45,7 @@ class _ListDocumentScreenState extends State<ListDocumentScreen> {
     final isLight = theme.brightness == Brightness.light;
     return BlocBuilder<DocumentCubit, DocumentState>(builder: (context, state) {
       return Scaffold(
-        drawer: isLargeScreen ? null : const DrawerDashboard(),
+        drawer: isLargeScreen ? null : const NewDrawerDashboard(),
         body: Row(
           children: [
             if (isLargeScreen) const NewDrawerDashboard(),

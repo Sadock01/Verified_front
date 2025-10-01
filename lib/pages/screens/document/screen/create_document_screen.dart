@@ -201,6 +201,7 @@ class _CreateDocumentScreenState extends State<CreateDocumentScreen> with Single
                                       required String description,
                                       required String typeCertificat,
                                       required String beneficiaire,
+                                      String? date
                                     }) {
                                       log("Enregistrement document...: $description");
                                       context.read<DocumentCubit>().addDocument(
@@ -208,6 +209,7 @@ class _CreateDocumentScreenState extends State<CreateDocumentScreen> with Single
                                                 identifier: identifier,
                                                 descriptionDocument: description,
                                                 typeName: typeCertificat,
+                                                dateInfo: date,
                                                 beneficiaire: beneficiaire),
                                           );
                                     },
@@ -305,10 +307,10 @@ class _CreateDocumentScreenState extends State<CreateDocumentScreen> with Single
                         children: [
                           Icon(Icons.check_circle, color: Colors.green.shade700),
                           SizedBox(width: 8),
-                          Flexible(
+                          Expanded(
                             child: Text(
                               _selectedFileName ?? 'Fichier sélectionné',
-                              style: TextStyle(
+                              style: Theme.of(context).textTheme.labelSmall!.copyWith(
                                 color: Colors.green.shade700,
                                 fontWeight: FontWeight.bold,
                               ),
