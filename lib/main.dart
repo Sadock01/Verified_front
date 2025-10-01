@@ -1,5 +1,6 @@
 import 'dart:developer';
 
+import 'package:doc_authentificator/repositories/utils_repository.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -26,6 +27,8 @@ import 'package:doc_authentificator/repositories/verification_repository.dart';
 import 'package:doc_authentificator/routes/routes.dart';
 import 'package:doc_authentificator/utils/app_theme.dart';
 import 'package:doc_authentificator/utils/shared_preferences_utils.dart';
+
+import 'cubits/activities/activities_cubit.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -58,6 +61,7 @@ class MyApp extends StatelessWidget {
               RepositoryProvider(create: (_) => VerificationRepository()),
               RepositoryProvider(create: (_) => CollaborateurRepository()),
               RepositoryProvider(create: (_) => ReportRepository()),
+              RepositoryProvider(create: (_) => UtilsRepository()),
             ],
             child: MultiBlocProvider(
               providers: [
@@ -91,6 +95,12 @@ class MyApp extends StatelessWidget {
                   create: (context) => ReportCubit(
                     reportRepository: context.read<ReportRepository>(),
                   )..getAllReports(1),
+                ),
+                BlocProvider(
+                  create: (context) => ActivitiesCubit
+                    (
+                    utilsRepository: context.read<UtilsRepository>(),
+                  )..getAllActivities(1),
                 ),
               ],
               child: Builder(

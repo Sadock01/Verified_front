@@ -1,3 +1,4 @@
+import 'package:doc_authentificator/pages/screens/activity/screens/activities_screen.dart';
 import 'package:doc_authentificator/pages/system/screens/system_admin_screen.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -139,6 +140,13 @@ class AppRouter {
         builder: (BuildContext context, GoRouterState state) {
           context.read<SwitchPageCubit>().switchPage(9.9);
           return const SystemAdminScreen();
+        },
+      ),
+      GoRoute(
+        path: '/system/activities-logs',
+        builder: (BuildContext context, GoRouterState state) {
+          context.read<SwitchPageCubit>().switchPage(9.9);
+          return const ActivitiesScreen();
         },
       ),
       GoRoute(

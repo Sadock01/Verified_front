@@ -25,16 +25,16 @@ class SystemAdminWidget extends StatelessWidget {
         Icons.receipt_long_outlined,
         onTap: () => context.go('/system/request-logs'),
       ),
-      _SysTileData('Activities Logs', 'View and delete your system activity logs', Icons.event_note_outlined),
-      _SysTileData('Backup', 'Backup database and uploads folder.', Icons.backup_outlined),
-      _SysTileData('Cronjob', 'Automate certain commands or scripts on your site.', Icons.schedule_outlined),
-      _SysTileData('Security Settings', 'Manage cookie security and HTTP headers', Icons.shield_outlined),
       _SysTileData(
         'Activities Logs',
         'View and delete your system activity logs',
         Icons.event_note_outlined,
         onTap: () => context.go('/system/activities-logs'),
       ),
+      _SysTileData('Backup', 'Backup database and uploads folder.', Icons.backup_outlined),
+      _SysTileData('Cronjob', 'Automate certain commands or scripts on your site.', Icons.schedule_outlined),
+      _SysTileData('Security Settings', 'Manage cookie security and HTTP headers', Icons.shield_outlined),
+
       _SysTileData(
         'Cache Management',
         'Clear cache to make your site up to date.',
