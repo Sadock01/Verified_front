@@ -58,7 +58,7 @@ class _CollaboratorDrawerWidgetState extends State<CollaboratorDrawerWidget> {
                       SizedBox(width: 5),
                       Text(
                         'Collaborateurs',
-                        style: Theme.of(context).textTheme.displaySmall?.copyWith(
+                        style: Theme.of(context).textTheme.labelSmall?.copyWith(
                               color: state.isCollabExpanded == true ? Colors.white : Colors.grey[500],
                             ),
                       ),
@@ -108,8 +108,8 @@ class _CollaboratorDrawerWidgetState extends State<CollaboratorDrawerWidget> {
                               ),
                               SizedBox(width: 5),
                               Text(
-                                'Listes de Collaborateurs',
-                                style: Theme.of(context).textTheme.displaySmall?.copyWith(
+                                'Listes',
+                                style: Theme.of(context).textTheme.labelSmall?.copyWith(
                                       color: context.read<SwitchPageCubit>().state.selectedPage == 5.1 ? Colors.white : Colors.grey[500],
                                     ),
                               ),
@@ -149,7 +149,7 @@ class _CollaboratorDrawerWidgetState extends State<CollaboratorDrawerWidget> {
                               SizedBox(width: 5),
                               Text(
                                 'Nouveau Collaborateur',
-                                style: Theme.of(context).textTheme.displaySmall?.copyWith(
+                                style: Theme.of(context).textTheme.labelSmall?.copyWith(
                                       color: context.read<SwitchPageCubit>().state.selectedPage == 5.2 ? Colors.white : Colors.grey[500],
                                     ),
                               ),

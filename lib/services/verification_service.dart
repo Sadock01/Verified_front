@@ -132,18 +132,24 @@ class VerificationService {
 
       if (response.statusCode == 200 || response.statusCode == 201) {
         final data = response.data;
+        log("Voici le mimatches dans le service: ${response.data['mismatches']}");
         return {
           'success': true,
           'status': data['status'],
           'message': data['message'],
           'enteredData': data['entered_or_extracted_data'],
+          'misMatch': data['mismatches'],
           'description': data['document']?['description'],
         };
       } else {
+        log("Voici le mimatches dans le service: ${response.data['mismatches']}");
         return {
+
           'success': response.data['success'],
           'status': response.data['status'],
           'message': response.data['message'],
+          'misMatch': response.data['mismatches'],
+          'enteredData': response.data['entered_or_extracted_data'],
           'data': response.data,
         };
       }

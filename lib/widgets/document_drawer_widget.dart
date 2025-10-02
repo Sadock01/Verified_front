@@ -58,7 +58,7 @@ class _DocumentDrawerWidgetState extends State<DocumentDrawerWidget> {
                       SizedBox(width: 5),
                       Text(
                         'Documents',
-                        style: Theme.of(context).textTheme.displaySmall?.copyWith(
+                        style: Theme.of(context).textTheme.labelSmall?.copyWith(
                               color: state.isDocumentExpanded == true ? Colors.white : Colors.grey[500],
                             ),
                       ),
@@ -108,8 +108,8 @@ class _DocumentDrawerWidgetState extends State<DocumentDrawerWidget> {
                               ),
                               SizedBox(width: 5),
                               Text(
-                                'Listes des Documents',
-                                style: Theme.of(context).textTheme.displaySmall?.copyWith(
+                                'Listes',
+                                style: Theme.of(context).textTheme.labelSmall?.copyWith(
                                       color: context.read<SwitchPageCubit>().state.selectedPage == 1.1 ? Colors.white : Colors.grey[500],
                                     ),
                               ),
@@ -148,8 +148,8 @@ class _DocumentDrawerWidgetState extends State<DocumentDrawerWidget> {
                               ),
                               SizedBox(width: 5),
                               Text(
-                                'Creation Documents Rapide',
-                                style: Theme.of(context).textTheme.displaySmall?.copyWith(
+                                'Creation par lot',
+                                style: Theme.of(context).textTheme.labelSmall?.copyWith(
                                       color: context.read<SwitchPageCubit>().state.selectedPage == 1.2 ? Colors.white : Colors.grey[500],
                                     ),
                               ),
@@ -189,7 +189,7 @@ class _DocumentDrawerWidgetState extends State<DocumentDrawerWidget> {
                               SizedBox(width: 5),
                               Text(
                                 'Nouveau Document',
-                                style: Theme.of(context).textTheme.displaySmall?.copyWith(
+                                style: Theme.of(context).textTheme.labelSmall?.copyWith(
                                       color: context.read<SwitchPageCubit>().state.selectedPage == 1.3 ? Colors.white : Colors.grey[500],
                                     ),
                               ),

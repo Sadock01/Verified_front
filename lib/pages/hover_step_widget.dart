@@ -81,8 +81,8 @@ class _HoverAnimatedStepState extends State<HoverAnimatedStep> with SingleTicker
                 child: Icon(widget.icon, size: 32, color: Colors.white),
               ),
               SizedBox(height: 16),
-              Text(
-                "Étape ${widget.number}",
+              widget.number == 0 ? const SizedBox(): Text(
+                "Option ${widget.number}",
                 style: Theme.of(context).textTheme.labelSmall!.copyWith(fontWeight: FontWeight.bold, fontSize: 18, color: widget.color),
               ),
               SizedBox(height: 8),

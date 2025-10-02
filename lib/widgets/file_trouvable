@@ -1,377 +1,306 @@
-  Expanded(
-                                    flex: 9,
-                                    child: SingleChildScrollView(
-                                      scrollDirection: Axis.horizontal,
-                                      child: ConstrainedBox(
-                                        constraints: BoxConstraints(
-                                          minWidth: MediaQuery.of(context).size.width,
-                                        ),
-                                        child: DocumentsTabWidget(state: state),
-                                      ),
-                                    ),
-                                  ),
+import 'package:doc_authentificator/const/const.dart';
+import 'package:doc_authentificator/cubits/login/login_cubit.dart';
+import 'package:doc_authentificator/cubits/login/login_state.dart';
+import 'package:elegant_notification/elegant_notification.dart';
+import 'package:elegant_notification/resources/arrays.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 
-                                  // Container(
-                                  //   margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
-                                  //   width: Const.screenWidth(context),
-                                  //   decoration: const BoxDecoration(
-                                  //     borderRadius: BorderRadius.only(
-                                  //       topLeft: Radius.circular(15),
-                                  //       topRight: Radius.circular(15),
-                                  //     ),
-                                  //     color: Colors.white,
-                                  //   ),
-                                  //   child: DataTable(
-                                  //     headingRowHeight: 30,
-                                  //     dataRowMaxHeight: 50,
-                                  //     columns: [
-                                  //       DataColumn(
-                                  //         label: Text("Identifiant", style: Theme.of(context).textTheme.displayMedium),
-                                  //       ),
-                                  //       DataColumn(
-                                  //         label: Text("Description", style: Theme.of(context).textTheme.displayMedium),
-                                  //       ),
-                                  //       DataColumn(
-                                  //         label: Text("Type", style: Theme.of(context).textTheme.displayMedium),
-                                  //       ),
-                                  //       DataColumn(
-                                  //         label: SizedBox(
-                                  //           width: Const.screenWidth(context) * 0.12,
-                                  //           child: Text("Action", style: Theme.of(context).textTheme.displayMedium),
-                                  //         ),
-                                  //       ),
-                                  //     ],
-                                  //     rows: state.listDocuments
-                                  //         .map((document) => DataRow(
-                                  //               cells: [
-                                  //                 DataCell(SizedBox(
-                                  //                   width: Const.screenWidth(context) * 0.1,
-                                  //                   child: Text(
-                                  //                     document.identifier.toString(),
-                                  //                     style: Theme.of(context).textTheme.displayMedium,
-                                  //                     overflow: TextOverflow.ellipsis,
-                                  //                   ),
-                                  //                 )),
-                                  //                 DataCell(SizedBox(
-                                  //                   width: Const.screenWidth(context) * 0.25,
-                                  //                   height: Const.screenHeight(context) * 0.05,
-                                  //                   child: Text(
-                                  //                     document.descriptionDocument,
-                                  //                     style: Theme.of(context).textTheme.labelSmall,
-                                  //                     overflow: TextOverflow.ellipsis,
-                                  //                   ),
-                                  //                 )),
-                                  //                 DataCell(SizedBox(
-                                  //                   width: Const.screenWidth(context) * 0.1,
-                                  //                   child: Text(
-                                  //                     document.typeName.toString(),
-                                  //                     style: Theme.of(context).textTheme.displayMedium,
-                                  //                   ),
-                                  //                 )),
-                                  //                 DataCell(PopupMenuButton<String>(
-                                  //                   onSelected: (value) {
-                                  //                     if (value == "edit") {
-                                  //                       context.go('/document/update/${document.id}');
-                                  //                     } else if (value == "view") {
-                                  //                       context.go('/document/view/${document.identifier}');
-                                  //                     }
-                                  //                   },
-                                  //                   itemBuilder: (context) => [
-                                  //                     PopupMenuItem(
-                                  //                         value: "edit",
-                                  //                         child: Text(
-                                  //                           "Modifier document",
-                                  //                           style: Theme.of(context).textTheme.labelSmall,
-                                  //                         )),
-                                  //                     PopupMenuItem(
-                                  //                         value: "view",
-                                  //                         child: Text("Afficher document", style: Theme.of(context).textTheme.labelSmall)),
-                                  //                   ],
-                                  //                   child: MouseRegion(
-                                  //                     cursor: SystemMouseCursors.click,
-                                  //                     child: Container(
-                                  //                       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 5),
-                                  //                       decoration: BoxDecoration(
-                                  //                         color: Theme.of(context).colorScheme.primary,
-                                  //                         borderRadius: BorderRadius.circular(5),
-                                  //                       ),
-                                  //                       child: Text(
-                                  //                         "Option",
-                                  //                         style: Theme.of(context).textTheme.labelMedium!.copyWith(color: Colors.white),
-                                  //                       ),
-                                  //                     ),
-                                  //                   ),
-                                  //                 )),
-                                  //               ],
-                                  //             ))
-                                  //         .toList(),
-                                  //   ),
-                                  // ),
+import '../../../../utils/app_colors.dart';
+
+class LoginPage extends StatefulWidget {
+  const LoginPage({super.key});
+
+  @override
+  State<LoginPage> createState() => _LoginPageState();
+}
+
+class _LoginPageState extends State<LoginPage> {
+  final _formKey = GlobalKey<FormState>();
+  bool _isPasswordVisible = false;
+  bool _rememberMe = false;
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
+
+  @override
+  Widget build(BuildContext context) {
+    return BlocListener<LoginCubit, LoginState>(
+      listener: (context, state) {
+        if (state.loginStatus == LoginStatus.error) {
+          ElegantNotification.error(
+            width: Const.screenWidth(context) * 0.5,
+            notificationMargin: 10,
+            description: Text(state.errorMessage, style: Theme.of(context).textTheme.labelSmall),
+            position: Alignment.topRight,
+            animation: AnimationType.fromRight,
+            icon: const Icon(
+              Icons.error_outline,
+              color: Colors.red,
+            ),
+          ).show(context);
+        } else if (state.loginStatus == LoginStatus.loaded) {
+          ElegantNotification.success(
+            width: Const.screenWidth(context) * 0.5,
+            notificationMargin: 10,
+            description: Text(state.errorMessage, style: Theme.of(context).textTheme.labelSmall),
+            position: Alignment.topRight,
+            animation: AnimationType.fromRight,
+            icon: const Icon(
+              Icons.check_circle_outline,
+              color: Colors.green,
+            ),
+          ).show(context);
+
+          Future.delayed(Duration(milliseconds: 300), () {
+            if (mounted) {
+              context.go('/dashboard');
+            }
+          });
+        }
+      },
+      child: Builder(
+        builder: (context) {
+          return Scaffold(
+            body: Row(
+              children: [
+                Expanded(
+                  flex: 2,
+                  child: Container(
+                    height: Const.screenHeight(context),
+                    decoration: BoxDecoration(
+                      color: AppColors.PRIMARY_BLUE_COLOR,
+                      borderRadius: BorderRadius.only(topRight: Radius.circular(30), bottomRight: Radius.circular(30)),
+                      image: DecorationImage(
+                        fit: BoxFit.contain,
+                        image: AssetImage("assets/images/verified_imag.png"),
+                      ),
+                    ),
+                    child: Stack(
+                      children: [
+                        Positioned(
+                          bottom: 10,
+                          right: 10,
+                          child: Opacity(
+                            opacity: 0.2, // transparence
+                            child: Image.asset(
+                              'assets/images/quality-assurance.png', // Remplace par ton image
+                              width: 165,
+                              height: 165,
+                              color: Colors.white,
+                            ),
+                          ),
+                        ),
+                        Positioned(
+                          top: 10,
+                          left: 10,
+                          child: Opacity(
+                            opacity: 0.2, // transparence
+                            child: Image.asset(
+                              'assets/images/verified.png', // Remplace par ton image
+                              width: 165,
+                              height: 165,
+                              color: Colors.white,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+                Expanded(
+                  flex: 2,
+                  child: Padding(
+                    padding: const EdgeInsets.all(24.0),
+                    child: Form(
+                      key: _formKey,
+                      child: SizedBox(
+                        width: Const.screenWidth(context) * 0.3,
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Text(
+                                  "Bienvenue sur ",
+                                  style: Theme.of(context).textTheme.labelLarge!.copyWith(fontWeight: FontWeight.bold),
+                                ),
+                                SizedBox(
+                                  width: 7,
+                                ),
+                                Container(
+                                  width: Const.screenWidth(context) * 0.1,
+                                  height: 80,
+                                  decoration:
+                                      BoxDecoration(image: DecorationImage(fit: BoxFit.cover, image: AssetImage("assets/images/logo_mix.png"))),
+                                ),
+                              ],
+                            ),
+                            const SizedBox(height: 10),
+                            Text(
+                              "Accédez à vos documents en toute sécurité.",
+                              style: Theme.of(context).textTheme.labelSmall,
+                              textAlign: TextAlign.center,
+                            ),
+                            const SizedBox(height: 35),
+                            SizedBox(
+                              width: Const.screenWidth(context) * 0.3,
+                              child: TextFormField(
+                                controller: _emailController,
+                                validator: (value) {
+                                  if (value == null || value.isEmpty) {
+                                    return 'Veuillez entrer votre email';
+                                  } else if (!RegExp(r'^[^@]+@[^@]+\.[^@]+').hasMatch(value)) {
+                                    return 'Veuillez entrer un email valide';
+                                  }
+                                  return null;
+                                },
+                                style: Theme.of(context).textTheme.displaySmall,
+                                decoration: InputDecoration(
+                                  prefixIcon: Icon(
+                                    Icons.mail_outline_rounded,
+                                  ),
+                                  enabledBorder: OutlineInputBorder(
+                                    borderSide: BorderSide(color: Theme.of(context).colorScheme.primary),
+                                    borderRadius: BorderRadius.circular(5),
+                                  ),
+                                  focusedBorder: OutlineInputBorder(
+                                    borderSide: BorderSide(color: Theme.of(context).colorScheme.primary),
+                                    borderRadius: BorderRadius.circular(5),
+                                  ),
+                                  errorBorder: OutlineInputBorder(
+                                    borderSide: BorderSide(color: Colors.red),
+                                    borderRadius: BorderRadius.circular(5),
+                                  ),
+                                  hintText: "Email",
+                                  hintStyle: Theme.of(context).textTheme.displaySmall,
+                                ),
+                              ),
+                            ),
+                            const SizedBox(height: 20),
+                            SizedBox(
+                              width: Const.screenWidth(context) * 0.3,
+                              child: TextFormField(
+                                controller: _passwordController,
+                                obscureText: !_isPasswordVisible,
+                                style: Theme.of(context).textTheme.displaySmall,
+                                decoration: InputDecoration(
+                                  prefixIcon: Icon(Icons.key),
+                                  enabledBorder: OutlineInputBorder(
+                                    borderSide: BorderSide(color: Theme.of(context).colorScheme.primary),
+                                    borderRadius: BorderRadius.circular(5),
+                                  ),
+                                  focusedBorder: OutlineInputBorder(
+                                    borderSide: BorderSide(color: Theme.of(context).colorScheme.primary),
+                                    borderRadius: BorderRadius.circular(5),
+                                  ),
+                                  errorBorder: OutlineInputBorder(
+                                    borderSide: BorderSide(color: Colors.red), // Couleur du bord en cas d'erreur
+                                    borderRadius: BorderRadius.circular(5), // Arrondi des bords
+                                  ),
+                                  hintText: "Mot de Passe",
+                                  hintStyle: Theme.of(context).textTheme.displaySmall,
+                                  suffixIcon: IconButton(
+                                    icon: Icon(
+                                      _isPasswordVisible ? Icons.visibility_outlined : Icons.visibility_off_outlined,
+                                      color: Colors.grey[500],
+                                    ),
+                                    onPressed: () {
+                                      setState(() {
+                                        _isPasswordVisible = !_isPasswordVisible;
+                                      });
+                                    },
+                                  ),
+                                ),
+                              ),
+                            ),
+                            SizedBox(
+                              width: Const.screenWidth(context) * 0.3,
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                children: [
                                   Row(
-                                    mainAxisSize: MainAxisSize.min,
-                                    mainAxisAlignment: MainAxisAlignment.center,
                                     children: [
-                                      InkWell(
-                                        onTap: state.currentPage > 1 ? () => context.read<DocumentCubit>().goToPreviousPage() : null,
-                                        child: Container(
-                                            decoration:
-                                                BoxDecoration(color: Colors.grey.withValues(alpha: 0.2), borderRadius: BorderRadius.circular(3)),
-                                            child: Icon(Icons.arrow_back_ios)),
+                                      Checkbox(
+                                        value: _rememberMe,
+                                        onChanged: (val) {
+                                          setState(() => _rememberMe = val ?? false);
+                                        },
                                       ),
                                       Text(
-                                        '${state.currentPage} sur ${state.lastPage}',
-                                        style: Theme.of(context).textTheme.labelSmall,
-                                      ),
-                                      InkWell(
-                                        onTap: state.currentPage < state.lastPage ? () => context.read<DocumentCubit>().goToNextPage() : null,
-                                        child: Container(
-                                            decoration:
-                                                BoxDecoration(color: Colors.grey..withValues(alpha: 0.2), borderRadius: BorderRadius.circular(3)),
-                                            child: Icon(Icons.arrow_forward_ios)),
+                                        "Remember Me",
+                                        style: Theme.of(context).textTheme.displaySmall,
                                       ),
                                     ],
-
-
-
-               margin: EdgeInsets.symmetric(vertical: 6, horizontal: 8),
-                            padding: EdgeInsets.symmetric(vertical: 10),
-                            width: Const.screenWidth(context) * 0.19,
-                            height: 35,
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(6),
-                              boxShadow: [
-                                context.read<SwitchPageCubit>().state.selectedPage == 0
-                                    ? BoxShadow(
-                                        color: Colors.grey.withValues(alpha: 0.2),
-                                        spreadRadius: 10,
-                                        blurRadius: 10,
-                                        offset: Offset(0, 3), // Décalage horizontal et vertical de l'ombre
-                                      )
-                                    : BoxShadow(
-
-                                        // Décalage horizontal et vertical de l'ombre
-                                        )
-                              ],
-                              color: context.read<SwitchPageCubit>().state.selectedPage == 0 ? Theme.of(context).colorScheme.primary : Colors.grey[200],
-
-
-                         ),
-                          // Ajoute un bool pour savoir si la description auto est validée / affichée
-
-                           // Widget _buildManualForm(BuildContext context, TypeDocState state) {
-                           //   final theme = Theme.of(context);
-                           //
-                           //   return Center(
-                           //       child: Container(
-                           //     constraints: const BoxConstraints(maxWidth: 900),
-                           //     padding: const EdgeInsets.all(15),
-                           //     margin: const EdgeInsets.symmetric(vertical: 30),
-                           //     decoration: BoxDecoration(
-                           //       color: Colors.white,
-                           //       borderRadius: BorderRadius.circular(16),
-                           //       boxShadow: const [
-                           //         BoxShadow(
-                           //           color: Colors.black12,
-                           //           blurRadius: 20,
-                           //           offset: Offset(0, 8),
-                           //         ),
-                           //       ],
-                           //     ),
-                           //     child: Form(
-                           //       key: _formKey,
-                           //       child: Column(
-                           //         crossAxisAlignment: CrossAxisAlignment.stretch,
-                           //         children: [
-                           //           Text(
-                           //             "Saisie manuelle du document",
-                           //             style: theme.textTheme.labelSmall!.copyWith(fontWeight: FontWeight.bold),
-                           //           ),
-                           //           const SizedBox(height: 24),
-                           //
-                           //           // Identifiant
-                           //           Text("Identifiant du document", style: theme.textTheme.labelSmall),
-                           //           const SizedBox(height: 8),
-                           //           Row(
-                           //             children: [
-                           //               Expanded(
-                           //                 flex: 2,
-                           //                 child: TextFormField(
-                           //                   controller: _identifierController,
-                           //                   style: Theme.of(context).textTheme.labelSmall,
-                           //                   decoration: InputDecoration(
-                           //                     hintStyle: theme.textTheme.labelSmall,
-                           //                     hintText: "Ex: DOC-2025-XYZ",
-                           //                     border: OutlineInputBorder(borderRadius: BorderRadius.circular(5)),
-                           //                   ),
-                           //                   validator: (value) => value == null || value.isEmpty ? "Veuillez entrer l'identifiant." : null,
-                           //                 ),
-                           //               ),
-                           //               SizedBox(
-                           //                 width: 10,
-                           //               ),
-                           //               Expanded(
-                           //                 flex: 2,
-                           //                 child: TextFormField(
-                           //                   controller: _identifierController,
-                           //                   style: Theme.of(context).textTheme.labelSmall,
-                           //                   decoration: InputDecoration(
-                           //                     hintStyle: theme.textTheme.labelSmall,
-                           //                     hintText: "Ex: John Doe",
-                           //                     border: OutlineInputBorder(borderRadius: BorderRadius.circular(5)),
-                           //                   ),
-                           //                   // validator: (value) => value == null || value.isEmpty ? "Veuillez renseigner le Beneficiaire." : null,
-                           //                 ),
-                           //               ),
-                           //             ],
-                           //           ),
-                           //
-                           //           const SizedBox(height: 24),
-                           //
-                           //           // Choix auto / manuel
-                           //           Text("Méthode de description", style: theme.textTheme.labelLarge),
-                           //           const SizedBox(height: 8),
-                           //           Row(
-                           //             children: [
-                           //               Radio<bool>(
-                           //                 value: false,
-                           //                 groupValue: _isAutoDescription,
-                           //                 onChanged: (val) {
-                           //                   setState(() {
-                           //                     _isAutoDescription = val!;
-                           //                     if (!val) _isDescriptionReady = false; // Reset si on revient en manuel
-                           //                   });
-                           //                 },
-                           //               ),
-                           //               Text(
-                           //                 "Saisie manuelle",
-                           //                 style: theme.textTheme.labelSmall,
-                           //               ),
-                           //               const SizedBox(width: 20),
-                           //               Radio<bool>(
-                           //                 value: true,
-                           //                 groupValue: _isAutoDescription,
-                           //                 onChanged: (val) => setState(() => _isAutoDescription = val!),
-                           //               ),
-                           //               Text(
-                           //                 "Génération guidée",
-                           //                 style: theme.textTheme.labelSmall,
-                           //               ),
-                           //             ],
-                           //           ),
-                           //
-                           //           const SizedBox(height: 8),
-                           //
-                           //           if (_isAutoDescription)
-                           //             !_isDescriptionReady
-                           //                 ? Align(
-                           //                     alignment: Alignment.centerLeft,
-                           //                     child: ElevatedButton.icon(
-                           //                       icon: const Icon(Icons.auto_fix_high, color: Colors.white),
-                           //                       onPressed: () async {
-                           //                         _showDescriptionDialog();
-                           //                         setState(() {
-                           //                           _isDescriptionReady = _descriptionController.text.isNotEmpty;
-                           //                         });
-                           //                       },
-                           //                       label: Text(
-                           //                         "Générer une description",
-                           //                         style: theme.textTheme.labelSmall!.copyWith(color: Colors.white),
-                           //                       ),
-                           //                       style: ElevatedButton.styleFrom(
-                           //                         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-                           //                         backgroundColor: theme.colorScheme.primary,
-                           //                         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)),
-                           //                         foregroundColor: Colors.white,
-                           //                       ),
-                           //                     ),
-                           //                   )
-                           //                 : Column(
-                           //                     crossAxisAlignment: CrossAxisAlignment.start,
-                           //                     children: [
-                           //                       Text(
-                           //                         "Description générée :",
-                           //                         style: theme.textTheme.labelSmall!.copyWith(fontWeight: FontWeight.bold),
-                           //                       ),
-                           //                       const SizedBox(height: 8),
-                           //                       Container(
-                           //                         padding: const EdgeInsets.all(12),
-                           //                         decoration: BoxDecoration(
-                           //                           color: Colors.grey.shade100,
-                           //                           borderRadius: BorderRadius.circular(5),
-                           //                           border: Border.all(color: Colors.grey.shade300),
-                           //                         ),
-                           //                         child: Text(
-                           //                           _descriptionController.text,
-                           //                           style: Theme.of(context).textTheme.labelSmall,
-                           //                         ),
-                           //                       ),
-                           //                       const SizedBox(height: 8),
-                           //                       TextButton(
-                           //                         onPressed: () {
-                           //                           setState(() {
-                           //                             _isAutoDescription = false; // Passe en mode manuel pour modifier
-                           //                             _isDescriptionReady = false;
-                           //                           });
-                           //                         },
-                           //                         child: Text(
-                           //                           "Modifier la description",
-                           //                           style: Theme.of(context).textTheme.labelSmall!.copyWith(color: Theme.of(context).colorScheme.primary),
-                           //                         ),
-                           //                       ),
-                           //                     ],
-                           //                   )
-                           //           else
-                           //             TextFormField(
-                           //               controller: _descriptionController,
-                           //               maxLines: 4,
-                           //               style: Theme.of(context).textTheme.labelSmall,
-                           //               decoration: InputDecoration(
-                           //                 hintStyle: Theme.of(context).textTheme.labelSmall,
-                           //                 hintText: "Ex: Attestation délivrée par...",
-                           //                 border: OutlineInputBorder(borderRadius: BorderRadius.circular(5)),
-                           //               ),
-                           //               validator: (value) => value == null || value.isEmpty ? "Veuillez entrer une description." : null,
-                           //             ),
-                           //
-                           //           const SizedBox(height: 24),
-                           //
-                           //           // Dropdown type
-                           //           Text("Type de document", style: theme.textTheme.labelSmall),
-                           //           const SizedBox(height: 8),
-                           //           _buildTypeDropdown(state),
-                           //
-                           //           const SizedBox(height: 30),
-                           //
-                           //           // Bouton Enregistrer
-                           //           SizedBox(
-                           //             width: double.infinity,
-                           //             child: ElevatedButton.icon(
-                           //               icon: const Icon(Icons.save, color: Colors.white),
-                           //               onPressed: () {
-                           //                 if (_formKey.currentState!.validate() && _selectedType != null) {
-                           //                   context.read<DocumentCubit>().addDocument(
-                           //                         DocumentsModel(
-                           //                           identifier: _identifierController.text,
-                           //                           descriptionDocument: _descriptionController.text,
-                           //                           typeId: _selectedType!.id,
-                           //                         ),
-                           //                       );
-                           //                 }
-                           //               },
-                           //               label: Text(
-                           //                 "Enregistrer",
-                           //                 style: theme.textTheme.labelSmall!.copyWith(color: Colors.white),
-                           //               ),
-                           //               style: ElevatedButton.styleFrom(
-                           //                 backgroundColor: theme.colorScheme.primary,
-                           //                 foregroundColor: Colors.white,
-                           //                 padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
-                           //                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)),
-                           //               ),
-                           //             ),
-                           //           ),
-                           //         ],
-                           //       ),
-                           //     ),
-                           //   ));
-                           // }
+                                  ),
+                                  TextButton(
+                                    onPressed: () {},
+                                    child: Text(
+                                      "Forgot Your Password?",
+                                      style: Theme.of(context).textTheme.displaySmall!.copyWith(color: AppColors.PRIMARY_BLUE_COLOR),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            SizedBox(height: 20),
+                            BlocBuilder<LoginCubit, LoginState>(
+                              builder: (context, state) {
+                                return SizedBox(
+                                  width: Const.screenWidth(context) * 0.3,
+                                  child: ElevatedButton(
+                                    style: ElevatedButton.styleFrom(
+                                      padding: EdgeInsets.all(10),
+                                      backgroundColor: AppColors.PRIMARY_BLUE_COLOR,
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(5),
+                                      ),
+                                    ),
+                                    onPressed: () {
+                                      if (_formKey.currentState?.validate() ?? false) {
+                                        final email = _emailController.text;
+                                        final password = _passwordController.text;
+                                        context.read<LoginCubit>().login(email, password);
+                                      }
+                                    },
+                                    child: state.loginStatus == LoginStatus.loading
+                                        ? SizedBox(
+                                            width: 15,
+                                            height: 15,
+                                            child: CircularProgressIndicator(
+                                              color: Colors.white,
+                                              strokeWidth: 1,
+                                            ),
+                                          )
+                                        : Row(
+                                            mainAxisAlignment: MainAxisAlignment.center,
+                                            children: [
+                                              Icon(Icons.login, color: Colors.white),
+                                              SizedBox(width: 10),
+                                              Text(
+                                                'Se connecter',
+                                                style: Theme.of(context).textTheme.displaySmall!.copyWith(color: Colors.white),
+                                              ),
+                                            ],
+                                          ),
+                                  ),
+                                );
+                              },
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                )
+              ],
+            ),
+          );
+        },
+      ),
+    );
+  }
+}

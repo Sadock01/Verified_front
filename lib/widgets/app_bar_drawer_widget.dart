@@ -33,7 +33,7 @@ class AppBarDrawerWidget extends StatelessWidget {
                         TextField(
                       style: Theme.of(context).textTheme.labelSmall,
                       decoration: InputDecoration(
-                        hintText: 'Search anything...',
+                        hintText: 'Rechercher...',
                         hintStyle: Theme.of(context).textTheme.labelSmall,
                         border: InputBorder.none,
                         isDense: true,
@@ -104,7 +104,7 @@ class AppBarDrawerWidget extends StatelessWidget {
                   ),
                   SizedBox(width: 8),
                   Text(
-                    'View website',
+                    'Voir le site',
                     style: Theme.of(context).textTheme.labelSmall!.copyWith(color: Colors.white, fontWeight: FontWeight.w500),
                   ),
                 ],

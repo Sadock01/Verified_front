@@ -103,7 +103,8 @@ class _ExtractedDataReviewFormState extends State<ExtractedDataReviewForm> {
               const SizedBox(height: 25),
 
               // Champs dans un scrollable
-              Expanded(
+              SizedBox(
+                height: 500,
                 child: ListView(
                   padding: EdgeInsets.zero,
                   children: [
@@ -217,7 +218,7 @@ class _ExtractedDataReviewFormState extends State<ExtractedDataReviewForm> {
                             children: [
                               Text(
                                 "Date de delivrance",
-                                style: Theme.of(context).textTheme.labelSmall!.copyWith(fontWeight: FontWeight.bold),
+                                style: Theme.of(context).textTheme.labelSmall!.copyWith(),
                               ),
                               SizedBox(height: 5),
                               TextFormField(

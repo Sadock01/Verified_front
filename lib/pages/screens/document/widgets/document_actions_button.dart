@@ -29,11 +29,11 @@ class DocumentActionButtons extends StatelessWidget {
                     "assets/images/editer.png",
                     width: 22,
                     height: 22,
-                    color:  Colors.grey[300],
+                    color:  Colors.blue,
                   ),
 
 
-                Text("Editer",style: Theme.of(context).textTheme.displaySmall,)
+                // Text("Editer",style: Theme.of(context).textTheme.displaySmall,)
               ],
             ),
           ),
@@ -49,11 +49,11 @@ class DocumentActionButtons extends StatelessWidget {
                     "assets/images/vue.png",
                     width: 22,
                     height: 22,
-                    color: Colors.grey[300],
+                    color: Colors.grey[500],
                   ),
 
 
-                Text("Afficher",style: Theme.of(context).textTheme.displaySmall,)
+                // Text("Afficher",style: Theme.of(context).textTheme.displaySmall,)
               ],
             ),
           ),

@@ -23,14 +23,14 @@ class Utils {
       barrierDismissible: true,
       builder: (_) {
         return Dialog(
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)),
           insetPadding: EdgeInsets.all(24),
           child: Container(
             padding: const EdgeInsets.all(24),
             constraints: const BoxConstraints(maxWidth: 500),
             decoration: BoxDecoration(
               color: Colors.white,
-              borderRadius: BorderRadius.circular(16),
+              borderRadius: BorderRadius.circular(5),
             ),
             child: SingleChildScrollView(
               child: Column(
@@ -167,6 +167,7 @@ class Utils {
     required String title,
     required String message,
     Map<String, dynamic>? enteredData,
+    Map<String, dynamic>? misMatch,
     String? description,
   }) {
     final color = isSuccess ? Colors.green : Colors.red;
@@ -176,7 +177,7 @@ class Utils {
       barrierDismissible: true,
       builder: (_) {
         return Dialog(
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)),
           insetPadding: EdgeInsets.all(24),
           child: Stack(
             children: [
@@ -189,7 +190,7 @@ class Utils {
                   shape: const CircleBorder(),
                   child: InkWell(
                     onTap: () => Navigator.of(context).pop(),
-                    borderRadius: BorderRadius.circular(30),
+                    borderRadius: BorderRadius.circular(5),
                     child: Container(
                       padding: const EdgeInsets.all(8),
                       decoration: BoxDecoration(
@@ -250,6 +251,7 @@ class Utils {
                       ),
                       const SizedBox(height: 24),
 
+
                       // ✅ Données saisies
                       if (enteredData != null && enteredData.isNotEmpty) ...[
                         Align(
@@ -258,7 +260,7 @@ class Utils {
                             "Données saisies :",
                             style: Theme.of(context).textTheme.labelMedium?.copyWith(
                                   fontWeight: FontWeight.bold,
-                                  fontSize: 16,
+                                  fontSize: 13,
                                 ),
                           ),
                         ),
@@ -268,7 +270,7 @@ class Utils {
                           padding: const EdgeInsets.all(16),
                           decoration: BoxDecoration(
                             color: Colors.grey.shade100,
-                            borderRadius: BorderRadius.circular(12),
+                            borderRadius: BorderRadius.circular(5),
                             border: Border.all(color: Colors.grey.shade300),
                           ),
                           child: Column(
@@ -279,13 +281,61 @@ class Utils {
                                 child: RichText(
                                   text: TextSpan(
                                     style: Theme.of(context).textTheme.labelMedium?.copyWith(
-                                          fontSize: 14,
+                                          fontSize: 12,
                                           color: Colors.black,
                                         ),
                                     children: [
                                       TextSpan(
                                         text: "${_capitalize(entry.key)} : ",
-                                        style: Theme.of(context).textTheme.labelMedium?.copyWith(fontWeight: FontWeight.bold),
+                                        style: Theme.of(context).textTheme.labelSmall?.copyWith(fontWeight: FontWeight.bold),
+                                      ),
+                                      TextSpan(text: "${entry.value ?? 'N/A'}"),
+                                    ],
+                                  ),
+                                ),
+                              );
+                            }).toList(),
+                          ),
+                        ),
+                        const SizedBox(height: 16),
+                      ],
+
+                      // ✅ Données saisies
+                      if (misMatch != null  && misMatch.isNotEmpty) ...[
+                        Align(
+                          alignment: Alignment.centerLeft,
+                          child: Text(
+                            "Données incorrectes :",
+                            style: Theme.of(context).textTheme.labelMedium?.copyWith(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 13,
+                            ),
+                          ),
+                        ),
+                        const SizedBox(height: 12),
+                        Container(
+                          width: double.infinity,
+                          padding: const EdgeInsets.all(16),
+                          decoration: BoxDecoration(
+                            color: Colors.grey.shade100,
+                            borderRadius: BorderRadius.circular(5),
+                            border: Border.all(color: Colors.grey.shade300),
+                          ),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: misMatch.entries.map((entry) {
+                              return Padding(
+                                padding: const EdgeInsets.symmetric(vertical: 4),
+                                child: RichText(
+                                  text: TextSpan(
+                                    style: Theme.of(context).textTheme.labelMedium?.copyWith(
+                                      fontSize: 12,
+                                      color: Colors.black,
+                                    ),
+                                    children: [
+                                      TextSpan(
+                                        text: "${_capitalize(entry.key)} : ",
+                                        style: Theme.of(context).textTheme.labelSmall?.copyWith(fontWeight: FontWeight.bold),
                                       ),
                                       TextSpan(text: "${entry.value ?? 'N/A'}"),
                                     ],
@@ -306,7 +356,7 @@ class Utils {
                             "Description du document :",
                             style: Theme.of(context).textTheme.labelMedium?.copyWith(
                                   fontWeight: FontWeight.bold,
-                                  fontSize: 16,
+                                  fontSize: 13,
                                 ),
                           ),
                         ),
@@ -316,7 +366,7 @@ class Utils {
                           padding: const EdgeInsets.all(16),
                           decoration: BoxDecoration(
                             color: Colors.grey.shade100,
-                            borderRadius: BorderRadius.circular(12),
+                            borderRadius: BorderRadius.circular(5),
                             border: Border.all(color: Colors.grey.shade300),
                           ),
                           child: Text(

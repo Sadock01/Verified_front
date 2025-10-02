@@ -111,8 +111,8 @@ class _NewDrawerDashboardState extends State<NewDrawerDashboard> {
                       ),
                       SizedBox(width: 5),
                       Text(
-                        'Dashboard',
-                        style: Theme.of(context).textTheme.displaySmall?.copyWith(
+                        'Acceuil',
+                        style: Theme.of(context).textTheme.labelSmall?.copyWith(
                               color: context.read<SwitchPageCubit>().state.selectedPage == 0 ? Colors.white : Colors.grey[500],
                             ),
                       ),
@@ -152,7 +152,7 @@ class _NewDrawerDashboardState extends State<NewDrawerDashboard> {
                       SizedBox(width: 5),
                       Text(
                         'Historiques',
-                        style: Theme.of(context).textTheme.displaySmall!.copyWith(
+                        style: Theme.of(context).textTheme.labelSmall!.copyWith(
                               color: context.read<SwitchPageCubit>().state.selectedPage == 3 ? Colors.white : Colors.grey[500],
                             ),
                       ),
@@ -196,7 +196,7 @@ class _NewDrawerDashboardState extends State<NewDrawerDashboard> {
                                 SizedBox(width: 5),
                                 Text(
                                   'Rapports',
-                                  style: Theme.of(context).textTheme.displaySmall!.copyWith(
+                                  style: Theme.of(context).textTheme.labelSmall!.copyWith(
                                         color: context.read<SwitchPageCubit>().state.selectedPage == 4 ? Colors.white : Colors.grey[500],
                                       ),
                                 ),
@@ -242,7 +242,7 @@ class _NewDrawerDashboardState extends State<NewDrawerDashboard> {
                                 SizedBox(width: 5),
                                 Text(
                                   'Plateform Administration',
-                                  style: Theme.of(context).textTheme.displaySmall?.copyWith(
+                                  style: Theme.of(context).textTheme.labelSmall?.copyWith(
                                         color: context.read<SwitchPageCubit>().state.selectedPage == 9.9 ? Colors.white : Colors.grey[500],
                                       ),
                                 ),

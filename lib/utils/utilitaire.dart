@@ -14,7 +14,7 @@ class DateInputFormatter extends TextInputFormatter {
       buffer.write(text[i]);
       used++;
       if ((i == 1 || i == 3) && i != text.length - 1) {
-        buffer.write('-');
+        buffer.write('/');
       }
     }
 
