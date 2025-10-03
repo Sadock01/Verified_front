@@ -1,4 +1,4 @@
-// import 'dart:developer';
+
 
 import 'package:doc_authentificator/cubits/switch_page/switch_page_state.dart';
 import 'package:flutter/material.dart';
