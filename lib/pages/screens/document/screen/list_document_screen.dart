@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:doc_authentificator/const/const.dart';
 import 'package:doc_authentificator/cubits/documents/document_cubit.dart';
 import 'package:doc_authentificator/cubits/documents/document_state.dart';
@@ -8,10 +10,17 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../../cubits/types/type_doc_cubit.dart';
+import '../../../../cubits/types/type_doc_state.dart';
+import '../../../../models/type_doc_model.dart';
+import '../../../../utils/app_colors.dart';
 import '../../../../utils/shared_preferences_utils.dart';
 import '../../../../widgets/app_bar_drawer_widget.dart';
 import '../../../../widgets/new_drawer_dashboard.dart';
 import '../widgets/documents_tab_widget.dart';
+import '../widgets/month_filter_widget.dart';
+import '../widgets/search_widget.dart';
+import '../widgets/type_widget.dart';
 
 class ListDocumentScreen extends StatefulWidget {
   const ListDocumentScreen({super.key});
@@ -29,6 +38,14 @@ class _ListDocumentScreenState extends State<ListDocumentScreen> {
       context.read<DocumentCubit>().getAllDocument(1);
     });
   }
+  String? _selectedMonth;
+  void handleMonthSelection(String monthValue) {
+    setState(() {
+      _selectedMonth = monthValue; // Mettre à jour la sélection du mois
+    });
+    log("Mois sélectionné : $monthValue");
+    // Vous pouvez appliquer ici la logique de filtrage en fonction de _selectedMonth
+  }
 
   void _checkAuthentication() async {
     final token = SharedPreferencesUtils.getString('auth_token');
@@ -37,6 +54,8 @@ class _ListDocumentScreenState extends State<ListDocumentScreen> {
       context.go('/login'); // ou Navigator.of(context).pushReplacementNamed('/login');
     }
   }
+  TypeDocModel? _selectedType;
+  final TextEditingController _manualTypeController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -61,7 +80,73 @@ class _ListDocumentScreenState extends State<ListDocumentScreen> {
                         return AppBarVendorWidget();
                       }
                     },
-                  ),
+                  ),Container(height: 180, padding: EdgeInsets.all(15),
+                    margin: EdgeInsets.only(left: 10, right: 10, top: 10, bottom: 20),
+                    decoration: BoxDecoration(
+                      color: theme.cardColor,
+                      borderRadius: BorderRadius.circular(10),
+                      boxShadow: [
+                        isLight
+                            ? BoxShadow(
+                          color: Colors.grey.withValues(alpha: 0.2),
+                          spreadRadius: 10,
+                          blurRadius: 10,
+                          offset: Offset(0, 3),
+                        )
+                            : BoxShadow()
+                      ],
+                    ),child: Column(children: [
+                      Row(
+                        children: [
+                          Expanded(
+                            flex: 2,
+                            child: BlocBuilder<TypeDocCubit, TypeDocState>(
+                              builder: (context, state) {
+                                return TypeDropdownWidget(
+                                  state: state,
+                                  selectedType: _selectedType,  // Définissez votre type sélectionné
+                                  onChanged: (newType) {
+                                    setState(() {
+                                      _selectedType = newType;
+                                    });
+                                  },
+                                  manualTypeController: _manualTypeController,  // Définir votre contrôleur pour le champ texte
+                                );
+                              },
+                            ),
+                          ),SizedBox(width: 10,),
+                          Expanded(flex: 2,child: SearchFieldWidget()),
+
+                        ],
+                      ),SizedBox(height: 10),
+                      Row(
+                        children: [
+                          Expanded(
+                            flex: 2,
+                            child: MonthFilterDropdown(onMonthSelected: handleMonthSelection),
+                          ),SizedBox(width: 10,),
+                          Expanded(flex: 2,child:ElevatedButton(
+                           onPressed: (){},
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: AppColors.PRIMARY_BLUE_COLOR,
+                              padding: EdgeInsets.symmetric(vertical: 16),
+                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)),
+                            ),
+                            child:  Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                               Image.asset('assets/images/filtre.png',width:22,height:22,color: Colors.grey[300],),
+                                Text(
+                                  "Filtrer",
+                                  style: Theme.of(context).textTheme.labelSmall!.copyWith(fontSize: 18, color: Colors.white),
+                                ),
+                              ],
+                            ),
+                          ),),
+
+                        ],
+                      ),
+                    ],),),
                   Expanded(
                     child: Container(
                       padding: EdgeInsets.all(15),
@@ -90,11 +175,11 @@ class _ListDocumentScreenState extends State<ListDocumentScreen> {
                                 children: [
                                   Text(
                                     "Documents",
-                                    style: Theme.of(context).textTheme.displayMedium!.copyWith(fontWeight: FontWeight.bold),
+                                    style: Theme.of(context).textTheme.labelMedium!.copyWith(fontWeight: FontWeight.bold),
                                   ),
                                   Text(
                                     "Du dernier document enregistrement au premier.",
-                                    style: Theme.of(context).textTheme.displaySmall!.copyWith(color: Colors.grey[300]),
+                                    style: Theme.of(context).textTheme.labelSmall!.copyWith(color: Colors.grey[500]),
                                   ),
                                 ],
                               ),
@@ -123,27 +208,8 @@ class _ListDocumentScreenState extends State<ListDocumentScreen> {
                               SizedBox(
                                 width: 10,
                               ),
-                              Container(
-                                padding: const EdgeInsets.all(10),
-                                decoration: BoxDecoration(border: Border.all(color: Colors.grey[200]!), borderRadius: BorderRadius.circular(5)),
-                                child: Row(
-                                  children: [
-                                    Image.asset(
-                                      "assets/images/filtre.png",
-                                      width: 18,
-                                      height: 18,
-                                      color: Colors.grey[300],
-                                    ),
-                                    Text(
-                                      "Filter",
-                                      style: Theme.of(context).textTheme.displaySmall!.copyWith(fontWeight: FontWeight.bold),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                              SizedBox(
-                                width: 10,
-                              ),
+
+
                               Container(
                                 padding: const EdgeInsets.all(10),
                                 decoration: BoxDecoration(border: Border.all(color: Colors.grey[200]!), borderRadius: BorderRadius.circular(5)),

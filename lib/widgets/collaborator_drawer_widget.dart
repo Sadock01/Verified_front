@@ -108,7 +108,7 @@ class _CollaboratorDrawerWidgetState extends State<CollaboratorDrawerWidget> {
                               ),
                               SizedBox(width: 5),
                               Text(
-                                'Listes',
+                                'Liste',
                                 style: Theme.of(context).textTheme.labelSmall?.copyWith(
                                       color: context.read<SwitchPageCubit>().state.selectedPage == 5.1 ? Colors.white : Colors.grey[500],
                                     ),

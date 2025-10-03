@@ -2,6 +2,7 @@ import 'dart:developer';
 
 import 'package:doc_authentificator/widgets/collaborator_drawer_widget.dart';
 import 'package:doc_authentificator/widgets/document_drawer_widget.dart';
+import 'package:doc_authentificator/widgets/type_drawer_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -121,6 +122,7 @@ class _NewDrawerDashboardState extends State<NewDrawerDashboard> {
                 ),
               ),
               DocumentDrawerWidget(),
+              TypeDrawerWidget(),
               Container(
                 padding: EdgeInsets.symmetric(vertical: 10),
                 width: Const.screenWidth(context),
