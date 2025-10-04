@@ -15,7 +15,7 @@ class VerificationService {
     final token = SharedPreferencesUtils.getString('auth_token');
     api.options.headers['AUTHORIZATION'] = 'Bearer $token';
 
-    final response = await api.get("dashboard/recent-verifications", queryParameters: {
+    final response = await api.get("verifications", queryParameters: {
       'page': page,
       'per_page': 10,
     });
@@ -23,7 +23,7 @@ class VerificationService {
 
     if (response.statusCode == 200 || response.statusCode == 201) {
       log("Voici la response de la requête: ${response.data}");
-      List<dynamic> allVerificationMap = response.data['data'];
+      List<dynamic> allVerificationMap = response.data['verifications'];
       log("Il a récupéré les verifications: $allVerificationMap");
       return {
         // allDocumentMap
@@ -31,7 +31,7 @@ class VerificationService {
         //       DocumentsModel.fromJson(documentMap as Map<String, dynamic>))
         //   .toList();
         'status_code': response.data['status_code'],
-        'data': response.data['data'], // Liste des documents
+        'data': response.data['verifications'], // Liste des documents
         'current_page': response.data['current_page'], // Page actuelle
         'last_page': response.data['last_page'], // Dernière page
       };

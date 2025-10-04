@@ -1,4 +1,6 @@
-  import 'package:doc_authentificator/cubits/verification/verification_state.dart';
+  import 'dart:developer';
+
+import 'package:doc_authentificator/cubits/verification/verification_state.dart';
 import 'package:doc_authentificator/models/verification_model.dart';
 import 'package:doc_authentificator/repositories/verification_repository.dart';
   import 'package:flutter_bloc/flutter_bloc.dart';
@@ -24,6 +26,7 @@ import 'package:doc_authentificator/repositories/verification_repository.dart';
           lastPage: response['last_page'],
           errorMessage: ""));
     } catch (e) {
+      log("Erreur dans getAllVerification: $e");
       emit(state.copyWith(
           errorMessage: e.toString(), verificationStatus: VerificationStatus.error));
     }

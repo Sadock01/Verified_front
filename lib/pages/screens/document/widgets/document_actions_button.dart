@@ -41,7 +41,7 @@ class DocumentActionButtons extends StatelessWidget {
         SizedBox(width: 8),
          InkWell(
             onTap: () {
-              context.go('/document/view/${document.identifier}');
+              context.go('/document/detail/${document.identifier}');
             },
             child: Row(
               children: [

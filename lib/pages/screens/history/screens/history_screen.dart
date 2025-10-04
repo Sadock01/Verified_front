@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:doc_authentificator/const/const.dart';
 import 'package:doc_authentificator/cubits/verification/verification_cubit.dart';
 import 'package:doc_authentificator/cubits/verification/verification_state.dart';
@@ -42,6 +44,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
     final theme = Theme.of(context);
     final isLight = theme.brightness == Brightness.light;
     return BlocBuilder<VerificationCubit, VerificationState>(builder: (context, state) {
+      log("state.verificationStatus: ${state.verificationStatus}");
       return Scaffold(
         body: Row(
           children: [
@@ -87,61 +90,15 @@ class _HistoryScreenState extends State<HistoryScreen> {
                                   children: [
                                     Text(
                                       "Historiques des verifications",
-                                      style: Theme.of(context).textTheme.displayMedium!.copyWith(fontWeight: FontWeight.bold),
+                                      style: Theme.of(context).textTheme.labelMedium!.copyWith(fontWeight: FontWeight.bold),
                                     ),
                                     Text(
                                       "Du dernier document verifié au premier.",
-                                      style: Theme.of(context).textTheme.displaySmall!.copyWith(color: Colors.grey[300]),
+                                      style: Theme.of(context).textTheme.labelSmall!.copyWith(color: Colors.grey[500]),
                                     ),
                                   ],
                                 ),
-                                Spacer(),
-                                SizedBox(
-                                  width: 10,
-                                ),
-                                Container(
-                                  padding: EdgeInsets.all(5),
-                                  decoration: BoxDecoration(border: Border.all(color: Colors.grey[200]!), borderRadius: BorderRadius.circular(5)),
-                                  child: Row(
-                                    children: [
-                                      Image.asset(
-                                        "assets/images/filtre.png",
-                                        width: 18,
-                                        height: 18,
-                                        color: Colors.black,
-                                      ),
-                                      Text(
-                                        "Filter",
-                                        style: Theme.of(context).textTheme.displaySmall!.copyWith(fontWeight: FontWeight.bold),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                                SizedBox(
-                                  width: 10,
-                                ),
-                                Container(
-                                  padding: EdgeInsets.all(5),
-                                  decoration: BoxDecoration(border: Border.all(color: Colors.grey[200]!), borderRadius: BorderRadius.circular(5)),
-                                  child: Icon(Icons.picture_in_picture_alt_outlined, size: 18, color: Colors.black),
-                                ),
-                                SizedBox(
-                                  width: 10,
-                                ),
-                                Container(
-                                  padding: EdgeInsets.all(5),
-                                  decoration: BoxDecoration(border: Border.all(color: Colors.grey[200]!), borderRadius: BorderRadius.circular(5)),
-                                  child: Row(
-                                    children: [
-                                      Icon(Icons.grid_view, size: 18, color: Colors.grey),
-                                      Icon(
-                                        Icons.table_rows_outlined,
-                                        size: 18,
-                                        color: Colors.grey,
-                                      ),
-                                    ],
-                                  ),
-                                )
+
                               ],
                             ),
                             SizedBox(height: 12),

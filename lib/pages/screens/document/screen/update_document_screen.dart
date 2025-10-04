@@ -121,6 +121,7 @@ class _UpdateDocumentScreenState extends State<UpdateDocumentScreen> {
               _identifierController.text = document.identifier;
               _descriptionController.text = document.descriptionDocument;
               _beneficiaryController.text = document.beneficiaire ?? "";
+              _dateInfo.text = document.dateInfo ?? "";
 
               return BlocBuilder<TypeDocCubit, TypeDocState>(
                 builder: (context, typeState) {
@@ -140,13 +141,13 @@ class _UpdateDocumentScreenState extends State<UpdateDocumentScreen> {
                             children: [
                               AppBarDrawerWidget(),
                               Container(
-                                margin: const EdgeInsets.symmetric(vertical: 10, horizontal: 10),
+
                                 width: Const.screenWidth(context),
                                 height: Const.screenHeight(context) * 0.1,
                                 padding: const EdgeInsets.symmetric(horizontal: 50, vertical: 10),
                                 decoration: BoxDecoration(
                                   color: Theme.of(context).colorScheme.primary,
-                                  borderRadius: BorderRadius.circular(10),
+                                  //borderRadius: BorderRadius.circular(5),
                                 ),
                                 child: Column(
                                   children: [
@@ -154,7 +155,7 @@ class _UpdateDocumentScreenState extends State<UpdateDocumentScreen> {
                                       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
                                       decoration: BoxDecoration(
                                         border: Border.all(color: Colors.white, width: 1),
-                                        borderRadius: BorderRadius.circular(10),
+                                        borderRadius: BorderRadius.circular(4),
                                       ),
                                       child: Text(
                                         "Modifier Document",
@@ -169,7 +170,7 @@ class _UpdateDocumentScreenState extends State<UpdateDocumentScreen> {
                                 padding: const EdgeInsets.all(10),
                                 width: Const.screenWidth(context),
                                 decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(10),
+                                  borderRadius: BorderRadius.circular(5),
                                   color: theme.cardColor,
                                   boxShadow: [
                                     BoxShadow(

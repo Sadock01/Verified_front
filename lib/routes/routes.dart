@@ -11,6 +11,7 @@ import '../pages/screens/collaborateur/screen/list_collaborateur_screen.dart';
 import '../pages/screens/collaborateur/screen/new_collaborateur_screen.dart';
 import '../pages/screens/dashboard/screen/statistiques_screen.dart';
 import '../pages/screens/document/screen/create_document_screen.dart';
+import '../pages/screens/document/screen/details_document_screen.dart';
 import '../pages/screens/document/screen/document_details_screen.dart';
 import '../pages/screens/document/screen/list_document_screen.dart';
 import '../pages/screens/document/screen/new_document_screen.dart';
@@ -161,6 +162,15 @@ class AppRouter {
           final identifier = int.parse(state.pathParameters['identifier']!);
           return UpdateDocumentScreen(
             documentId: identifier,
+          );
+        },
+      ),
+      GoRoute(
+        path: '/document/detail/:identifier',
+        builder: (context, state) {
+          final identifier = state.pathParameters['identifier']!;
+          return DetailsDocumentScreen(
+            documentId: 1,
           );
         },
       ),
