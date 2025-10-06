@@ -44,4 +44,26 @@ class TypeDocCubit extends Cubit<TypeDocState> {
       emit(state.copyWith(errorMessage: e.toString(), typeStatus: TypeStatus.error));
     }
   }
+
+  Future<void> updateType(
+      int typeId, TypeDocModel typeModel) async {
+    try {
+      emit(state.copyWith(
+          typeStatus: TypeStatus.loading, errorMessage: ""));
+      final response =
+      await TypeDocRepository.updateType(typeId, typeModel);
+      log("${response['message']}");
+      if (response['status_code'] == 200) {
+        emit(state.copyWith(
+            typeStatus: TypeStatus.sucess,
+            errorMessage: response['message']));
+      }
+
+    } catch (e) {
+
+      emit(state.copyWith(
+          errorMessage: e.toString(),
+          typeStatus: TypeStatus.error));
+    }
+  }
 }

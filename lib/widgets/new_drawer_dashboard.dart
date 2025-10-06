@@ -122,7 +122,46 @@ class _NewDrawerDashboardState extends State<NewDrawerDashboard> {
                 ),
               ),
               DocumentDrawerWidget(),
-              TypeDrawerWidget(),
+              Container(
+                padding: EdgeInsets.symmetric(vertical: 10),
+                width: Const.screenWidth(context),
+                height: 35,
+                decoration: BoxDecoration(
+                  color: context.read<SwitchPageCubit>().state.selectedPage == 3 ? Theme.of(context).colorScheme.primary : Colors.transparent,
+                ),
+                child: TextButton(
+                  onPressed: () {
+                    context.read<SwitchPageCubit>().switchPage(0.1);
+                    context.go('/types');
+                  },
+                  style: ButtonStyle(
+                    overlayColor: MaterialStateProperty.resolveWith<Color?>(
+                          (Set<MaterialState> states) {
+                        if (states.contains(MaterialState.hovered)) {
+                          return Colors.transparent; // Pas d'effet au survol
+                        }
+                        return null; // Laisser les autres états par défaut
+                      },
+                    ),
+                  ),
+                  child: Row(
+                    children: [
+                      Image.asset(
+                        "assets/images/history.png",
+                        color: context.read<SwitchPageCubit>().state.selectedPage == 0.1 ? Colors.white : Colors.grey[500],
+                      ),
+                      SizedBox(width: 5),
+                      Text(
+                        'Types',
+                        style: Theme.of(context).textTheme.labelSmall!.copyWith(
+                          color: context.read<SwitchPageCubit>().state.selectedPage ==0.1 ? Colors.white : Colors.grey[500],
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              // TypeDrawerWidget(),
               Container(
                 padding: EdgeInsets.symmetric(vertical: 10),
                 width: Const.screenWidth(context),
@@ -243,7 +282,7 @@ class _NewDrawerDashboardState extends State<NewDrawerDashboard> {
                                 ),
                                 SizedBox(width: 5),
                                 Text(
-                                  'Plateform Administration',
+                                  'Plateforme Administration',
                                   style: Theme.of(context).textTheme.labelSmall?.copyWith(
                                         color: context.read<SwitchPageCubit>().state.selectedPage == 9.9 ? Colors.white : Colors.grey[500],
                                       ),

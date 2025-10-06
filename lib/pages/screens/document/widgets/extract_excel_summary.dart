@@ -23,7 +23,7 @@ class ExtractedExcelDataSummary extends StatelessWidget {
         padding: const EdgeInsets.all(20),
         decoration: BoxDecoration(
           color: theme.cardColor,
-          borderRadius: BorderRadius.circular(10),
+          borderRadius: BorderRadius.circular(4),
           boxShadow: const [
             BoxShadow(
               color: Colors.black12,

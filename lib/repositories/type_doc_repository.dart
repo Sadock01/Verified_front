@@ -38,4 +38,22 @@ class TypeDocRepository {
       throw Exception("Erreur lors de l'ajout du document");
     }
   }
+
+  static Future<Map<String, dynamic>> updateType(
+      int typeId, TypeDocModel typeModel) async {
+    try {
+      log("Appel au service pour mettre à jour un type");
+
+      final response =
+      await TypeService.updateType(typeId, typeModel);
+      log("$response");
+      return {
+        'status_code':response['status_code'],
+        'message': response['message'],
+      };
+    } catch (e) {
+      log("Erreur dans DocumentRepository: $e");
+      throw Exception("Erreur lors de la mise à jour du document");
+    }
+  }
 }

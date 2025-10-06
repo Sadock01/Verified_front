@@ -158,65 +158,38 @@ class _CreateDocumentScreenState extends State<CreateDocumentScreen> with Single
                       //   ),
                       // ),
                       Expanded(
-                        child: TabBarView(
-                          controller: _tabController,
-                          children: [
-                            extractedEntitiesList != null
-                                // ?
-                            ?ExtractedExcelDataSummary(
-                              extractedDocuments: extractedEntitiesList!,
-                              onCancel: () {
-                                setState(() => extractedEntitiesList = null);
-                              },
-                              onConfirm: () {
-                                final documentsToSend = extractedEntitiesList!
-                                    .map((item) {
-                                  final entity = item['entities'] as Map<String, dynamic>;
-                                  return DocumentsModel(
-                                    identifier: entity['identifier'] ?? '',
-                                    descriptionDocument: entity['description'] ?? '',
-                                    typeName: entity['type_document'] ?? '',
-                                    beneficiaire: entity['beneficiaire'] ?? '',
-                                  );
-                                })
-                                    .toList();
+                        child: extractedEntitiesList != null
+                            // ?
+                        ?ExtractedExcelDataSummary(
+                          extractedDocuments: extractedEntitiesList!,
+                          onCancel: () {
+                            setState(() => extractedEntitiesList = null);
+                          },
+                          onConfirm: () {
+                            final documentsToSend = extractedEntitiesList!
+                                .map((item) {
+                              final entity = item['entities'] as Map<String, dynamic>;
+                              return DocumentsModel(
+                                identifier: entity['identifier'] ?? '',
+                                descriptionDocument: entity['description'] ?? '',
+                                dateInfo: entity['date_information'],
+                                typeName: entity['type_document'] ?? '',
+                                beneficiaire: entity['beneficiaire'] ?? '',
+                              );
+                            })
+                                .toList();
 
-                                context.read<DocumentCubit>().addDocuments(documentsToSend);
+                            context.read<DocumentCubit>().addDocuments(documentsToSend);
 
-                                setState(() => extractedEntitiesList = null);
-                              },
-                            ): UploadExcelWidget(
-                                    onExtracted: (data) {
-                                      setState(() {
-                                        extractedEntitiesList = data;
-                                      });
-                                    },
-                                  ),
-                            // extractedEntities != null
-                            //     ? ExtractedDataReviewForm(
-                            //         extractedData: extractedEntities!,
-                            //         documentIdentifier: _identifierController,
-                            //         onSubmit: ({
-                            //           required String identifier,
-                            //           required String description,
-                            //           required String typeCertificat,
-                            //           required String beneficiaire,
-                            //           String? date
-                            //         }) {
-                            //           log("Enregistrement document...: $description");
-                            //           context.read<DocumentCubit>().addDocument(
-                            //                 DocumentsModel(
-                            //                     identifier: identifier,
-                            //                     descriptionDocument: description,
-                            //                     typeName: typeCertificat,
-                            //                     dateInfo: date,
-                            //                     beneficiaire: beneficiaire),
-                            //               );
-                            //         },
-                            //       )
-                            //     : _buildUploadForm(context, state)
-                          ],
-                        ),
+                            setState(() => extractedEntitiesList = null);
+                          },
+                        ): UploadExcelWidget(
+                                onExtracted: (data) {
+                                  setState(() {
+                                    extractedEntitiesList = data;
+                                  });
+                                },
+                              ),
                       ),
                     ],
                   ),

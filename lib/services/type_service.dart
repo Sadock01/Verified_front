@@ -43,4 +43,22 @@ class TypeService {
       throw Exception("Echec lors de l'ajout d'un document");
     }
   }
+
+  static Future<Map<String, dynamic>> updateType(int typeId, TypeDocModel typeModel) async {
+    final token = SharedPreferencesUtils.getString('auth_token');
+    api.options.headers['AUTHORIZATION'] = 'Bearer $token';
+
+    final response = await api.put("types/edit/type/$typeId", data: typeModel.toJson());
+    log("response update type:$response");
+    log("Il met à jour un type");
+    if (response.statusCode == 200 || response.statusCode == 201) {
+      log("${response.data['message']}");
+      return {
+        'status_code': response.data['status_code'],
+        'message': response.data['message'],
+      };
+    } else {
+      throw Exception("Echec lors de la mise à jour d'un document");
+    }
+  }
 }

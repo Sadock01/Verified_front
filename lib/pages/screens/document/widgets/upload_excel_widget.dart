@@ -43,7 +43,7 @@ class _UploadExcelWidgetState extends State<UploadExcelWidget> {
         margin: const EdgeInsets.symmetric(vertical: 30),
         decoration: BoxDecoration(
           color: theme.cardColor,
-          borderRadius: BorderRadius.circular(16),
+          borderRadius: BorderRadius.circular(5),
           boxShadow: [
             BoxShadow(
               color: Colors.black12,
@@ -62,7 +62,7 @@ class _UploadExcelWidgetState extends State<UploadExcelWidget> {
                 padding: const EdgeInsets.all(10),
                 decoration: BoxDecoration(
                   color: Colors.amber.withValues(alpha: 0.15),
-                  borderRadius: BorderRadius.circular(6),
+                  borderRadius: BorderRadius.circular(4),
                   border: Border.all(color: Colors.amber.withValues(alpha: 0.4)),
                 ),
                 child: Text("Merci de téléverser uniquement des fichiers Excel (.xls, .xlsx) dans cette zone.",
