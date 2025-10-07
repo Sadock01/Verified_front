@@ -1,12 +1,10 @@
 import 'dart:developer';
 import 'dart:typed_data';
-
-import 'package:doc_authentificator/cubits/documents/document_state.dart';
-import 'package:doc_authentificator/models/type_doc_model.dart';
 import 'package:doc_authentificator/pages/screens/document/widgets/excel_drop_zone.dart';
 import 'package:elegant_notification/elegant_notification.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../../../../services/document_service.dart';
 
@@ -70,10 +68,29 @@ class _UploadExcelWidgetState extends State<UploadExcelWidget> {
               ),
               const SizedBox(height: 16),
               // _buildTypeDropdown(state),
-              Text(
-                "Téléversez votre fichier EXCEL",
-                style: Theme.of(context).textTheme.labelSmall!.copyWith(fontWeight: FontWeight.bold),
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Expanded(
+                    child: Text(
+                      "Téléversez votre fichier EXCEL",
+                      style: Theme.of(context).textTheme.labelSmall!.copyWith(fontWeight: FontWeight.bold),
+                    ),
+                  ),
+                  Text(
+                    "Besoin d’un exemple ? ",
+                    style: theme.textTheme.labelSmall,
+                  ),
+                  TextButton(
+                    onPressed: () {
+                      const url = 'https://tonsite.com/exemple_import.xlsx';
+                      launchUrl(Uri.parse(url), mode: LaunchMode.externalApplication);
+                    },
+                    child:  Text("Cliquez ici",style: theme.textTheme.labelSmall!.copyWith(color: Colors.orange,),),
+                  ),
+                ],
               ),
+
               SizedBox(height: 8),
               SizedBox(height: 8),
               _selectedFileBytes == null

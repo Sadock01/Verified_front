@@ -6,6 +6,7 @@ enum CollaborateurStatus {
   initial,
   loading,
   success,
+  update,
   loaded,
   error,
 }

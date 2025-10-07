@@ -1,4 +1,6 @@
 import 'package:doc_authentificator/services/authentification_service.dart';
+import 'package:elegant_notification/elegant_notification.dart';
+import 'package:elegant_notification/resources/arrays.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -511,13 +513,15 @@ class Utils {
     return s[0].toUpperCase() + s.substring(1);
   }
 
+
+
   static Future<void> showLogoutConfirmationDialog(BuildContext context) async {
     return showDialog(
       context: context,
       barrierDismissible: false,
       builder: (BuildContext dialogContext) {
         return AlertDialog(
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
           title: Text(
             'Déconnexion',
             style: Theme.of(dialogContext).textTheme.labelSmall!.copyWith(fontWeight: FontWeight.bold),
@@ -542,20 +546,52 @@ class Utils {
                   onPressed: () async {
                     Navigator.of(dialogContext).pop(); // Ferme le dialog
 
-                    final int res = await AuthentificationService.logout();
+                    final response = await AuthentificationService.logout();
 
-                    // Sécurité : petit délai après fermeture du dialog
-                    await Future.delayed(Duration(milliseconds: 2));
+                    // Exemple : response = {"status_code": 200, "message": "Déconnexion réussie."}
+                    final int status = response['status_code'];
+                    final String message = response['message'] ?? 'Erreur inconnue.';
 
-                    if (res.toString().contains("2")) {
-                      context.go('/login');
+                    await Future.delayed(Duration(milliseconds: 200)); // Délai optionnel pour fluidité
+
+                    if (status == 200) {
+                      ElegantNotification.success(
+                        width: MediaQuery.of(context).size.width * 0.5,
+                        notificationMargin: 10,
+                        description: Text(
+                          "Déconnexion réussie.",
+                          style: Theme.of(context).textTheme.labelSmall,
+                        ),
+                        position: Alignment.topRight,
+                        animation: AnimationType.fromRight,
+                        icon: const Icon(
+                          Icons.check_circle_outline,
+                          color: Colors.green,
+                        ),
+                      ).show(context);
                     } else {
-                      Navigator.of(context, rootNavigator: true).pushReplacementNamed('/login_screen');
+                      ElegantNotification.error(
+                        width: MediaQuery.of(context).size.width * 0.5,
+                        notificationMargin: 10,
+                        description: Text(
+                          "Échec de la déconnexion. $message",
+                          style: Theme.of(context).textTheme.labelSmall,
+                        ),
+                        position: Alignment.topRight,
+                        animation: AnimationType.fromRight,
+                        icon: const Icon(
+                          Icons.error_outline,
+                          color: Colors.red,
+                        ),
+                      ).show(context);
                     }
+
+                    // Redirection après la notification
+                    context.go('/login');
                   },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.redAccent,
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(2)),
                   ),
                   child: Text(
                     'Se déconnecter',
@@ -569,6 +605,7 @@ class Utils {
       },
     );
   }
+
 
   static String toUpperCaseInput(String input) {
     return input.toUpperCase();

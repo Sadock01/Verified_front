@@ -296,7 +296,7 @@ class _UserVerifyPageState extends State<UserVerifyPage> with TickerProviderStat
                                               backgroundColor: !_showUpload ? AppColors.PRIMARY_BLUE_COLOR : Colors.grey[300],
                                             ),
                                             child: Text(
-                                              "Formulaire",
+                                              "Entrée personnalisée",
                                               style: TextStyle(color: !_showUpload ? Colors.white : Colors.black),
                                             ),
                                           ),
@@ -309,7 +309,7 @@ class _UserVerifyPageState extends State<UserVerifyPage> with TickerProviderStat
                                               backgroundColor: _showUpload ? AppColors.PRIMARY_BLUE_COLOR : Colors.grey[300],
                                             ),
                                             child: Text(
-                                              "Upload PDF",
+                                              "Vérification par fichier",
                                               style: TextStyle(color: _showUpload ? Colors.white : Colors.black),
                                             ),
                                           ),

@@ -159,15 +159,13 @@ class _CreateDocumentScreenState extends State<CreateDocumentScreen> with Single
                       // ),
                       Expanded(
                         child: extractedEntitiesList != null
-                            // ?
-                        ?ExtractedExcelDataSummary(
+                            ? ExtractedExcelDataSummary(
                           extractedDocuments: extractedEntitiesList!,
                           onCancel: () {
                             setState(() => extractedEntitiesList = null);
                           },
-                          onConfirm: () {
-                            final documentsToSend = extractedEntitiesList!
-                                .map((item) {
+                          onConfirm: (updatedData) {
+                            final documentsToSend = updatedData.map((item) {
                               final entity = item['entities'] as Map<String, dynamic>;
                               return DocumentsModel(
                                 identifier: entity['identifier'] ?? '',
@@ -176,20 +174,19 @@ class _CreateDocumentScreenState extends State<CreateDocumentScreen> with Single
                                 typeName: entity['type_document'] ?? '',
                                 beneficiaire: entity['beneficiaire'] ?? '',
                               );
-                            })
-                                .toList();
+                            }).toList();
 
                             context.read<DocumentCubit>().addDocuments(documentsToSend);
-
                             setState(() => extractedEntitiesList = null);
                           },
-                        ): UploadExcelWidget(
-                                onExtracted: (data) {
-                                  setState(() {
-                                    extractedEntitiesList = data;
-                                  });
-                                },
-                              ),
+                        )
+                            : UploadExcelWidget(
+                          onExtracted: (data) {
+                            setState(() {
+                              extractedEntitiesList = data;
+                            });
+                          },
+                        ),
                       ),
                     ],
                   ),

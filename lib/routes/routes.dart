@@ -1,4 +1,5 @@
 import 'package:doc_authentificator/pages/screens/activity/screens/activities_screen.dart';
+import 'package:doc_authentificator/pages/screens/profile/screen/profile_screen.dart';
 import 'package:doc_authentificator/pages/screens/type/screens/type_screen.dart';
 import 'package:doc_authentificator/pages/system/screens/system_admin_screen.dart';
 import 'package:flutter/cupertino.dart';
@@ -142,6 +143,13 @@ class AppRouter {
         builder: (BuildContext context, GoRouterState state) {
           context.read<SwitchPageCubit>().switchPage(0.1);
           return  TypeManagerScreen();
+        },
+      ),
+      GoRoute(
+        path: '/profile',
+        builder: (BuildContext context, GoRouterState state) {
+          context.read<SwitchPageCubit>().switchPage(0.1);
+          return  ProfilePage();
         },
       ),
       GoRoute(

@@ -129,15 +129,18 @@ class AppBarDrawerWidget extends StatelessWidget {
           //
           // const SizedBox(width: 3),
           // _iconCircle("assets/images/panier.png"),
-          CircleAvatar(
-              // backgroundColor: Colors.white,
-              radius: 18,
-              child: Image.asset(
-                "assets/images/user.png",
-                width: 20,
-                height: 20,
-                color: Colors.white,
-              )),
+          InkWell(
+            onTap: () => context.go('/profile'),
+            child: CircleAvatar(
+                // backgroundColor: Colors.white,
+                radius: 18,
+                child: Image.asset(
+                  "assets/images/user.png",
+                  width: 20,
+                  height: 20,
+                  color: Colors.white,
+                )),
+          ),
         ],
       ),
     );

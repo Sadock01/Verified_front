@@ -6,6 +6,7 @@ import '../../../cubits/switch_page/switch_page_cubit.dart';
 import '../const/const.dart';
 import '../cubits/switch_page/switch_page_state.dart';
 import '../cubits/theme/theme_cubit.dart';
+import '../utils/utils.dart';
 
 class AppBarVendorWidget extends StatelessWidget {
   const AppBarVendorWidget({super.key});
@@ -40,23 +41,34 @@ class AppBarVendorWidget extends StatelessWidget {
                         color: iconColor,
                       ))),
               const SizedBox(width: 8),
-              Container(
-                // margin: EdgeInsets.only(bottom: 8, top: 5),
-                padding: EdgeInsets.symmetric(vertical: 10),
-                width: Const.screenWidth(context) * 0.12,
-                height: 45,
-                decoration: BoxDecoration(image: DecorationImage(fit: BoxFit.contain, image: AssetImage('assets/images/Verified_original.png'))),
-              ),
+              // Container(
+              //   // margin: EdgeInsets.only(bottom: 8, top: 5),
+              //   padding: EdgeInsets.symmetric(vertical: 10),
+              //   width: Const.screenWidth(context) * 0.12,
+              //   height: 45,
+              //   decoration: BoxDecoration(image: DecorationImage(fit: BoxFit.contain, image: AssetImage('assets/images/Verified_original.png'))),
+              // ),
               Row(
                 children: [
-                  const SizedBox(width: 20),
 
+                  CircleAvatar(
+                    // backgroundColor: Colors.white,
+                      radius: 18,
+                      child: Image.asset(
+                        "assets/images/user.png",
+                        width: 20,
+                        height: 20,
+                        color: Colors.white,
+                      )),   const SizedBox(width: 20),
                   InkWell(
                     onTap: () => context.read<ThemeCubit>().toggleTheme(),
                     child: _themeIcon(context),
                   ),
                   const SizedBox(width: 20),
-                  const Icon(Icons.logout_outlined, size: 28, color: Colors.red),
+                  InkWell(onTap: (){
+                    Utils.showLogoutConfirmationDialog(context);
+        },
+        child: const Icon(Icons.logout_outlined, size: 28, color: Colors.red)),
 
                   // Menu hamburger
                 ],

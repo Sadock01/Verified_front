@@ -104,7 +104,7 @@ class _NewCollaborateurScreenState extends State<NewCollaborateurScreen> {
                   AppBarDrawerWidget(),
                   // Titre
                   Container(
-                    margin: const EdgeInsets.symmetric(vertical: 10, horizontal: 10),
+                    margin: const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
                     width: Const.screenWidth(context),
                     height: Const.screenHeight(context) * 0.1,
                     padding: const EdgeInsets.symmetric(horizontal: 50, vertical: 10),

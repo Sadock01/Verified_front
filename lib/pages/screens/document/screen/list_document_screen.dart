@@ -38,6 +38,15 @@ class _ListDocumentScreenState extends State<ListDocumentScreen> {
       context.read<DocumentCubit>().getAllDocument(1);
     });
   }
+
+  final ScrollController _scrollController = ScrollController();
+
+  @override
+  void dispose() {
+    _scrollController.dispose(); // Toujours disposer le controller
+    super.dispose();
+  }
+
   String? _selectedMonth;
   void handleMonthSelection(String monthValue) {
     setState(() {
@@ -80,7 +89,8 @@ class _ListDocumentScreenState extends State<ListDocumentScreen> {
                         return AppBarVendorWidget();
                       }
                     },
-                  ),Container(height: 180, padding: EdgeInsets.all(15),
+                  ),
+                  Container(height: 180, padding: EdgeInsets.all(15),
                     margin: EdgeInsets.only(left: 10, right: 10, top: 10, bottom: 20),
                     decoration: BoxDecoration(
                       color: theme.cardColor,
@@ -226,13 +236,31 @@ class _ListDocumentScreenState extends State<ListDocumentScreen> {
                           SizedBox(height: 12),
                           Expanded(
                             flex: 9,
-                            child: SingleChildScrollView(
-                              scrollDirection: Axis.horizontal,
-                              child: ConstrainedBox(
-                                constraints: BoxConstraints(
-                                  minWidth: MediaQuery.of(context).size.width,
+                            child: ScrollbarTheme(
+                              data: ScrollbarThemeData(
+                                thumbColor: MaterialStateProperty.resolveWith<Color>((states) {
+                                  if (states.contains(MaterialState.dragged)) {
+                                    return Colors.grey;
+                                  }
+                                  return Colors.grey[300]!; // couleur par défaut
+                                }),
+                                thickness: MaterialStateProperty.all(8),
+                                radius: const Radius.circular(8),
+                              ),
+                              child: Scrollbar(
+                                controller: _scrollController,
+                                thumbVisibility: true, // Force la visibilité de la scrollbar
+                                trackVisibility: true, // Optionnel, affiche le track aussi
+                                child: SingleChildScrollView(
+                                  controller: _scrollController,
+                                  scrollDirection: Axis.horizontal,
+                                  child: ConstrainedBox(
+                                    constraints: BoxConstraints(
+                                      minWidth: MediaQuery.of(context).size.width,
+                                    ),
+                                    child: DocumentsTabWidget(state: state),
+                                  ),
                                 ),
-                                child: DocumentsTabWidget(state: state),
                               ),
                             ),
                           ),

@@ -57,7 +57,7 @@ class CollaborateursCubit extends Cubit<CollaborateursState> {
       final response = await collaborateurRepository.updateCollaborateur(collaborateurId, collaborateurModel);
       log("${response['message']}");
       if (response['status_code'] == 200) {
-        emit(state.copyWith(collaborateurStatus: CollaborateurStatus.loaded, errorMessage: response['message']));
+        emit(state.copyWith(collaborateurStatus: CollaborateurStatus.update, errorMessage: response['message']));
       }
     } catch (e) {
       emit(state.copyWith(errorMessage: e.toString(), collaborateurStatus: CollaborateurStatus.error));

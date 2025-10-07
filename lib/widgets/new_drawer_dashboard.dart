@@ -127,7 +127,7 @@ class _NewDrawerDashboardState extends State<NewDrawerDashboard> {
                 width: Const.screenWidth(context),
                 height: 35,
                 decoration: BoxDecoration(
-                  color: context.read<SwitchPageCubit>().state.selectedPage == 3 ? Theme.of(context).colorScheme.primary : Colors.transparent,
+                  color: context.read<SwitchPageCubit>().state.selectedPage == 0.1 ? Theme.of(context).colorScheme.primary : Colors.transparent,
                 ),
                 child: TextButton(
                   onPressed: () {

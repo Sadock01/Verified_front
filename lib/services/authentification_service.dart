@@ -52,36 +52,48 @@ class AuthentificationService {
   //     throw Exception("Echec de connexion");
   //   }
   // }
-  static Future<int> logout() async {
+  static Future<Map<String, dynamic>> logout() async {
     try {
       final token = SharedPreferencesUtils.getString('auth_token');
-      log("mon token de connexion : $token");
-      if (token != null && token.isNotEmpty) {
-        // final res1 = await CreditCardService.getCreditCardDetails(currentUser!.id);
-        // log("Voici les details de la card de credit: $res1");
-        final response = await api.post(
-          '/logout',
-          options: Options(
-            headers: {
-              'Authorization': 'Bearer $token',
-            },
-          ),
-        );
-        log("Voici A RESPONSE: $response");
-        final int res = response.data['status_code'];
+      log("🔐 Token utilisé pour la déconnexion : $token");
 
-        if (response.statusCode == 200 || response.statusCode == 201) {
-          // await SharedPreferencesUtils.remove('auth_token');
-          return res;
-        } else {
-          return res;
-        }
-      } else {
-        // cas où le token est null ou vide
-        return 400;
+      if (token == null || token.isEmpty) {
+        return {
+          'status_code': 400,
+          'message': 'Token invalide ou inexistant.',
+        };
       }
+
+      final response = await api.post(
+        '/logout',
+        options: Options(
+          headers: {
+            'Authorization': 'Bearer $token',
+          },
+        ),
+      );
+
+      log("✅ Réponse logout : ${response.data}");
+
+      final int statusCode = response.data['status_code'] ?? response.statusCode ?? 500;
+      final String message = response.data['message'] ?? 'Déconnexion effectuée.';
+
+      // Tu peux aussi vider le token ici si c’est un succès
+      if (statusCode == 200) {
+        await SharedPreferencesUtils.remove('auth_token');
+      }
+
+      return {
+        'status_code': statusCode,
+        'message': message,
+      };
     } catch (e) {
-      throw Exception("Erreur lors de la déconnexion : ${e.toString()}");
+      log("❌ Erreur logout : $e");
+      return {
+        'status_code': 500,
+        'message': 'Une erreur est survenue lors de la déconnexion.',
+      };
     }
   }
+
 }
