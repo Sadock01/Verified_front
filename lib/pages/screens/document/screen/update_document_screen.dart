@@ -18,6 +18,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../../utils/app_colors.dart';
 import '../../../../utils/shared_preferences_utils.dart';
 import '../../../../utils/utilitaire.dart';
 import '../../../../widgets/app_bar_drawer_widget.dart';
@@ -141,13 +142,13 @@ class _UpdateDocumentScreenState extends State<UpdateDocumentScreen> {
                             children: [
                               AppBarDrawerWidget(),
                               Container(
-
+                                margin: const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
                                 width: Const.screenWidth(context),
                                 height: Const.screenHeight(context) * 0.1,
                                 padding: const EdgeInsets.symmetric(horizontal: 50, vertical: 10),
                                 decoration: BoxDecoration(
-                                  color: Theme.of(context).colorScheme.primary,
-                                  //borderRadius: BorderRadius.circular(5),
+                                  color: AppColors.PRIMARY_BLUE_COLOR,
+                                  borderRadius: BorderRadius.circular(5),
                                 ),
                                 child: Column(
                                   children: [

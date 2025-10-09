@@ -5,8 +5,10 @@ import 'package:doc_authentificator/cubits/documents/document_state.dart';
 import 'package:doc_authentificator/models/documents_model.dart';
 import 'package:elegant_notification/elegant_notification.dart';
 import 'package:elegant_notification/resources/arrays.dart';
+import 'package:go_router/go_router.dart';
 
 import '../../../../const/const.dart';
+import '../../../../services/document_service.dart';
 import '../../../../widgets/app_bar_drawer_widget.dart';
 import '../../../../widgets/new_drawer_dashboard.dart';
 
@@ -143,7 +145,7 @@ class _DetailsDocumentScreenState extends State<DetailsDocumentScreen> {
             ElevatedButton(
               onPressed: () {
                 // Naviguer vers la page de modification du document
-                Navigator.pushNamed(context, '/document/update/${document.id}');
+                context.go('/document/update/${document.id}');
               },
               child: Text("Modifier le Document", style: theme.textTheme.labelSmall!.copyWith(color: Colors.white)),
               style: ElevatedButton.styleFrom(
@@ -154,15 +156,14 @@ class _DetailsDocumentScreenState extends State<DetailsDocumentScreen> {
             const SizedBox(height: 10),
             ElevatedButton(
               onPressed: () {
-                // Naviguer vers la page d'impression ou d'autres actions
-                _showActionNotImplemented(theme);
+                 showDeleteConfirmation(context, document);
               },
-              child: Text("Supprimer le Document", style: theme.textTheme.labelSmall!.copyWith(color: Colors.white)),
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.red,
                 padding: EdgeInsets.symmetric(vertical: 12,horizontal: 12),
                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)),
               ),
+              child: Text("Supprimer le Document", style: theme.textTheme.labelSmall!.copyWith(color: Colors.white)),
             ),
           ],
         ),
@@ -180,21 +181,21 @@ class _DetailsDocumentScreenState extends State<DetailsDocumentScreen> {
             // Naviguer vers la page de mise à jour
             Navigator.pushNamed(context, '/document/update/${document.id}');
           },
-          child: Text("Modifier", style: Theme.of(context).textTheme.labelSmall!.copyWith(color: Colors.white)),
           style: ElevatedButton.styleFrom(
             padding: EdgeInsets.symmetric(vertical: 12,horizontal: 12),
             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)),
           ),
+          child: Text("Modifier", style: Theme.of(context).textTheme.labelSmall!.copyWith(color: Colors.white)),
         ),
         ElevatedButton(
 
-          onPressed: () => _showDeleteConfirmation(context, document),
-          child: Text("Supprimer", style: Theme.of(context).textTheme.labelSmall!.copyWith(color: Colors.white)),
+          onPressed: () => showDeleteConfirmation(context, document),
           style: ElevatedButton.styleFrom(
             backgroundColor: Colors.red,
             padding: EdgeInsets.symmetric(vertical: 12,horizontal: 12),
             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)),
           ),
+          child: Text("Supprimer", style: Theme.of(context).textTheme.labelSmall!.copyWith(color: Colors.white)),
         ),
       ],
     );
@@ -212,7 +213,7 @@ class _DetailsDocumentScreenState extends State<DetailsDocumentScreen> {
   }
 
   // Affiche la confirmation de suppression
-  void _showDeleteConfirmation(BuildContext context, DocumentsModel document) {
+  void showDeleteConfirmation(BuildContext context, DocumentsModel document) {
     final theme = Theme.of(context);
     showDialog(
       context: context,
@@ -228,12 +229,60 @@ class _DetailsDocumentScreenState extends State<DetailsDocumentScreen> {
             child: Text("Annuler", style: theme.textTheme.labelSmall),
           ),
           TextButton(
-            onPressed: () {
-              // Supprimer le document
-              //context.read<DocumentCubit>().deleteDocument(document.id);
-              Navigator.of(context).pop();
-            },
-            child: Text("Supprimer", style: theme.textTheme.labelSmall!.copyWith(color: Colors.red)),
+          onPressed: () async {
+    try {
+    // Supprimer le document
+    final result = await DocumentService.deleteDocument(document);
+
+    if (result["status_code"] == 200) {
+    // ✅ Notification de succès
+    ElegantNotification.success(
+    background: theme.cardColor,
+    width: MediaQuery.of(context).size.width * 0.5,
+    description: Text(
+    result['message'] ?? "Document supprimé avec succès",
+    style: theme.textTheme.labelSmall,
+    ),
+    position: Alignment.topRight,
+    animation: AnimationType.fromRight,
+    icon: const Icon(Icons.check_circle_outline, color: Colors.green),
+    ).show(context);
+
+    // ⏳ Attendre un peu avant de naviguer
+    Future.delayed(const Duration(milliseconds: 300), () {
+    if (context.mounted) context.go('/document/List_document');
+    });
+    } else {
+    // ❌ Notification d'échec (code non 200)
+    ElegantNotification.error(
+    background: theme.cardColor,
+    width: MediaQuery.of(context).size.width * 0.5,
+    description: Text(
+    result['message'] ?? "Échec de la suppression du document.",
+    style: theme.textTheme.labelSmall,
+    ),
+    position: Alignment.topRight,
+    animation: AnimationType.fromRight,
+    icon: const Icon(Icons.error_outline, color: Colors.red),
+    ).show(context);
+    }
+    } catch (e) {
+    // ❌ Notification d'erreur système (exception, etc.)
+    ElegantNotification.error(
+    background: theme.cardColor,
+    width: MediaQuery.of(context).size.width * 0.5,
+    description: Text(
+    "Une erreur est survenue lors de la suppression.",
+    style: theme.textTheme.labelSmall,
+    ),
+    position: Alignment.topRight,
+    animation: AnimationType.fromRight,
+    icon: const Icon(Icons.error_outline, color: Colors.red),
+    ).show(context);
+    }
+    },
+
+    child: Text("Supprimer", style: theme.textTheme.labelSmall!.copyWith(color: Colors.red)),
           ),
         ],
       ),

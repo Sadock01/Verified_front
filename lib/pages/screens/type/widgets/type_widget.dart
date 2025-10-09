@@ -51,11 +51,11 @@ class TypeWidget extends StatelessWidget {
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-               TextButton(onPressed: (){}, child: Text("Edit",style: Theme.of(context).textTheme.labelSmall!.copyWith(
+               TextButton(      onPressed: onEdit, child: Text("Edit",style: Theme.of(context).textTheme.labelSmall!.copyWith(
                  fontSize: 12,
                  color: Colors.grey,
                ),)),
-                TextButton(onPressed: (){}, child: Text("Supprimer",style: Theme.of(context).textTheme.labelSmall!.copyWith(
+                TextButton(onPressed:onDelete, child: Text("Supprimer",style: Theme.of(context).textTheme.labelSmall!.copyWith(
                   fontSize: 12,
                   color: Colors.red,
                 ),))

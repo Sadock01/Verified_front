@@ -1,6 +1,9 @@
 import 'dart:developer';
 
 import 'package:doc_authentificator/models/type_doc_model.dart';
+import 'package:doc_authentificator/services/type_service.dart';
+import 'package:elegant_notification/elegant_notification.dart';
+import 'package:elegant_notification/resources/arrays.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -170,8 +173,11 @@ SizedBox(height: 2),
                                                 onDelete: () {
                                                   // context.read<TypeDocCubit>().deleteType(index);
                                                 },
-                                                onEdit: () async{
-                                                   showEditDialog(context, index, type);
+                                                onEdit: () {
+
+                                                    log("Le bouton Éditer a été cliqué");
+                                                    showEditDialog(context, index, type);
+
                                                 }
 
                                               );
@@ -207,10 +213,23 @@ SizedBox(height: 2),
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: Text('Modifier le Type'),
-        content: TextField(
-          controller: _editController,
-          decoration: InputDecoration(labelText: 'Nom du Type'),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
+        title: Text('Modifier le Type',style: Theme.of(context).textTheme.labelMedium),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text("Libelle du Type",style: Theme.of(context).textTheme.labelSmall,),
+            TextField(
+              controller: _editController,
+
+              style: Theme.of(context).textTheme.labelSmall,
+              decoration: InputDecoration(
+
+                border: OutlineInputBorder(borderRadius: BorderRadius.circular(4)),
+              ),
+            ),
+          ],
         ),
         actions: [
           TextButton(
@@ -225,23 +244,98 @@ SizedBox(height: 2),
                 );
 
                 // Mettre à jour le type via le Cubit
-                context.read<TypeDocCubit>().updateType(index, updatedType);
+
                 Navigator.of(context).pop(); // Fermer le dialogue
               }
             },
-            child: Text('Enregistrer'),
+            child: Text('Enregistrer',style: Theme.of(context).textTheme.labelSmall),
           ),
           TextButton(
             onPressed: () {
               Navigator.of(context).pop(); // Fermer le dialogue sans enregistrer
             },
-            child: Text('Annuler'),
+            child: Text('Annuler',style: Theme.of(context).textTheme.labelSmall!.copyWith(color: Colors.grey[300])),
           ),
         ],
       ),
     );
   }
 
+  void showDeleteConfirmation(BuildContext context, TypeDocModel type) {
+    final theme = Theme.of(context);
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)),
+        title: Text("Modifier le Type", style: theme.textTheme.labelSmall),
+        content: Text("Êtes-vous sûr de vouloir modifier le libelle du type ?", style: theme.textTheme.labelMedium),
+        actions: [
+          TextButton(
+            onPressed: () {
+              Navigator.of(context).pop();
+            },
+            child: Text("Annuler", style: theme.textTheme.labelSmall),
+          ),
+          TextButton(
+            onPressed: () async {
+              try {
+                // Supprimer le document
+                final result = await TypeService.updateType(type.id!, type);
+
+                if (result["status_code"] == 200) {
+                  // ✅ Notification de succès
+                  ElegantNotification.success(
+                    background: theme.cardColor,
+                    width: MediaQuery.of(context).size.width * 0.5,
+                    description: Text(
+                      result['message'] ?? "Type modifié avec succès",
+                      style: theme.textTheme.labelSmall,
+                    ),
+                    position: Alignment.topRight,
+                    animation: AnimationType.fromRight,
+                    icon: const Icon(Icons.check_circle_outline, color: Colors.green),
+                  ).show(context);
+
+                  // ⏳ Attendre un peu avant de naviguer
+                  Future.delayed(const Duration(milliseconds: 300), () {
+                    if (context.mounted) context.go('/document/List_document');
+                  });
+                } else {
+                  // ❌ Notification d'échec (code non 200)
+                  ElegantNotification.error(
+                    background: theme.cardColor,
+                    width: MediaQuery.of(context).size.width * 0.5,
+                    description: Text(
+                      result['message'] ?? "Échec de la modification du type.",
+                      style: theme.textTheme.labelSmall,
+                    ),
+                    position: Alignment.topRight,
+                    animation: AnimationType.fromRight,
+                    icon: const Icon(Icons.error_outline, color: Colors.red),
+                  ).show(context);
+                }
+              } catch (e) {
+                // ❌ Notification d'erreur système (exception, etc.)
+                ElegantNotification.error(
+                  background: theme.cardColor,
+                  width: MediaQuery.of(context).size.width * 0.5,
+                  description: Text(
+                    "Une erreur est survenue lors de la modification du type.",
+                    style: theme.textTheme.labelSmall,
+                  ),
+                  position: Alignment.topRight,
+                  animation: AnimationType.fromRight,
+                  icon: const Icon(Icons.error_outline, color: Colors.red),
+                ).show(context);
+              }
+            },
+
+            child: Text("Supprimer", style: theme.textTheme.labelSmall!.copyWith(color: Colors.red)),
+          ),
+        ],
+      ),
+    );
+  }
 }
 
 

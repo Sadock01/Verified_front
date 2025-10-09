@@ -269,4 +269,35 @@ class DocumentService {
       };
     }
   }
+
+
+  static Future<Map<String, dynamic>> deleteDocument(DocumentsModel documentsModel) async {
+    final token = SharedPreferencesUtils.getString('auth_token');
+    api.options.headers['AUTHORIZATION'] = 'Bearer $token';
+
+    final documentId = documentsModel.id; // Assure-toi que l'id existe dans ton modèle
+
+    try {
+      log("Suppression du document avec l'id: $documentId");
+
+      final response = await api.delete("/documents/$documentId");
+
+      log("Réponse de la suppression: $response");
+
+      if (response.statusCode == 200 || response.statusCode == 204) {
+        return {
+          'status_code': response.data?['status_code'] ?? 200,
+          'message': response.data?['message'] ?? "Document supprimé avec succès",
+          'data': response.data?['data'] ?? {},
+        };
+      } else {
+        log("Code réponse inattendu: ${response.statusCode}");
+        throw Exception("Échec lors de la suppression du document");
+      }
+    } catch (e) {
+      log("Erreur lors de la suppression: $e");
+      throw Exception("Erreur lors de la suppression du document: $e");
+    }
+  }
+
 }
