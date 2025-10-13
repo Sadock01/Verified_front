@@ -59,7 +59,7 @@ class _ManualDocumentFormState extends State<ManualDocumentForm> {
         margin: const EdgeInsets.symmetric(vertical: 30),
         decoration: BoxDecoration(
           color: theme.cardColor,
-          borderRadius: BorderRadius.circular(16),
+          borderRadius: BorderRadius.circular(4),
           boxShadow: const [
             BoxShadow(
               color: Colors.black12,

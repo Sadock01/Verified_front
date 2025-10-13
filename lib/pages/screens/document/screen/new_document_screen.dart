@@ -85,9 +85,9 @@ class _NewDocumentScreenState extends State<NewDocumentScreen> with SingleTicker
 
   @override
   Widget build(BuildContext context) {
+    final isLargeScreen = MediaQuery.of(context).size.width > 1150;
     final theme = Theme.of(context);
     final isLight = theme.brightness == Brightness.light;
-
     return BlocListener<DocumentCubit, DocumentState>(
       listener: (context, state) {
         if (state.documentStatus == DocumentStatus.sucess) {
@@ -119,19 +119,30 @@ class _NewDocumentScreenState extends State<NewDocumentScreen> with SingleTicker
       child: BlocBuilder<TypeDocCubit, TypeDocState>(
         builder: (context, state) {
           return Scaffold(
-            body: Row(
-              children: [
-                NewDrawerDashboard(),
-                Expanded(
-                  child: Column(
-                    children: [
-                      AppBarDrawerWidget(),
+              drawer: isLargeScreen ? null : const NewDrawerDashboard(),
+              body: SafeArea(
+                child: Row(
+                  children: [
+                    if (isLargeScreen) const NewDrawerDashboard(),
+                    Expanded(
+                      child: Column(
+                        children: [
+                          LayoutBuilder(
+                            builder: (context, constraints) {
+                              double width = constraints.maxWidth;
+                              if (isLargeScreen) {
+                                return SizedBox(height: 60, child: AppBarDrawerWidget());
+                              } else {
+                                return AppBarVendorWidget();
+                              }
+                            },
+                          ),
                       Expanded(
                         child: SingleChildScrollView(
                           child: Column(
                             children: [
                               Padding(
-                                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 15),
+                                padding: const EdgeInsets.symmetric(horizontal: 50, vertical: 15),
                                 child: Row(
                                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                                   children: [
@@ -145,8 +156,8 @@ class _NewDocumentScreenState extends State<NewDocumentScreen> with SingleTicker
                                           backgroundColor: !_showExtractor ? AppColors.PRIMARY_BLUE_COLOR : Colors.grey[300],
                                         ),
                                         child: Text(
-                                          "Formulaire",
-                                          style: TextStyle(color: !_showExtractor ? Colors.white : Colors.black),
+                                          "Enregistrement Manuel",
+                                          style: Theme.of(context).textTheme.labelSmall!.copyWith(color: !_showExtractor ? Colors.white : Colors.black),
                                         ),
                                       ),
                                     ),
@@ -161,8 +172,8 @@ class _NewDocumentScreenState extends State<NewDocumentScreen> with SingleTicker
                                           backgroundColor: _showExtractor ? AppColors.PRIMARY_BLUE_COLOR : Colors.grey[300],
                                         ),
                                         child: Text(
-                                          "Upload PDF",
-                                          style: TextStyle(color: _showExtractor ? Colors.white : Colors.black),
+                                          "Enregistrement par PDF",
+                                          style: Theme.of(context).textTheme.labelSmall!.copyWith(color: _showExtractor ? Colors.white : Colors.black),
                                         ),
                                       ),
                                     ),
@@ -207,7 +218,7 @@ class _NewDocumentScreenState extends State<NewDocumentScreen> with SingleTicker
                 ),
               ],
             ),
-          );
+          ));
         },
       ),
     );
@@ -221,7 +232,7 @@ class _NewDocumentScreenState extends State<NewDocumentScreen> with SingleTicker
         margin: const EdgeInsets.symmetric(vertical: 30),
         decoration: BoxDecoration(
           color: theme.cardColor,
-          borderRadius: BorderRadius.circular(16),
+          borderRadius: BorderRadius.circular(5),
           boxShadow: [
             BoxShadow(
               color: Colors.black12,

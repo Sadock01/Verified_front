@@ -67,7 +67,7 @@ class _ListCollaborateurScreenState extends State<ListCollaborateurScreen> {
                       margin: EdgeInsets.only(left: 10, right: 10, top: 10, bottom: 20),
                       decoration: BoxDecoration(
                         color: theme.cardColor,
-                        borderRadius: BorderRadius.circular(10),
+                        borderRadius: BorderRadius.circular(4),
                         boxShadow: [
                           isLight
                               ? BoxShadow(

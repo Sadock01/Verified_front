@@ -70,7 +70,7 @@ class _ExtractedDataReviewFormState extends State<ExtractedDataReviewForm> {
         margin: const EdgeInsets.symmetric(vertical: 30),
         decoration: BoxDecoration(
           color: theme.cardColor,
-          borderRadius: BorderRadius.circular(16),
+          borderRadius: BorderRadius.circular(5),
           boxShadow: const [
             BoxShadow(
               color: Colors.black12,
