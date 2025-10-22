@@ -39,7 +39,7 @@ class CollaborateursModel extends Equatable {
       firstName: json['firstname'],
       lastName: json['lastname'],
       email: json['email'],
-      status: json['status'],
+      status: json['status'], // Le backend envoie déjà un booléen
       roleId: json['role_id'],
       roleName: json['role_name'], // récupère le nom du rôle
     );
@@ -51,7 +51,7 @@ class CollaborateursModel extends Equatable {
       firstName: map['firstname'],
       lastName: map['lastname'],
       email: map['email'],
-      status: map['status'],
+      status: map['status'], // Le backend envoie déjà un booléen
       roleId: map['role_id'],
       roleName: map['role_name'], // récupère le nom du rôle
     );

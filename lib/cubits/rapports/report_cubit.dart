@@ -43,6 +43,17 @@ class ReportCubit extends Cubit<ReportState> {
     }
   }
 
+  Future<void> setItemsPerPage(int itemsPerPage) async {
+    emit(state.copyWith(itemsPerPage: itemsPerPage));
+    await getAllReports(1);
+  }
+
+  Future<void> goToPage(int page) async {
+    if (page >= 1 && page <= state.lastPage) {
+      await getAllReports(page);
+    }
+  }
+
   Future<void> getAllDocReport(int documentId,int page) async {
     try {
       // Mettre l'état en "loading"

@@ -12,6 +12,10 @@ import '../../../../widgets/app_bar_drawer_widget.dart';
 import '../../../../widgets/appbar_dashboard.dart';
 import '../../../../widgets/new_drawer_dashboard.dart';
 import '../widgets/report_tab_widget.dart';
+import '../widgets/report_filters_widget.dart';
+import '../../../../widgets/custom_expanded_table_reports.dart';
+import '../widgets/smart_pagination_widget.dart';
+import '../widgets/items_per_page_selector.dart';
 
 class RapportsScreen extends StatefulWidget {
   const RapportsScreen({super.key});
@@ -21,6 +25,8 @@ class RapportsScreen extends StatefulWidget {
 }
 
 class _RapportsScreenState extends State<RapportsScreen> {
+
+  final ScrollController _scrollController = ScrollController();
   @override
   void initState() {
     super.initState();
@@ -38,17 +44,30 @@ class _RapportsScreenState extends State<RapportsScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final isLargeScreen = MediaQuery.of(context).size.width > 1150;
     final theme = Theme.of(context);
     final isLight = theme.brightness == Brightness.light;
     return BlocBuilder<ReportCubit, ReportState>(builder: (context, state) {
       return Scaffold(
+        drawer: isLargeScreen ? null : const NewDrawerDashboard(),
         body: Row(
           children: [
-            NewDrawerDashboard(),
+            if (isLargeScreen) const NewDrawerDashboard(),
             Expanded(
               child: Column(
                 children: [
-                  AppBarDrawerWidget(),
+                  LayoutBuilder(
+                    builder: (context, constraints) {
+                      double width = constraints.maxWidth;
+                      if (isLargeScreen) {
+                        return SizedBox(height: 60, child: AppBarDrawerWidget());
+                      } else {
+                        return AppBarVendorWidget();
+                      }
+                    },
+                  ),
+                  // Filtres
+                  const ReportFiltersWidget(),
                   Expanded(
                     child: Container(
                       padding: EdgeInsets.all(15),
@@ -76,144 +95,91 @@ class _RapportsScreenState extends State<RapportsScreen> {
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Text(
-                                    "Historiques des verifications",
+                                    "Rapports",
                                     style: Theme.of(context).textTheme.displayMedium!.copyWith(fontWeight: FontWeight.bold),
                                   ),
                                   Text(
-                                    "Du dernier document verifié au premier.",
+                                    "Gestion et consultation des rapports.",
                                     style: Theme.of(context).textTheme.displaySmall!.copyWith(color: Colors.grey[300]),
                                   ),
                                 ],
                               ),
-                              Spacer(),
-                              SizedBox(
-                                width: 10,
-                              ),
-                              Container(
-                                padding: EdgeInsets.all(5),
-                                decoration: BoxDecoration(border: Border.all(color: Colors.grey[200]!), borderRadius: BorderRadius.circular(5)),
-                                child: Row(
-                                  children: [
-                                    Image.asset(
-                                      "assets/images/filtre.png",
-                                      width: 18,
-                                      height: 18,
-                                      color: Colors.black,
-                                    ),
-                                    Text(
-                                      "Filter",
-                                      style: Theme.of(context).textTheme.displaySmall!.copyWith(fontWeight: FontWeight.bold),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                              SizedBox(
-                                width: 10,
-                              ),
-                              Container(
-                                padding: EdgeInsets.all(5),
-                                decoration: BoxDecoration(border: Border.all(color: Colors.grey[200]!), borderRadius: BorderRadius.circular(5)),
-                                child: Icon(Icons.picture_in_picture_alt_outlined, size: 18, color: Colors.black),
-                              ),
-                              SizedBox(
-                                width: 10,
-                              ),
-                              Container(
-                                padding: EdgeInsets.all(5),
-                                decoration: BoxDecoration(border: Border.all(color: Colors.grey[200]!), borderRadius: BorderRadius.circular(5)),
-                                child: Row(
-                                  children: [
-                                    Icon(Icons.grid_view, size: 18, color: Colors.grey),
-                                    Icon(
-                                      Icons.table_rows_outlined,
-                                      size: 18,
-                                      color: Colors.grey,
-                                    ),
-                                  ],
-                                ),
-                              )
                             ],
                           ),
                           SizedBox(height: 12),
                           Expanded(
-                            child: SingleChildScrollView(
-                              scrollDirection: Axis.horizontal,
-                              child: ConstrainedBox(
-                                constraints: BoxConstraints(
-                                  minWidth: MediaQuery.of(context).size.width,
-                                ),
-                                child: ReportTabWidget(state: state),
-                              ),
+                            flex: 5,
+                            child: state.listReports.isEmpty
+                                ? SingleChildScrollView(
+                                    child: Center(
+                                      child: Padding(
+                                        padding: const EdgeInsets.all(20),
+                                        child: Column(
+                                          mainAxisAlignment: MainAxisAlignment.center,
+                                          children: [
+                                            Image.asset(
+                                              "assets/images/undraw_not-found_6bgl.png",
+                                              width: 150,
+                                              height: 150,
+                                            ),
+                                            SizedBox(height: 16),
+                                            Text(
+                                              "Aucun rapport trouvé",
+                                              style: Theme.of(context).textTheme.labelMedium?.copyWith(
+                                                fontWeight: FontWeight.bold,
+                                                color: Colors.grey[600],
+                                              ),
+                                            ),
+                                            SizedBox(height: 8),
+                                            Text(
+                                              "Il n'y a actuellement aucun rapport disponible.",
+                                              style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                                                color: Colors.grey[500],
+                                              ),
+                                              textAlign: TextAlign.center,
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ),
+                                  )
+                                : ScrollbarTheme(
+                                    data: ScrollbarThemeData(
+                                      thumbColor: MaterialStateProperty.resolveWith<Color>((states) {
+                                        if (states.contains(MaterialState.dragged)) {
+                                          return Colors.grey;
+                                        }
+                                        return Colors.grey[300]!;
+                                      }),
+                                      thickness: MaterialStateProperty.all(8),
+                                      radius: const Radius.circular(8),
+                                    ),
+                                    child: Scrollbar(
+                                      controller: _scrollController,
+                                      thumbVisibility: true,
+                                      trackVisibility: true,
+                                      child: SingleChildScrollView(
+                                        controller: _scrollController,
+                                        scrollDirection: Axis.horizontal,
+                                        child: ConstrainedBox(
+                                          constraints: BoxConstraints(
+                                            minWidth: MediaQuery.of(context).size.width,
+                                          ),
+                                          child: CustomExpandedTableReports(state: state),
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                          ),
+                          Spacer(),
+                          if (state.listReports.isNotEmpty)
+                            Row(
+                              children: [
+                                ItemsPerPageSelector(state: state),
+                                Spacer(),
+                                SmartPaginationWidget(state: state),
+                              ],
                             ),
-                          ),
-                          SizedBox(height: 30),
-                          Row(
-                            children: [
-                              Container(
-                                padding: EdgeInsets.all(5),
-                                decoration: BoxDecoration(border: Border.all(color: Colors.grey[200]!), borderRadius: BorderRadius.circular(5)),
-                                child: Row(
-                                  children: [
-                                    Text(
-                                      "Show: 2",
-                                      style: Theme.of(context).textTheme.displaySmall!.copyWith(fontWeight: FontWeight.bold),
-                                    ),
-                                    Icon(
-                                      Icons.swap_vert,
-                                      size: 18,
-                                    ),
-                                  ],
-                                ),
-                              ),
-                              Spacer(),
-                              InkWell(
-                                onTap: state.currentPage > 1 ? () => context.read<VerificationCubit>().goToPreviousPage() : null,
-                                child: Container(
-                                  padding: EdgeInsets.all(5),
-                                  decoration: BoxDecoration(border: Border.all(color: Colors.grey[200]!), borderRadius: BorderRadius.circular(5)),
-                                  child: Icon(
-                                    Icons.arrow_back,
-                                    size: 18,
-                                  ),
-                                ),
-                              ),
-                              SizedBox(
-                                width: 10,
-                              ),
-                              Container(
-                                padding: EdgeInsets.all(5),
-                                decoration: BoxDecoration(border: Border.all(color: Colors.grey[200]!), borderRadius: BorderRadius.circular(5)),
-                                child: Icon(
-                                  Icons.more_horiz_outlined,
-                                  size: 18,
-                                ),
-                              ),
-                              SizedBox(
-                                width: 10,
-                              ),
-                              Container(
-                                  padding: EdgeInsets.all(5),
-                                  decoration: BoxDecoration(color: Colors.black, borderRadius: BorderRadius.circular(5)),
-                                  child: Text(
-                                    "12",
-                                    style: Theme.of(context).textTheme.displaySmall!.copyWith(fontWeight: FontWeight.bold, color: Colors.white),
-                                  )),
-                              SizedBox(
-                                width: 10,
-                              ),
-                              InkWell(
-                                onTap: state.currentPage < state.lastPage ? () => context.read<VerificationCubit>().goToNextPage() : null,
-                                child: Container(
-                                  padding: EdgeInsets.all(5),
-                                  decoration: BoxDecoration(border: Border.all(color: Colors.grey[200]!), borderRadius: BorderRadius.circular(5)),
-                                  child: Icon(
-                                    Icons.arrow_forward,
-                                    size: 18,
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
                         ],
                       ),
                     ),

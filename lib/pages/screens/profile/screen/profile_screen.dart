@@ -42,7 +42,7 @@ class _ProfilePageState extends State<ProfilePage> {
     _firstNameController = TextEditingController(text: user.firstName);
     _lastNameController = TextEditingController(text: user.lastName);
     _emailController = TextEditingController(text: user.email);
-    _roleController = TextEditingController(text: user.roleName.toString());
+    _roleController = TextEditingController(text: user.roleName ?? '');
     // _statusController = TextEditingController(text: user.status.toString());
 
     showDialog(
@@ -235,7 +235,7 @@ log("user.id: ${user.id}");
                                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                 children: [
                                   Expanded(flex:2,child: _buildInfoRow('Email', user.email)),
-                                  Expanded(flex: 2,child: _buildInfoRow('Rôle', user.roleName.toString())),
+                                  Expanded(flex: 2,child: _buildInfoRow('Rôle', user.roleName ?? 'Non défini')),
                                 ],
                               ),
                               SizedBox(height: 12),

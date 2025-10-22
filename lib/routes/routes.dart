@@ -186,7 +186,7 @@ class AppRouter {
         builder: (context, state) {
           final identifier = state.pathParameters['identifier']!;
           return DetailsDocumentScreen(
-            documentId: 1,
+            documentId: int.parse(identifier),
           );
         },
       ),
@@ -195,7 +195,7 @@ class AppRouter {
         builder: (context, state) {
           final identifier = state.pathParameters['identifier']!;
           return DocumentDetailsScreen(
-            documentId: 1,
+            documentId: int.parse(identifier),
           );
         },
       ),

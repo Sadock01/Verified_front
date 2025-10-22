@@ -16,11 +16,14 @@ import '../../../../models/type_doc_model.dart';
 import '../../../../utils/app_colors.dart';
 import '../../../../utils/shared_preferences_utils.dart';
 import '../../../../widgets/app_bar_drawer_widget.dart';
+import '../../../../widgets/custom_expanded_table.dart';
 import '../../../../widgets/new_drawer_dashboard.dart';
 import '../widgets/documents_tab_widget.dart';
 import '../widgets/month_filter_widget.dart';
 import '../widgets/search_widget.dart';
 import '../widgets/type_widget.dart';
+import '../widgets/items_per_page_selector.dart';
+import '../widgets/smart_pagination_widget.dart';
 
 class ListDocumentScreen extends StatefulWidget {
   const ListDocumentScreen({super.key});
@@ -258,7 +261,7 @@ class _ListDocumentScreenState extends State<ListDocumentScreen> {
                                     constraints: BoxConstraints(
                                       minWidth: MediaQuery.of(context).size.width,
                                     ),
-                                    child: DocumentsTabWidget(state: state),
+                                    child: CustomExpandedTable(state: state),
                                   ),
                                 ),
                               ),
@@ -267,69 +270,22 @@ class _ListDocumentScreenState extends State<ListDocumentScreen> {
                           Spacer(),
                           Row(
                             children: [
-                              Container(
-                                padding: EdgeInsets.all(5),
-                                decoration: BoxDecoration(border: Border.all(color: Colors.grey[200]!), borderRadius: BorderRadius.circular(5)),
-                                child: Row(
-                                  children: [
-                                    Text(
-                                      "Show: 2",
-                                      style: Theme.of(context).textTheme.displaySmall!.copyWith(fontWeight: FontWeight.bold),
-                                    ),
-                                    Icon(
-                                      Icons.swap_vert,
-                                      size: 18,
-                                    ),
-                                  ],
-                                ),
+                              Row(
+                                children: [
+                                  Text(
+                                    "Nombre de documents : ",
+                                    style: Theme.of(context).textTheme.displaySmall!.copyWith(fontWeight: FontWeight.bold),
+                                  ),
+                                  // ItemsPerPageSelector(currentItemsPerPage: state.itemsPerPage),
+                                  SizedBox(width: 10),
+                                  Text(
+                                    "${state.listDocuments.length}",
+                                    style: Theme.of(context).textTheme.displaySmall!.copyWith(fontWeight: FontWeight.bold),
+                                  ),
+                                ],
                               ),
                               Spacer(),
-                              InkWell(
-                                onTap: state.currentPage > 1 ? () => context.read<DocumentCubit>().goToPreviousPage() : null,
-                                child: Container(
-                                  padding: EdgeInsets.all(5),
-                                  decoration: BoxDecoration(border: Border.all(color: Colors.grey[200]!), borderRadius: BorderRadius.circular(5)),
-                                  child: Icon(
-                                    Icons.arrow_back,
-                                    size: 18,
-                                  ),
-                                ),
-                              ),
-                              SizedBox(
-                                width: 10,
-                              ),
-                              Container(
-                                padding: EdgeInsets.all(5),
-                                decoration: BoxDecoration(border: Border.all(color: Colors.grey[200]!), borderRadius: BorderRadius.circular(5)),
-                                child: Icon(
-                                  Icons.more_horiz_outlined,
-                                  size: 18,
-                                ),
-                              ),
-                              SizedBox(
-                                width: 10,
-                              ),
-                              Container(
-                                  padding: EdgeInsets.all(5),
-                                  decoration: BoxDecoration(color: Colors.black, borderRadius: BorderRadius.circular(5)),
-                                  child: Text(
-                                    "12",
-                                    style: Theme.of(context).textTheme.displaySmall!.copyWith(fontWeight: FontWeight.bold, color: Colors.white),
-                                  )),
-                              SizedBox(
-                                width: 10,
-                              ),
-                              InkWell(
-                                onTap: state.currentPage < state.lastPage ? () => context.read<DocumentCubit>().goToNextPage() : null,
-                                child: Container(
-                                  padding: EdgeInsets.all(5),
-                                  decoration: BoxDecoration(border: Border.all(color: Colors.grey[200]!), borderRadius: BorderRadius.circular(5)),
-                                  child: Icon(
-                                    Icons.arrow_forward,
-                                    size: 18,
-                                  ),
-                                ),
-                              ),
+                              SmartPaginationWidget(state: state),
                             ],
                           ),
                         ],

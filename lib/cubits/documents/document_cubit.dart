@@ -149,6 +149,13 @@ class DocumentCubit extends Cubit<DocumentState> {
     }
   }
 
+  void goToPage(int page) {
+    if (page >= 1 && page <= state.lastPage && page != state.currentPage) {
+      emit(state.copyWith(currentPage: page));
+      getAllDocument(page);
+    }
+  }
+
  
 
   Future<void> getDocumentById(int documentId) async {
@@ -178,6 +185,11 @@ class DocumentCubit extends Cubit<DocumentState> {
 
    void setSearchKey(String searchKey) {
     emit(state.copyWith(searchKey: searchKey));
+  }
+
+  void setItemsPerPage(int itemsPerPage) {
+    emit(state.copyWith(itemsPerPage: itemsPerPage, currentPage: 1));
+    getAllDocument(1); // Recharger la première page avec le nouveau nombre d'éléments
   }
 
   void statisticsByDays(){

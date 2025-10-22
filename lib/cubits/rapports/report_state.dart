@@ -13,6 +13,7 @@ class ReportState extends Equatable {
   final List<ReportModel> listReports;
   final int currentPage;
   final int lastPage;
+  final int itemsPerPage;
   final String? searchKey;
   final String errorMessage;
 
@@ -22,6 +23,7 @@ class ReportState extends Equatable {
     required this.errorMessage,
     required this.currentPage,
     required this.lastPage,
+    required this.itemsPerPage,
     required this.searchKey,
   });
 
@@ -31,6 +33,7 @@ class ReportState extends Equatable {
       listReports: [],
       currentPage: 1,
       lastPage: 1,
+      itemsPerPage: 5,
       errorMessage: "",
       searchKey: '',
     );
@@ -41,6 +44,7 @@ class ReportState extends Equatable {
     List<ReportModel>? listReports,
     int? currentPage,
     int? lastPage,
+    int? itemsPerPage,
     String? errorMessage,
     String? searchKey,
   }) {
@@ -50,6 +54,7 @@ class ReportState extends Equatable {
       errorMessage: errorMessage ?? this.errorMessage,
       currentPage: currentPage ?? this.currentPage,
       lastPage: lastPage ?? this.lastPage,
+      itemsPerPage: itemsPerPage ?? this.itemsPerPage,
       searchKey: searchKey ?? this.searchKey,
     );
   }
@@ -60,6 +65,7 @@ class ReportState extends Equatable {
         listReports,
         currentPage,
         lastPage,
+        itemsPerPage,
         errorMessage,
         searchKey,
       ];

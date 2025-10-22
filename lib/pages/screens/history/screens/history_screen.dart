@@ -13,6 +13,9 @@ import '../../../../utils/shared_preferences_utils.dart';
 import '../../../../widgets/app_bar_drawer_widget.dart';
 import '../../../../widgets/appbar_dashboard.dart';
 import '../../../../widgets/new_drawer_dashboard.dart';
+import '../../../../widgets/custom_expanded_table_history.dart';
+import '../widgets/history_filters_widget.dart';
+import '../widgets/smart_pagination_widget.dart';
 
 class HistoryScreen extends StatefulWidget {
   const HistoryScreen({super.key});
@@ -22,6 +25,7 @@ class HistoryScreen extends StatefulWidget {
 }
 
 class _HistoryScreenState extends State<HistoryScreen> {
+  final ScrollController _scrollController = ScrollController();
   @override
   void initState() {
     super.initState();
@@ -41,18 +45,31 @@ class _HistoryScreenState extends State<HistoryScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final isLargeScreen = MediaQuery.of(context).size.width > 1150;
     final theme = Theme.of(context);
     final isLight = theme.brightness == Brightness.light;
     return BlocBuilder<VerificationCubit, VerificationState>(builder: (context, state) {
       log("state.verificationStatus: ${state.verificationStatus}");
       return Scaffold(
+        drawer: isLargeScreen ? null : const NewDrawerDashboard(),
         body: Row(
           children: [
-            NewDrawerDashboard(),
+            if (isLargeScreen) const NewDrawerDashboard(),
             Expanded(
               child: Column(
                 children: [
-                  AppBarDrawerWidget(),
+                  LayoutBuilder(
+                    builder: (context, constraints) {
+                      double width = constraints.maxWidth;
+                      if (isLargeScreen) {
+                        return SizedBox(height: 60, child: AppBarDrawerWidget());
+                      } else {
+                        return AppBarVendorWidget();
+                      }
+                    },
+                  ),
+                  // Filtres
+                  const HistoryFiltersWidget(),
                   if (state.verificationStatus == VerificationStatus.loading) ...[
                     const Center(
                       child: CircularProgressIndicator(strokeWidth: 1.0),
@@ -64,7 +81,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
                   ] else if (state.verificationStatus == VerificationStatus.loaded)
                     Expanded(
                       child: Container(
-                        padding: EdgeInsets.all(15),
+                        padding: EdgeInsets.all(8),
                         margin: EdgeInsets.only(left: 10, right: 10, top: 10, bottom: 20),
                         decoration: BoxDecoration(
                           color: theme.cardColor,
@@ -83,104 +100,108 @@ class _HistoryScreenState extends State<HistoryScreen> {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Row(
-                              children: [
-                                Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                      "Historiques des verifications",
-                                      style: Theme.of(context).textTheme.labelMedium!.copyWith(fontWeight: FontWeight.bold),
-                                    ),
-                                    Text(
-                                      "Du dernier document verifié au premier.",
-                                      style: Theme.of(context).textTheme.labelSmall!.copyWith(color: Colors.grey[500]),
-                                    ),
-                                  ],
-                                ),
-
-                              ],
-                            ),
-                            SizedBox(height: 12),
+                            // Row(
+                            //   children: [
+                            //     Column(
+                            //       crossAxisAlignment: CrossAxisAlignment.start,
+                            //       children: [
+                            //         Text(
+                            //           "Historiques des verifications",
+                            //           style: Theme.of(context).textTheme.labelMedium!.copyWith(fontWeight: FontWeight.bold),
+                            //         ),
+                            //         Text(
+                            //           "Du dernier document verifié au premier.",
+                            //           style: Theme.of(context).textTheme.labelSmall!.copyWith(color: Colors.grey[500]),
+                            //         ),
+                            //       ],
+                            //     ),
+                            //   ],
+                            // ),
+                            // SizedBox(height: 12),
                             Expanded(
-                              child: SingleChildScrollView(
-                                scrollDirection: Axis.horizontal,
-                                child: ConstrainedBox(
-                                  constraints: BoxConstraints(
-                                    minWidth: MediaQuery.of(context).size.width,
-                                  ),
-                                  child: HistoryTabWidget(state: state),
-                                ),
-                              ),
+                              flex: 7,
+                              child: state.listVerifications.isEmpty
+                                  ? SingleChildScrollView(
+                                      child: Center(
+                                        child: Padding(
+                                          padding: const EdgeInsets.all(20),
+                                          child: Column(
+                                            mainAxisAlignment: MainAxisAlignment.center,
+                                            children: [
+                                              Image.asset(
+                                                "assets/images/undraw_not-found_6bgl.png",
+                                                width: 150,
+                                                height: 150,
+                                              ),
+                                              SizedBox(height: 16),
+                                              Text(
+                                                "Aucun historique trouvé",
+                                                style: Theme.of(context).textTheme.labelMedium?.copyWith(
+                                                  fontWeight: FontWeight.bold,
+                                                  color: Colors.grey[600],
+                                                ),
+                                              ),
+                                              SizedBox(height: 8),
+                                              Text(
+                                                "Il n'y a actuellement aucun historique de vérification.",
+                                                style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                                                  color: Colors.grey[500],
+                                                ),
+                                                textAlign: TextAlign.center,
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                      ),
+                                    )
+                                  : ScrollbarTheme(
+                                      data: ScrollbarThemeData(
+                                        thumbColor: MaterialStateProperty.resolveWith<Color>((states) {
+                                          if (states.contains(MaterialState.dragged)) {
+                                            return Colors.grey;
+                                          }
+                                          return Colors.grey[300]!;
+                                        }),
+                                        thickness: MaterialStateProperty.all(8),
+                                        radius: const Radius.circular(8),
+                                      ),
+                                      child: Scrollbar(
+                                        controller: _scrollController,
+                                        thumbVisibility: true,
+                                        trackVisibility: true,
+                                        child: SingleChildScrollView(
+                                          controller: _scrollController,
+                                          scrollDirection: Axis.horizontal,
+                                          child: ConstrainedBox(
+                                            constraints: BoxConstraints(
+                                              minWidth: MediaQuery.of(context).size.width,
+                                            ),
+                                            child: CustomExpandedTableHistory(state: state),
+                                          ),
+                                        ),
+                                      ),
+                                    ),
                             ),
-                            SizedBox(height: 30),
-                            Row(
-                              children: [
-                                Container(
-                                  padding: EdgeInsets.all(5),
-                                  decoration: BoxDecoration(border: Border.all(color: Colors.grey[200]!), borderRadius: BorderRadius.circular(5)),
-                                  child: Row(
+                            Spacer(),
+                            if (state.listVerifications.isNotEmpty)
+                              Row(
+                                children: [
+                                  Row(
                                     children: [
                                       Text(
-                                        "Show: 2",
+                                        "Nombre de documents : ",
                                         style: Theme.of(context).textTheme.displaySmall!.copyWith(fontWeight: FontWeight.bold),
                                       ),
-                                      Icon(
-                                        Icons.swap_vert,
-                                        size: 18,
+                                      Text(
+                                        "${state.listVerifications.length}",
+                                        style: Theme.of(context).textTheme.displaySmall!.copyWith(fontWeight: FontWeight.bold),
                                       ),
                                     ],
                                   ),
-                                ),
-                                Spacer(),
-                                InkWell(
-                                  onTap: state.currentPage > 1 ? () => context.read<VerificationCubit>().goToPreviousPage() : null,
-                                  child: Container(
-                                    padding: EdgeInsets.all(5),
-                                    decoration: BoxDecoration(border: Border.all(color: Colors.grey[200]!), borderRadius: BorderRadius.circular(5)),
-                                    child: Icon(
-                                      Icons.arrow_back,
-                                      size: 18,
-                                    ),
-                                  ),
-                                ),
-                                SizedBox(
-                                  width: 10,
-                                ),
-                                Container(
-                                  padding: EdgeInsets.all(5),
-                                  decoration: BoxDecoration(border: Border.all(color: Colors.grey[200]!), borderRadius: BorderRadius.circular(5)),
-                                  child: Icon(
-                                    Icons.more_horiz_outlined,
-                                    size: 18,
-                                  ),
-                                ),
-                                SizedBox(
-                                  width: 10,
-                                ),
-                                Container(
-                                    padding: EdgeInsets.all(5),
-                                    decoration: BoxDecoration(color: Colors.black, borderRadius: BorderRadius.circular(5)),
-                                    child: Text(
-                                      "12",
-                                      style: Theme.of(context).textTheme.displaySmall!.copyWith(fontWeight: FontWeight.bold, color: Colors.white),
-                                    )),
-                                SizedBox(
-                                  width: 10,
-                                ),
-                                InkWell(
-                                  onTap: state.currentPage < state.lastPage ? () => context.read<VerificationCubit>().goToNextPage() : null,
-                                  child: Container(
-                                    padding: EdgeInsets.all(5),
-                                    decoration: BoxDecoration(border: Border.all(color: Colors.grey[200]!), borderRadius: BorderRadius.circular(5)),
-                                    child: Icon(
-                                      Icons.arrow_forward,
-                                      size: 18,
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
+                                  Spacer(),
+                                  SmartPaginationWidget(state: state),
+                                ],
+                              ),
                           ],
                         ),
                       ),

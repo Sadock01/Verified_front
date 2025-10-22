@@ -17,6 +17,7 @@ class CollaborateursState extends Equatable {
   final CollaborateursModel? selectedCollaborateur;
   final int currentPage;
   final int lastPage;
+  final int itemsPerPage;
   final String? searchKey;
   final String errorMessage;
 
@@ -26,6 +27,7 @@ class CollaborateursState extends Equatable {
     this.selectedCollaborateur,
     required this.currentPage,
     required this.lastPage,
+    required this.itemsPerPage,
     required this.errorMessage,
     required this.searchKey,
   });
@@ -37,6 +39,7 @@ class CollaborateursState extends Equatable {
       selectedCollaborateur: null,
       currentPage: 1,
       lastPage: 1,
+      itemsPerPage: 5,
       errorMessage: "",
       searchKey: '',
     );
@@ -48,6 +51,7 @@ class CollaborateursState extends Equatable {
     CollaborateursModel? selectedCollaborateur,
     int? currentPage,
     int? lastPage,
+    int? itemsPerPage,
     String? errorMessage,
     String? searchKey,
   }) {
@@ -58,6 +62,7 @@ class CollaborateursState extends Equatable {
       errorMessage: errorMessage ?? this.errorMessage,
       currentPage: currentPage ?? this.currentPage,
       lastPage: lastPage ?? this.lastPage,
+      itemsPerPage: itemsPerPage ?? this.itemsPerPage,
       searchKey: searchKey ?? this.searchKey,
     );
   }
@@ -69,6 +74,8 @@ class CollaborateursState extends Equatable {
         selectedCollaborateur,
         lastPage,
         errorMessage,
+        currentPage,
+        itemsPerPage,
         searchKey,
       ];
 }

@@ -27,6 +27,17 @@ class CollaborateursCubit extends Cubit<CollaborateursState> {
     }
   }
 
+  Future<void> setItemsPerPage(int itemsPerPage) async {
+    emit(state.copyWith(itemsPerPage: itemsPerPage));
+    await getAllCollaborateur(1);
+  }
+
+  Future<void> goToPage(int page) async {
+    if (page >= 1 && page <= state.lastPage) {
+      await getAllCollaborateur(page);
+    }
+  }
+
   Future<void> addCollaborateur(CollaborateursModel documentsModel) async {
     try {
       emit(state.copyWith(collaborateurStatus: CollaborateurStatus.loading, errorMessage: ""));

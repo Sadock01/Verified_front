@@ -11,6 +11,10 @@ import 'package:go_router/go_router.dart';
 import '../../../../utils/shared_preferences_utils.dart';
 import '../../../../widgets/app_bar_drawer_widget.dart';
 import '../../../../widgets/new_drawer_dashboard.dart';
+import '../widgets/collaborateur_filters_widget.dart';
+import '../../../../widgets/custom_expanded_table_collaborateurs.dart';
+import '../widgets/smart_pagination_widget.dart';
+import '../widgets/items_per_page_selector.dart';
 
 class ListCollaborateurScreen extends StatefulWidget {
   const ListCollaborateurScreen({super.key});
@@ -20,6 +24,9 @@ class ListCollaborateurScreen extends StatefulWidget {
 }
 
 class _ListCollaborateurScreenState extends State<ListCollaborateurScreen> {
+
+  final ScrollController _scrollController = ScrollController();
+
   @override
   void initState() {
     super.initState();
@@ -61,6 +68,8 @@ class _ListCollaborateurScreenState extends State<ListCollaborateurScreen> {
                       }
                     },
                   ),
+                  // Filtres
+                  const CollaborateurFiltersWidget(),
                   Expanded(
                     child: Container(
                       padding: EdgeInsets.all(15),
@@ -159,84 +168,77 @@ class _ListCollaborateurScreenState extends State<ListCollaborateurScreen> {
                           SizedBox(height: 12),
                           Expanded(
                             flex: 9,
-                            child: SingleChildScrollView(
-                              scrollDirection: Axis.horizontal,
-                              child: ConstrainedBox(
-                                constraints: BoxConstraints(
-                                  minWidth: MediaQuery.of(context).size.width,
-                                ),
-                                child: CollaborateurTabWidget(state: state),
-                              ),
-                            ),
+                            child: state.listCollaborateurs.isEmpty
+                                ? SingleChildScrollView(
+                                    child: Center(
+                                      child: Padding(
+                                        padding: const EdgeInsets.all(20),
+                                        child: Column(
+                                          mainAxisAlignment: MainAxisAlignment.center,
+                                          children: [
+                                            Image.asset(
+                                              "assets/images/undraw_not-found_6bgl.png",
+                                              width: 150,
+                                              height: 150,
+                                            ),
+                                            SizedBox(height: 16),
+                                            Text(
+                                              "Aucun collaborateur trouvé",
+                                              style: Theme.of(context).textTheme.labelMedium?.copyWith(
+                                                fontWeight: FontWeight.bold,
+                                                color: Colors.grey[600],
+                                              ),
+                                            ),
+                                            SizedBox(height: 8),
+                                            Text(
+                                              "Il n'y a actuellement aucun collaborateur disponible.",
+                                              style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                                                color: Colors.grey[500],
+                                              ),
+                                              textAlign: TextAlign.center,
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ),
+                                  )
+                                : ScrollbarTheme(
+                                    data: ScrollbarThemeData(
+                                      thumbColor: MaterialStateProperty.resolveWith<Color>((states) {
+                                        if (states.contains(MaterialState.dragged)) {
+                                          return Colors.grey;
+                                        }
+                                        return Colors.grey[300]!;
+                                      }),
+                                      thickness: MaterialStateProperty.all(8),
+                                      radius: const Radius.circular(8),
+                                    ),
+                                    child: Scrollbar(
+                                      controller: _scrollController,
+                                      thumbVisibility: true,
+                                      trackVisibility: true,
+                                      child: SingleChildScrollView(
+                                        controller: _scrollController,
+                                        scrollDirection: Axis.horizontal,
+                                        child: ConstrainedBox(
+                                          constraints: BoxConstraints(
+                                            minWidth: MediaQuery.of(context).size.width,
+                                          ),
+                                          child: CustomExpandedTableCollaborateurs(state: state),
+                                        ),
+                                      ),
+                                    ),
+                                  ),
                           ),
                           Spacer(),
-                          Row(
-                            children: [
-                              Container(
-                                padding: EdgeInsets.all(5),
-                                decoration: BoxDecoration(border: Border.all(color: Colors.grey[200]!), borderRadius: BorderRadius.circular(5)),
-                                child: Row(
-                                  children: [
-                                    Text(
-                                      "Show: 2",
-                                      style: Theme.of(context).textTheme.displaySmall!.copyWith(fontWeight: FontWeight.bold),
-                                    ),
-                                    Icon(
-                                      Icons.swap_vert,
-                                      size: 18,
-                                    ),
-                                  ],
-                                ),
-                              ),
-                              Spacer(),
-                              InkWell(
-                                onTap: state.currentPage > 1 ? () => context.read<CollaborateursCubit>().goToPreviousPage() : null,
-                                child: Container(
-                                  padding: EdgeInsets.all(5),
-                                  decoration: BoxDecoration(border: Border.all(color: Colors.grey[200]!), borderRadius: BorderRadius.circular(5)),
-                                  child: Icon(
-                                    Icons.arrow_back,
-                                    size: 18,
-                                  ),
-                                ),
-                              ),
-                              SizedBox(
-                                width: 10,
-                              ),
-                              Container(
-                                padding: EdgeInsets.all(5),
-                                decoration: BoxDecoration(border: Border.all(color: Colors.grey[200]!), borderRadius: BorderRadius.circular(5)),
-                                child: Icon(
-                                  Icons.more_horiz_outlined,
-                                  size: 18,
-                                ),
-                              ),
-                              SizedBox(
-                                width: 10,
-                              ),
-                              Container(
-                                  padding: EdgeInsets.all(5),
-                                  decoration: BoxDecoration(color: Colors.black, borderRadius: BorderRadius.circular(5)),
-                                  child: Text(
-                                    "12",
-                                    style: Theme.of(context).textTheme.displaySmall!.copyWith(fontWeight: FontWeight.bold, color: Colors.white),
-                                  )),
-                              SizedBox(
-                                width: 10,
-                              ),
-                              InkWell(
-                                onTap: state.currentPage < state.lastPage ? () => context.read<CollaborateursCubit>().goToNextPage() : null,
-                                child: Container(
-                                  padding: EdgeInsets.all(5),
-                                  decoration: BoxDecoration(border: Border.all(color: Colors.grey[200]!), borderRadius: BorderRadius.circular(5)),
-                                  child: Icon(
-                                    Icons.arrow_forward,
-                                    size: 18,
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
+                          if (state.listCollaborateurs.isNotEmpty)
+                            Row(
+                              children: [
+                                ItemsPerPageSelector(state: state),
+                                Spacer(),
+                                SmartPaginationWidget(state: state),
+                              ],
+                            ),
                         ],
                       ),
                     ),

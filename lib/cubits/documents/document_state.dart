@@ -18,6 +18,7 @@ class DocumentState extends Equatable {
   final DocumentsModel? selectedDocument;
   final int currentPage;
   final int lastPage;
+  final int itemsPerPage;
   final String? searchKey;
   final String errorMessage;
 
@@ -30,6 +31,7 @@ class DocumentState extends Equatable {
     required this.apiResponse,
     required this.currentPage,
     required this.lastPage,
+    required this.itemsPerPage,
     this.selectedDocument,
     required this.searchKey,
   });
@@ -42,6 +44,7 @@ class DocumentState extends Equatable {
       selectedDocument: null,
       currentPage: 1,
       lastPage: 1,
+      itemsPerPage: 5, // Par défaut 5 éléments par page
       errorMessage: "",
       apiResponse: '',
       searchKey: '',
@@ -56,6 +59,7 @@ class DocumentState extends Equatable {
     DocumentsModel? selectedDocument,
     int? currentPage,
     int? lastPage,
+    int? itemsPerPage,
     String? errorMessage,
     String? searchKey,
   }) {
@@ -68,6 +72,7 @@ class DocumentState extends Equatable {
       errorMessage: errorMessage ?? this.errorMessage,
       currentPage: currentPage ?? this.currentPage,
       lastPage: lastPage ?? this.lastPage,
+      itemsPerPage: itemsPerPage ?? this.itemsPerPage,
       searchKey: searchKey ?? this.searchKey,
     );
   }
@@ -76,9 +81,10 @@ class DocumentState extends Equatable {
   List<Object?> get props => [
         documentStatus,
         listDocuments,
-          selectedDocument,
+        selectedDocument,
         currentPage,
         lastPage,
+        itemsPerPage,
         errorMessage,
         searchKey,
       ];
