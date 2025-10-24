@@ -75,6 +75,7 @@ class CollaborateursModel extends Equatable {
       "lastname": _lastName,
       "email": _email,
       "password": "password",
+      "status": _status,
       "role_id": _roleId,
       "role_name": _roleName, // ajoute au json
     };

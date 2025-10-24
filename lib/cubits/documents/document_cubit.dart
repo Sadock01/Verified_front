@@ -3,6 +3,7 @@ import 'dart:developer';
 import 'package:doc_authentificator/cubits/documents/document_state.dart';
 import 'package:doc_authentificator/models/documents_model.dart';
 import 'package:doc_authentificator/repositories/document_repository.dart';
+import 'package:doc_authentificator/services/document_service.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class DocumentCubit extends Cubit<DocumentState> {
@@ -67,14 +68,25 @@ class DocumentCubit extends Cubit<DocumentState> {
       final response = await documentRepository.addDocuments(documentsList);
 
       if (response['status_code'] == 200) {
+        // Télécharger automatiquement le rapport CSV si disponible
+        if (response['csv_recap'] != null && response['csv_recap'].toString().isNotEmpty) {
+          try {
+            await DocumentService.downloadCsvReport(response['csv_recap']);
+            log("Rapport CSV téléchargé automatiquement");
+          } catch (e) {
+            log("Erreur lors du téléchargement du rapport CSV: $e");
+            // Ne pas faire échouer l'opération principale si le téléchargement échoue
+          }
+        }
+        
         emit(state.copyWith(
           documentStatus: DocumentStatus.sucess,
-          errorMessage: response['message'] ?? 'Documents ajoutés.',
+          errorMessage: response['message'] ?? 'Documents ajoutés et rapport téléchargé.',
         ));
       } else {
         emit(state.copyWith(
           documentStatus: DocumentStatus.error,
-          errorMessage: response['message'] ?? 'Erreur lors de l’ajout.',
+          errorMessage: response['message'] ?? "Erreur lors de l'ajout.",
         ));
       }
     } catch (e) {

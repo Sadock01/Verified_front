@@ -51,7 +51,7 @@ class TypeWidget extends StatelessWidget {
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-               TextButton(      onPressed: onEdit, child: Text("Edit",style: Theme.of(context).textTheme.labelSmall!.copyWith(
+               TextButton(      onPressed: onEdit, child: Text("Modifier",style: Theme.of(context).textTheme.labelSmall!.copyWith(
                  fontSize: 12,
                  color: Colors.grey,
                ),)),

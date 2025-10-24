@@ -81,7 +81,7 @@ class CollaborateurService {
       final token = await SharedPreferencesUtils.getString('auth_token');
 
       final response = await api.get(
-        'me', // adapte l’URL ici
+        'me', // adapte l'URL ici
         options: Options(
           headers: {
             'Authorization': 'Bearer $token',
@@ -108,6 +108,35 @@ class CollaborateurService {
     } catch (e) {
       log('Erreur fetchAccountDetails: $e');
       throw Exception('Erreur réseau: ${e}');
+    }
+  }
+
+  static Future<Map<String, dynamic>> updateCollaborateurStatus(int collaborateurId, bool newStatus) async {
+    try {
+      final token = await SharedPreferencesUtils.getString('auth_token');
+      api.options.headers['AUTHORIZATION'] = 'Bearer $token';
+      
+      log("Mise à jour du statut du collaborateur $collaborateurId vers $newStatus");
+      
+      final response = await api.put(
+        "users/status/$collaborateurId", 
+        data: {
+          'status': newStatus,
+        }
+      );
+      
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        log("Statut mis à jour avec succès: ${response.data['message']}");
+        return {
+          'status_code': response.data['status_code'],
+          'message': response.data['message'],
+        };
+      } else {
+        throw Exception("Échec lors de la mise à jour du statut");
+      }
+    } catch (e) {
+      log('Erreur updateCollaborateurStatus: $e');
+      throw Exception('Erreur lors de la mise à jour du statut: $e');
     }
   }
 }

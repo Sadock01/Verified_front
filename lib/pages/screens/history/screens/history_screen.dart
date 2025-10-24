@@ -81,7 +81,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
                   ] else if (state.verificationStatus == VerificationStatus.loaded)
                     Expanded(
                       child: Container(
-                        padding: EdgeInsets.all(8),
+                        padding: EdgeInsets.all(5),
                         margin: EdgeInsets.only(left: 10, right: 10, top: 10, bottom: 20),
                         decoration: BoxDecoration(
                           color: theme.cardColor,

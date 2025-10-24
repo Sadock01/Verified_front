@@ -89,4 +89,26 @@ class CollaborateurRepository {
       };
     }
   }
+
+  Future<Map<String, dynamic>> updateCollaborateurStatus(int collaborateurId, bool newStatus) async {
+    try {
+      log("Appel au service pour mettre à jour le statut du collaborateur $collaborateurId");
+      final response = await CollaborateurService.updateCollaborateurStatus(collaborateurId, newStatus);
+      if (response['status_code'] == 200) {
+        log("Statut mis à jour avec succès: ${response['message']}");
+        return {
+          'status_code': response['status_code'],
+          'message': response['message'],
+        };
+      } else {
+        return {
+          'status_code': response['status_code'],
+          'message': response['message'],
+        };
+      }
+    } catch (e) {
+      log("Erreur dans CollaborateurRepository: $e");
+      throw Exception("Erreur lors de la mise à jour du statut du collaborateur");
+    }
+  }
 }

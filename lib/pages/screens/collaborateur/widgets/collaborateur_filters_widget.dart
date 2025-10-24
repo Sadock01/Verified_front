@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:doc_authentificator/utils/app_colors.dart';
+import 'package:doc_authentificator/widgets/inline_date_range_picker.dart';
 
 class CollaborateurFiltersWidget extends StatelessWidget {
   const CollaborateurFiltersWidget({Key? key}) : super(key: key);
@@ -7,12 +8,11 @@ class CollaborateurFiltersWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 180,
       margin: const EdgeInsets.only(left: 10, right: 10, top: 10),
       padding: const EdgeInsets.all(10),
       decoration: BoxDecoration(
         color: Theme.of(context).cardColor,
-        borderRadius: BorderRadius.circular(10),
+        borderRadius: BorderRadius.circular(4),
         boxShadow: [
           BoxShadow(
             color: Colors.grey.withOpacity(0.2),
@@ -22,103 +22,81 @@ class CollaborateurFiltersWidget extends StatelessWidget {
           ),
         ],
       ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // Titre des filtres
-          Row(
-            children: [
-              Image.asset(
-                'assets/images/filtre.png',
-                width: 20,
-                height: 20,
-                color: Colors.grey[600],
-              ),
-              const SizedBox(width: 8),
-              Text(
-                "Filtres des collaborateurs",
-                style: Theme.of(context).textTheme.labelMedium?.copyWith(
-                  fontWeight: FontWeight.bold,
-                  color: Colors.grey[800],
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 10),
+      child: LayoutBuilder(
+        builder: (context, constraints) {
+          final isSmallScreen = constraints.maxWidth < 800;
           
-          // Filtres en ligne
-          Expanded(
-            child: Column(
+          if (isSmallScreen) {
+            // Layout vertical pour petits écrans
+            return Column(
               children: [
-                Row(
-                  children: [
-                    // Filtre par statut
-                    Expanded(
-                      flex:2,
-                      child: _buildStatusFilter(context),
-                    ),
-                    const SizedBox(width: 10),
+                _buildStatusFilter(context),
+                const SizedBox(height: 10),
+                _buildRoleFilter(context),
+                const SizedBox(height: 10),
+                _buildDateFilter(context),
+                const SizedBox(height: 10),
+                _buildFilterButton(context),
+              ],
+            );
+          } else {
+            // Layout horizontal pour grands écrans
+            return Row(
+              children: [
+                Expanded(flex: 2, child: _buildStatusFilter(context)),
+                const SizedBox(width: 10),
+                Expanded(flex: 2, child: _buildRoleFilter(context)),
+                const SizedBox(width: 10),
+                Expanded(flex: 2, child: _buildDateFilter(context)),
+                const SizedBox(width: 10),
+                Expanded(flex: 2, child: _buildFilterButton(context)),
+              ],
+            );
+          }
+        },
+      ),
+    );
+  }
 
-
-                    Expanded(
-                      flex:2,
-                      child: _buildRoleFilter(context),
-                    ),
-
-
-
-
-
-                  ],
+  Widget _buildFilterButton(BuildContext context) {
+    return Column(
+      children: [
+        const SizedBox(height: 20),
+        SizedBox(
+          width: double.infinity,
+          child: ElevatedButton(
+            onPressed: () {
+              // TODO: Appliquer les filtres
+              print('Filtres appliqués');
+            },
+            style: ElevatedButton.styleFrom(
+              backgroundColor: AppColors.PRIMARY_BLUE_COLOR,
+              padding: const EdgeInsets.symmetric(vertical: 16),
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)),
+            ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Image.asset(
+                  'assets/images/filtre.png',
+                  width: 22,
+                  height: 22,
+                  color: Colors.grey[300],
                 ),
-               Row(children: [ Expanded(
-                 flex: 2,
-                 child: _buildDateFilter(context),
-               ),
-                 const SizedBox(width: 20),
-                 Expanded(
-                   flex: 2,
-                   child: Column(
-                     children: [
-                       SizedBox(height: 20),
-                       ElevatedButton(
-                         onPressed: () {
-                           // TODO: Appliquer les filtres
-                           print('Filtres appliqués');
-                         },
-                         style: ElevatedButton.styleFrom(
-                           backgroundColor: AppColors.PRIMARY_BLUE_COLOR,
-                           padding: const EdgeInsets.symmetric(vertical: 16),
-                           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)),
-                         ),
-                         child: Row(
-                           mainAxisAlignment: MainAxisAlignment.center,
-                           children: [
-                             Image.asset(
-                               'assets/images/filtre.png',
-                               width: 22,
-                               height: 22,
-                               color: Colors.grey[300],
-                             ),
-                             const SizedBox(width: 8),
-                             Text(
-                               "Filtrer",
-                               style: Theme.of(context).textTheme.labelSmall!.copyWith(
-                                 fontSize: 18,
-                                 color: Colors.white,
-                               ),
-                             ),
-                           ],
-                         ),
-                       ),
-                     ],
-                   ),
-                 ),],)
+                const SizedBox(width: 8),
+                Text(
+                  "Filtrer",
+                  style: Theme.of(context).textTheme.labelSmall!.copyWith(
+                    fontSize: 18,
+                    color: Colors.white,
+                  ),
+                ),
               ],
             ),
           ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 
@@ -219,27 +197,11 @@ class CollaborateurFiltersWidget extends StatelessWidget {
           style: Theme.of(context).textTheme.labelSmall?.copyWith(fontWeight: FontWeight.bold),
         ),
         const SizedBox(height: 4),
-        InkWell(
-          onTap: () {
-            _showDatePicker(context);
+        InlineDateRangePicker(
+          onDateRangeChanged: (startDate, endDate) {
+            // TODO: Appliquer le filtre de date
+            print('Période sélectionnée: $startDate - $endDate');
           },
-          child: Container(
-            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-            decoration: BoxDecoration(
-              border: Border.all(color: Colors.grey[300]!),
-              borderRadius: BorderRadius.circular(5),
-            ),
-            child: Row(
-              children: [
-                const Icon(Icons.calendar_today, size: 16),
-                const SizedBox(width: 8),
-                Text(
-                  "Sélectionner la période",
-                  style: Theme.of(context).textTheme.labelSmall,
-                ),
-              ],
-            ),
-          ),
         ),
       ],
     );

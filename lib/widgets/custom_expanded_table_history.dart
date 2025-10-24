@@ -23,7 +23,7 @@ class CustomExpandedTableHistory extends StatelessWidget {
       "Identifiant",
       "Statut",
       "Date",
-      "Actions",
+      "",
     ];
 
     // Calcul de la largeur des colonnes
@@ -33,7 +33,7 @@ class CustomExpandedTableHistory extends StatelessWidget {
       width: screenWidth,
       decoration: BoxDecoration(
         border: Border.all(color: Colors.grey[300]!),
-        borderRadius: BorderRadius.circular(8),
+        borderRadius: BorderRadius.circular(5),
       ),
       child: Column(
         children: [

@@ -18,6 +18,7 @@ class ExtractedExcelDataSummary extends StatefulWidget {
 
 class _ExtractedExcelDataSummaryState extends State<ExtractedExcelDataSummary> {
   late List<Map<String, dynamic>> editableDocs;
+  bool isEditing = false;
 
   @override
   void initState() {
@@ -35,6 +36,65 @@ class _ExtractedExcelDataSummaryState extends State<ExtractedExcelDataSummary> {
     setState(() {
       editableDocs[index]['entities'][key] = newValue;
     });
+  }
+
+  void toggleEditMode() {
+    setState(() {
+      isEditing = !isEditing;
+    });
+  }
+
+  Widget _buildTableHeader(String text, ThemeData theme) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+      child: Text(
+        text,
+        style: theme.textTheme.displaySmall,
+        textAlign: TextAlign.center,
+      ),
+    );
+  }
+
+  Widget _buildTableCell(String value, int index, String key, ThemeData theme) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+      child: isEditing
+          ? TextFormField(
+              initialValue: value,
+              onChanged: (val) => updateEntity(index, key, val),
+              style: theme.textTheme.labelSmall?.copyWith(fontSize: 12),
+              decoration: InputDecoration(
+                hintText: key == 'date_information' ? 'YYYY-MM-DD' : '',
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(6),
+                  borderSide: BorderSide(color: theme.colorScheme.outline.withOpacity(0.4)),
+                ),
+                enabledBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(6),
+                  borderSide: BorderSide(color: theme.colorScheme.outline.withOpacity(0.3)),
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(6),
+                  borderSide: BorderSide(color: theme.colorScheme.primary, width: 2),
+                ),
+                contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                filled: true,
+                fillColor: theme.colorScheme.surface,
+              ),
+            )
+          : Center(
+              child: Text(
+                value.isEmpty ? '-' : value,
+                style: theme.textTheme.labelSmall?.copyWith(
+                  fontSize: 12,
+                  color: value.isEmpty ? theme.colorScheme.onSurface.withOpacity(0.5) : null,
+                ),
+                textAlign: TextAlign.center,
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
+              ),
+            ),
+    );
   }
 
   @override
@@ -73,74 +133,99 @@ class _ExtractedExcelDataSummaryState extends State<ExtractedExcelDataSummary> {
                 style: theme.textTheme.displaySmall,
               ),
             ),
-            const SizedBox(height: 30),
-            Text(
-              "Tableau des documents extraits",
-              style: theme.textTheme.labelMedium?.copyWith(fontWeight: FontWeight.bold),
-            ),
             const SizedBox(height: 20),
-            Expanded(
-              child: SingleChildScrollView(
-
-                scrollDirection: Axis.horizontal,
-                child: SizedBox(
-                  width: MediaQuery.of(context).size.width,
-                  child: DataTable(
-                    columnSpacing: 20,
-                              dataRowHeight: 60,
-                    columns: const [
-                      DataColumn(label: Text("ID")),
-                      DataColumn(label: Text("Type")),
-                      DataColumn(label: Text("Description")),
-                      DataColumn(label: Text("Bénéficiaire")),
-                      DataColumn(label: Text("Date d'information")),
-                    ],
-                    rows: List.generate(editableDocs.length, (index) {
-                      final entity = editableDocs[index]['entities'] ?? {};
-
-                      return DataRow(
-                        cells: [
-                          DataCell(
-
-                            TextFormField(
-                              style: Theme.of(context).textTheme.labelSmall,
-                              initialValue: entity['identifier'] ?? '',
-                              onChanged: (val) => updateEntity(index, 'identifier', val),
-                            ),
-                          ),
-                          DataCell(
-                            TextFormField(
-                              style: Theme.of(context).textTheme.labelSmall,
-                              initialValue: entity['type_document'] ?? '',
-                              onChanged: (val) => updateEntity(index, 'type_document', val),
-                            ),
-                          ),
-                          DataCell(
-                            TextFormField(
-                              style: Theme.of(context).textTheme.labelSmall,
-                              initialValue: entity['description'] ?? '',
-                              onChanged: (val) => updateEntity(index, 'description', val),
-                            ),
-                          ),
-                          DataCell(
-                            TextFormField(
-                              style: Theme.of(context).textTheme.labelSmall,
-                              initialValue: entity['beneficiaire'] ?? '',
-                              onChanged: (val) => updateEntity(index, 'beneficiaire', val),
-                            ),
-                          ),
-                          DataCell(
-                            TextFormField(
-                              style: Theme.of(context).textTheme.labelSmall,
-                              initialValue: entity['date_information'] ?? '',
-                              onChanged: (val) => updateEntity(index, 'date_information', val),
-                              decoration: const InputDecoration(hintText: 'YYYY-MM-DD'),
-                            ),
-                          ),
-                        ],
-                      );
-                    }),
+            
+            // En-tête avec bouton de modification
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  "Documents extraits (${editableDocs.length})",
+                  style: theme.textTheme.labelMedium?.copyWith(
+                    fontWeight: FontWeight.bold,
+                    color: theme.colorScheme.primary,
                   ),
+                ),
+                ElevatedButton.icon(
+                  onPressed: toggleEditMode,
+                  icon: Icon(isEditing ? Icons.visibility : Icons.edit),
+                  label: Text(isEditing ? "Mode lecture" : "Modifier"),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: isEditing ? Colors.orange : theme.colorScheme.primary,
+                    foregroundColor: Colors.white,
+                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                  ),
+                ),
+              ],
+            ),
+            
+            const SizedBox(height: 16),
+            
+            // Tableau style CustomExpandedTable
+            Expanded(
+              child: Container(
+                decoration: BoxDecoration(
+                  border: Border.all(color: theme.colorScheme.outline.withOpacity(0.3)),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Column(
+                  children: [
+                    // En-tête du tableau
+                    Container(
+                      height: 50,
+                      decoration: BoxDecoration(
+                        color: Colors.grey.withOpacity(0.1),
+                        borderRadius: const BorderRadius.only(
+                          topLeft: Radius.circular(5),
+                          topRight: Radius.circular(5),
+                        ),
+                      ),
+                      child: Row(
+                        children: [
+                          Expanded(flex: 2, child: _buildTableHeader("ID", theme)),
+                          Container(width: 1, height: 50, color: theme.colorScheme.outline.withOpacity(0.3)),
+                          Expanded(flex: 2, child: _buildTableHeader("Type", theme)),
+                          Container(width: 1, height: 50, color: theme.colorScheme.outline.withOpacity(0.3)),
+                          Expanded(flex: 3, child: _buildTableHeader("Description", theme)),
+                          Container(width: 1, height: 50, color: theme.colorScheme.outline.withOpacity(0.3)),
+                          Expanded(flex: 2, child: _buildTableHeader("Bénéficiaire", theme)),
+                          Container(width: 1, height: 50, color: theme.colorScheme.outline.withOpacity(0.3)),
+                          Expanded(flex: 2, child: _buildTableHeader("Date", theme)),
+                        ],
+                      ),
+                    ),
+                    
+                    // Corps du tableau
+                    Expanded(
+                      child: ListView.builder(
+                        itemCount: editableDocs.length,
+                        itemBuilder: (context, index) {
+                          final entity = editableDocs[index]['entities'] ?? {};
+                          final isEven = index % 2 == 0;
+                          
+                          return Container(
+                            height: 60,
+                            decoration: BoxDecoration(
+                              color: isEven ? Colors.transparent : theme.colorScheme.surface.withOpacity(0.3),
+                            ),
+                            child: Row(
+                              children: [
+                                Expanded(flex: 2, child: _buildTableCell(entity['identifier'] ?? '', index, 'identifier', theme)),
+                                Container(width: 1, height: 60, color: theme.colorScheme.outline.withOpacity(0.2)),
+                                Expanded(flex: 2, child: _buildTableCell(entity['type_document'] ?? '', index, 'type_document', theme)),
+                                Container(width: 1, height: 60, color: theme.colorScheme.outline.withOpacity(0.2)),
+                                Expanded(flex: 3, child: _buildTableCell(entity['description'] ?? '', index, 'description', theme)),
+                                Container(width: 1, height: 60, color: theme.colorScheme.outline.withOpacity(0.2)),
+                                Expanded(flex: 2, child: _buildTableCell(entity['beneficiaire'] ?? '', index, 'beneficiaire', theme)),
+                                Container(width: 1, height: 60, color: theme.colorScheme.outline.withOpacity(0.2)),
+                                Expanded(flex: 2, child: _buildTableCell(entity['date_information'] ?? '', index, 'date_information', theme)),
+                              ],
+                            ),
+                          );
+                        },
+                      ),
+                    ),
+                  ],
                 ),
               ),
             ),

@@ -112,4 +112,42 @@ class CollaborateursCubit extends Cubit<CollaborateursState> {
       getAllCollaborateur(prevPage);
     }
   }
+
+  Future<void> updateCollaborateurStatus(int collaborateurId, bool newStatus) async {
+    try {
+      emit(state.copyWith(collaborateurStatus: CollaborateurStatus.loading, errorMessage: ""));
+      final response = await collaborateurRepository.updateCollaborateurStatus(collaborateurId, newStatus);
+      log("Status update response: ${response['status_code']}");
+      if (response['status_code'] == 200) {
+        // Mettre à jour la liste locale
+        final updatedList = state.listCollaborateurs.map((collaborateur) {
+          if (collaborateur.id == collaborateurId) {
+            return CollaborateursModel(
+              id: collaborateur.id,
+              firstName: collaborateur.firstName,
+              lastName: collaborateur.lastName,
+              email: collaborateur.email,
+              status: newStatus,
+              roleId: collaborateur.roleId,
+              roleName: collaborateur.roleName,
+            );
+          }
+          return collaborateur;
+        }).toList();
+        
+        emit(state.copyWith(
+          collaborateurStatus: CollaborateurStatus.success,
+          listCollaborateurs: updatedList,
+          errorMessage: response['message'],
+        ));
+      } else {
+        emit(state.copyWith(
+          collaborateurStatus: CollaborateurStatus.error,
+          errorMessage: response['message'],
+        ));
+      }
+    } catch (e) {
+      emit(state.copyWith(errorMessage: e.toString(), collaborateurStatus: CollaborateurStatus.error));
+    }
+  }
 }

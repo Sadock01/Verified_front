@@ -18,6 +18,8 @@ import '../../../../utils/shared_preferences_utils.dart';
 import '../../../../widgets/app_bar_drawer_widget.dart';
 import '../../../../widgets/custom_expanded_table.dart';
 import '../../../../widgets/new_drawer_dashboard.dart';
+import '../../../../widgets/responsive_action_buttons.dart';
+import '../../../../widgets/inline_date_range_picker.dart';
 import '../widgets/documents_tab_widget.dart';
 import '../widgets/month_filter_widget.dart';
 import '../widgets/search_widget.dart';
@@ -50,6 +52,18 @@ class _ListDocumentScreenState extends State<ListDocumentScreen> {
     super.dispose();
   }
 
+  void _showDatePicker(BuildContext context) {
+    showDateRangePicker(
+      context: context,
+      firstDate: DateTime(2020),
+      lastDate: DateTime.now(),
+    ).then((dateRange) {
+      if (dateRange != null) {
+        // TODO: Appliquer le filtre de date
+        print('Période sélectionnée: ${dateRange.start} - ${dateRange.end}');
+      }
+    });
+  }
   String? _selectedMonth;
   void handleMonthSelection(String monthValue) {
     setState(() {
@@ -93,7 +107,7 @@ class _ListDocumentScreenState extends State<ListDocumentScreen> {
                       }
                     },
                   ),
-                  Container(height: 180, padding: EdgeInsets.all(15),
+                  Container( padding: EdgeInsets.all(10),
                     margin: EdgeInsets.only(left: 10, right: 10, top: 10, bottom: 20),
                     decoration: BoxDecoration(
                       color: theme.cardColor,
@@ -128,18 +142,18 @@ class _ListDocumentScreenState extends State<ListDocumentScreen> {
                               },
                             ),
                           ),SizedBox(width: 10,),
-                          Expanded(flex: 2,child: SearchFieldWidget()),
-
-                        ],
-                      ),SizedBox(height: 10),
-                      Row(
-                        children: [
-                          Expanded(
-                            flex: 2,
-                            child: MonthFilterDropdown(onMonthSelected: handleMonthSelection),
-                          ),SizedBox(width: 10,),
+                          Expanded(flex: 2,child: SearchFieldWidget()),SizedBox(width: 10,),
+                           Expanded(
+                             flex: 2,
+                             child: InlineDateRangePicker(
+                               onDateRangeChanged: (startDate, endDate) {
+                                 // TODO: Appliquer le filtre de date
+                                 print('Période sélectionnée: $startDate - $endDate');
+                               },
+                             ),
+                           ),SizedBox(width: 10,),
                           Expanded(flex: 2,child:ElevatedButton(
-                           onPressed: (){},
+                            onPressed: (){},
                             style: ElevatedButton.styleFrom(
                               backgroundColor: AppColors.PRIMARY_BLUE_COLOR,
                               padding: EdgeInsets.symmetric(vertical: 16),
@@ -148,7 +162,7 @@ class _ListDocumentScreenState extends State<ListDocumentScreen> {
                             child:  Row(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
-                               Image.asset('assets/images/filtre.png',width:22,height:22,color: Colors.grey[300],),
+                                Image.asset('assets/images/filtre.png',width:22,height:22,color: Colors.grey[300],),
                                 Text(
                                   "Filtrer",
                                   style: Theme.of(context).textTheme.labelSmall!.copyWith(fontSize: 18, color: Colors.white),
@@ -156,9 +170,9 @@ class _ListDocumentScreenState extends State<ListDocumentScreen> {
                               ],
                             ),
                           ),),
-
                         ],
                       ),
+
                     ],),),
                   Expanded(
                     child: Container(
@@ -196,43 +210,13 @@ class _ListDocumentScreenState extends State<ListDocumentScreen> {
                                   ),
                                 ],
                               ),
-                              Spacer(),
-                              InkWell(
-                                onTap: () {
-                                  context.go('/document/nouveau-document');
+                              const Spacer(),
+                              ResponsiveActionButtons(
+                                newDocumentRoute: '/document/nouveau-document',
+                                onReload: () {
+                                  // TODO: Implémenter le reload
+                                  print('Reload documents');
                                 },
-                                child: Container(
-                                  padding: const EdgeInsets.all(10),
-                                  decoration: BoxDecoration(border: Border.all(color: Colors.grey[200]!), borderRadius: BorderRadius.circular(5)),
-                                  child: Row(
-                                    children: [
-                                      Icon(
-                                        Icons.add,
-                                        size: 18,
-                                      ),
-                                      Text(
-                                        "Nouveau document",
-                                        style: Theme.of(context).textTheme.displaySmall!.copyWith(fontWeight: FontWeight.bold),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ),
-                              SizedBox(
-                                width: 10,
-                              ),
-
-
-                              Container(
-                                padding: const EdgeInsets.all(10),
-                                decoration: BoxDecoration(border: Border.all(color: Colors.grey[200]!), borderRadius: BorderRadius.circular(5)),
-                                child: Row(
-                                  children: [
-                                    Image.asset('assets/images/reload.png', width: 18, height: 18, color: Colors.grey[300]),
-                                    const SizedBox(width: 10),
-                                    Text('Reload', style: Theme.of(context).textTheme.labelSmall!.copyWith(fontWeight: FontWeight.bold)),
-                                  ],
-                                ),
                               ),
                             ],
                           ),

@@ -57,6 +57,7 @@ class DocumentRepository {
       return {
         'status_code': 200,
         'message': 'Documents ajoutés avec succès',
+        'csv_recap': response['csv_recap'], // Passer l'URL du CSV
       };
     } catch (e) {
       return {

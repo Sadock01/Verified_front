@@ -5,6 +5,10 @@ import 'package:doc_authentificator/const/api_const.dart';
 import 'package:doc_authentificator/models/documents_model.dart';
 import 'package:http_parser/http_parser.dart';
 import 'dart:typed_data';
+import 'package:path_provider/path_provider.dart';
+import 'dart:io';
+import 'package:flutter/foundation.dart';
+import 'dart:html' as html;
 
 import '../utils/shared_preferences_utils.dart';
 
@@ -88,6 +92,7 @@ class DocumentService {
         return {
           'success': response.data['success'] ?? [],
           'failed': response.data['failed'] ?? [],
+          'csv_recap': response.data['csv_recap'], // URL du rapport CSV
         };
       } else {
         log("Erreur HTTP ${response.statusCode}");
@@ -297,6 +302,93 @@ class DocumentService {
     } catch (e) {
       log("Erreur lors de la suppression: $e");
       throw Exception("Erreur lors de la suppression du document: $e");
+    }
+  }
+
+  // Méthode pour télécharger automatiquement le rapport CSV
+  static Future<void> downloadCsvReport(String csvUrl) async {
+    try {
+      log("Téléchargement du rapport CSV depuis: $csvUrl");
+      
+      if (kIsWeb) {
+        // Pour le web, utiliser une approche directe avec le navigateur
+        await _downloadCsvWebDirect(csvUrl);
+      } else {
+        // Pour mobile/desktop, télécharger avec Dio
+        await _downloadCsvMobile(csvUrl);
+      }
+      
+    } catch (e) {
+      log("Erreur lors du téléchargement du rapport CSV: $e");
+      throw Exception("Erreur lors du téléchargement du rapport: $e");
+    }
+  }
+
+  static Future<void> _downloadCsvWebDirect(String csvUrl) async {
+    try {
+      // Pour le web, créer un lien de téléchargement avec un nom de fichier
+      final anchor = html.AnchorElement(href: csvUrl)
+        ..setAttribute("download", "rapport_documents.csv")
+        ..setAttribute("target", "_blank")
+        ..click();
+      
+      log("Rapport CSV téléchargé via lien direct (web)");
+    } catch (e) {
+      // Fallback: ouvrir dans un nouvel onglet si le téléchargement direct échoue
+      try {
+        html.window.open(csvUrl, '_blank');
+        log("Rapport CSV ouvert dans un nouvel onglet (fallback)");
+      } catch (fallbackError) {
+        throw Exception("Erreur lors du téléchargement web: $e, fallback: $fallbackError");
+      }
+    }
+  }
+
+  static Future<void> _downloadCsvMobile(String csvUrl) async {
+    try {
+      // Pour mobile/desktop, utiliser Dio avec headers spéciaux pour ngrok
+      final Dio downloadDio = Dio();
+      
+      // Headers pour contourner les restrictions ngrok
+      downloadDio.options.headers.addAll({
+        'ngrok-skip-browser-warning': 'true',
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36',
+        'Accept': 'text/csv,application/csv,*/*',
+        'Accept-Language': 'en-US,en;q=0.9',
+        'Cache-Control': 'no-cache',
+        'Pragma': 'no-cache',
+      });
+      
+      final response = await downloadDio.get(
+        csvUrl,
+        options: Options(
+          responseType: ResponseType.bytes,
+          followRedirects: true,
+          validateStatus: (status) => status! < 500, // Accepter les redirections
+        ),
+      );
+      
+      if (response.statusCode == 403) {
+        throw Exception("Accès refusé (403) - Vérifiez que l'URL ngrok est accessible");
+      }
+      
+      final Uint8List bytes = Uint8List.fromList(response.data);
+      
+      // Obtenir le répertoire de téléchargement
+      final Directory? downloadsDir = await getDownloadsDirectory();
+      if (downloadsDir == null) {
+        throw Exception("Impossible d'accéder au répertoire de téléchargement");
+      }
+      
+      // Créer le fichier
+      final String uniqueFileName = 'rapport_documents_${DateTime.now().millisecondsSinceEpoch}.csv';
+      final File file = File('${downloadsDir.path}/$uniqueFileName');
+      await file.writeAsBytes(bytes);
+      
+      log("Rapport CSV téléchargé avec succès (mobile): ${file.path}");
+    } catch (e) {
+      log("Erreur détaillée du téléchargement mobile: $e");
+      throw Exception("Erreur lors du téléchargement mobile: $e");
     }
   }
 

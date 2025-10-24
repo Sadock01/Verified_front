@@ -74,7 +74,7 @@ class _RapportsScreenState extends State<RapportsScreen> {
                       margin: EdgeInsets.only(left: 10, right: 10, top: 10, bottom: 20),
                       decoration: BoxDecoration(
                         color: theme.cardColor,
-                        borderRadius: BorderRadius.circular(10),
+                        borderRadius: BorderRadius.circular(4),
                         boxShadow: [
                           isLight
                               ? BoxShadow(
@@ -89,6 +89,7 @@ class _RapportsScreenState extends State<RapportsScreen> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
+                          // Titre et description
                           Row(
                             children: [
                               Column(
@@ -107,8 +108,9 @@ class _RapportsScreenState extends State<RapportsScreen> {
                             ],
                           ),
                           SizedBox(height: 12),
+                          
+                          // Contenu principal
                           Expanded(
-                            flex: 5,
                             child: state.listReports.isEmpty
                                 ? SingleChildScrollView(
                                     child: Center(
@@ -171,8 +173,10 @@ class _RapportsScreenState extends State<RapportsScreen> {
                                     ),
                                   ),
                           ),
-                          Spacer(),
-                          if (state.listReports.isNotEmpty)
+                          
+                          // Pagination
+                          if (state.listReports.isNotEmpty) ...[
+                            SizedBox(height: 16),
                             Row(
                               children: [
                                 ItemsPerPageSelector(state: state),
@@ -180,6 +184,7 @@ class _RapportsScreenState extends State<RapportsScreen> {
                                 SmartPaginationWidget(state: state),
                               ],
                             ),
+                          ],
                         ],
                       ),
                     ),

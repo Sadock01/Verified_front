@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
 import '../cubits/collaborateurs/collaborateurs_state.dart';
+import '../cubits/collaborateurs/collaborateurs_cubit.dart';
+import '../widgets/status_toggle_widget.dart';
+import '../widgets/change_status_dialog.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 class CustomExpandedTableCollaborateurs extends StatelessWidget {
   final CollaborateursState state;
@@ -169,63 +173,43 @@ class CustomExpandedTableCollaborateurs extends StatelessWidget {
                             textAlign: TextAlign.center,
                           ),
                         ),
-                        const SizedBox(height: 4),
-                        Text(
-                          "Niveau: ${_getRoleLevel(collaborateur.roleName)}",
-                          style: theme.textTheme.labelSmall?.copyWith(
-                            color: Colors.grey[600],
-                            fontSize: 9,
-                          ),
-                        ),
+                        // const SizedBox(height: 4),
+                        // Text(
+                        //   "Niveau: ${_getRoleLevel(collaborateur.roleName)}",
+                        //   style: theme.textTheme.labelSmall?.copyWith(
+                        //     color: Colors.grey[600],
+                        //     fontSize: 9,
+                        //   ),
+                        // ),
                       ],
                     ),
                   ),
                   
-                  // Statut
+                  // Statut avec toggle interactif
                   Container(
                     width: columnWidth,
                     padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 12),
                     decoration: BoxDecoration(),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                          decoration: BoxDecoration(
-                            color: (collaborateur.status == true) ? Colors.green : Colors.red,
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                          child: Text(
-                            (collaborateur.status == true) ? "Actif" : "Inactif",
-                            style: theme.textTheme.labelSmall?.copyWith(
-                              color: Colors.white,
-                              fontWeight: FontWeight.bold,
-                              fontSize: 10,
-                            ),
-                            textAlign: TextAlign.center,
-                          ),
-                        ),
-                        const SizedBox(height: 4),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Icon(
-                              (collaborateur.status == true) ? Icons.check_circle : Icons.cancel,
-                              size: 12,
-                              color: (collaborateur.status == true) ? Colors.green : Colors.red,
-                            ),
-                            const SizedBox(width: 4),
-                            Text(
-                              (collaborateur.status == true) ? "En ligne" : "Hors ligne",
-                              style: theme.textTheme.labelSmall?.copyWith(
-                                color: (collaborateur.status == true) ? Colors.green : Colors.red,
-                                fontSize: 9,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ],
+                    child: Center(
+                      child: AnimatedStatusToggleWidget(
+                        isActive: collaborateur.status ?? false,
+                        onChanged: (newStatus) {
+                          showChangeStatusDialog(
+                            context: context,
+                            collaborateurName: "${collaborateur.firstName} ${collaborateur.lastName}",
+                            currentStatus: collaborateur.status ?? false,
+                            onStatusChanged: (status) {
+                              // TODO: Appeler le cubit pour changer le statut
+                              context.read<CollaborateursCubit>().updateCollaborateurStatus(
+                                collaborateur.id!, 
+                                status
+                              );
+                            },
+                          );
+                        },
+                        activeText: "Actif",
+                        inactiveText: "Inactif",
+                      ),
                     ),
                   ),
                   
@@ -358,20 +342,20 @@ class CustomExpandedTableCollaborateurs extends StatelessWidget {
     }
   }
 
-  String _getRoleLevel(String? roleName) {
-    switch (roleName?.toLowerCase()) {
-      case 'admin':
-      case 'administrateur':
-        return '5';
-      case 'modérateur':
-        return '4';
-      case 'utilisateur':
-        return '3';
-      case 'invité':
-        return '1';
-      default:
-        return '0';
-    }
-  }
+  // String _getRoleLevel(String? roleName) {
+  //   switch (roleName?.toLowerCase()) {
+  //     case 'admin':
+  //     case 'administrateur':
+  //       return '5';
+  //     case 'modérateur':
+  //       return '4';
+  //     case 'utilisateur':
+  //       return '3';
+  //     case 'invité':
+  //       return '1';
+  //     default:
+  //       return '0';
+  //   }
+  // }
 
 }

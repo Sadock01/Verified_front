@@ -4,7 +4,11 @@ import 'package:doc_authentificator/pages/screens/document/widgets/excel_drop_zo
 import 'package:elegant_notification/elegant_notification.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
-import 'package:url_launcher/url_launcher.dart';
+import 'package:flutter/services.dart';
+import 'package:path_provider/path_provider.dart';
+import 'dart:io';
+import 'package:flutter/foundation.dart';
+import 'dart:html' as html;
 
 import '../../../../services/document_service.dart';
 
@@ -29,6 +33,78 @@ class _UploadExcelWidgetState extends State<UploadExcelWidget> {
 
   Map<String, dynamic>? extractedEntities;
   bool _isUploading = false;
+
+  Future<void> _downloadExampleExcel() async {
+    try {
+      // Charger le fichier depuis les assets
+      final ByteData data = await rootBundle.load('assets/fichiers/exemple_import.xlsx');
+      final Uint8List bytes = data.buffer.asUint8List();
+      
+      if (kIsWeb) {
+        // Pour le web, utiliser le téléchargement via le navigateur
+        await _downloadFileWeb(bytes, 'exemple_import.xlsx');
+      } else {
+        // Pour mobile/desktop, utiliser path_provider
+        await _downloadFileMobile(bytes, 'exemple_import.xlsx');
+      }
+      
+    } catch (e) {
+      log("Erreur lors du téléchargement : ${e.toString()}");
+      ElegantNotification.error(
+        description: Text(
+          "Erreur lors du téléchargement : ${e.toString()}",
+          style: Theme.of(context).textTheme.labelSmall,
+        ),
+      ).show(context);
+    }
+  }
+
+  Future<void> _downloadFileWeb(Uint8List bytes, String fileName) async {
+    try {
+      // Créer un blob et déclencher le téléchargement
+      final blob = html.Blob([bytes]);
+      final url = html.Url.createObjectUrlFromBlob(blob);
+      final anchor = html.AnchorElement(href: url)
+        ..setAttribute("download", fileName)
+        ..click();
+      html.Url.revokeObjectUrl(url);
+      
+      ElegantNotification.success(
+        title: Text("Téléchargement réussi"),
+        description: Text(
+          "Le fichier d'exemple a été téléchargé",
+          style: Theme.of(context).textTheme.labelSmall,
+        ),
+      ).show(context);
+    } catch (e) {
+      throw Exception("Erreur lors du téléchargement web: $e");
+    }
+  }
+
+  Future<void> _downloadFileMobile(Uint8List bytes, String fileName) async {
+    try {
+      // Obtenir le répertoire de téléchargement
+      final Directory? downloadsDir = await getDownloadsDirectory();
+      if (downloadsDir == null) {
+        throw Exception("Impossible d'accéder au répertoire de téléchargement");
+      }
+      
+      // Créer le fichier
+      final String uniqueFileName = 'exemple_import_${DateTime.now().millisecondsSinceEpoch}.xlsx';
+      final File file = File('${downloadsDir.path}/$uniqueFileName');
+      await file.writeAsBytes(bytes);
+      
+      ElegantNotification.success(
+        title: Text("Téléchargement réussi"),
+        description: Text(
+          "Le fichier d'exemple a été téléchargé dans votre dossier Téléchargements",
+          style: Theme.of(context).textTheme.labelSmall,
+        ),
+      ).show(context);
+    } catch (e) {
+      throw Exception("Erreur lors du téléchargement mobile: $e");
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -82,11 +158,14 @@ class _UploadExcelWidgetState extends State<UploadExcelWidget> {
                     style: theme.textTheme.labelSmall,
                   ),
                   TextButton(
-                    onPressed: () {
-                      const url = 'https://tonsite.com/exemple_import.xlsx';
-                      launchUrl(Uri.parse(url), mode: LaunchMode.externalApplication);
-                    },
-                    child:  Text("Cliquez ici",style: theme.textTheme.labelSmall!.copyWith(color: Colors.orange,),),
+                    onPressed: _downloadExampleExcel,
+                    child: Text(
+                      "Cliquez ici",
+                      style: theme.textTheme.labelSmall!.copyWith(
+                        color: Colors.orange,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
                   ),
                 ],
               ),

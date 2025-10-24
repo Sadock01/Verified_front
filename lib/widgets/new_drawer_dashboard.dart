@@ -152,7 +152,7 @@ class _NewDrawerDashboardState extends State<NewDrawerDashboard> {
                       ),
                       SizedBox(width: 5),
                       Text(
-                        'Types',
+                        'Types de document',
                         style: Theme.of(context).textTheme.labelSmall!.copyWith(
                           color: context.read<SwitchPageCubit>().state.selectedPage ==0.1 ? Colors.white : Colors.grey[500],
                         ),
@@ -192,7 +192,7 @@ class _NewDrawerDashboardState extends State<NewDrawerDashboard> {
                       ),
                       SizedBox(width: 5),
                       Text(
-                        'Historiques',
+                        'Historiques des vérifications',
                         style: Theme.of(context).textTheme.labelSmall!.copyWith(
                               color: context.read<SwitchPageCubit>().state.selectedPage == 3 ? Colors.white : Colors.grey[500],
                             ),
@@ -236,7 +236,7 @@ class _NewDrawerDashboardState extends State<NewDrawerDashboard> {
                                 ),
                                 SizedBox(width: 5),
                                 Text(
-                                  'Rapports',
+                                  'Historiques des opérations',
                                   style: Theme.of(context).textTheme.labelSmall!.copyWith(
                                         color: context.read<SwitchPageCubit>().state.selectedPage == 4 ? Colors.white : Colors.grey[500],
                                       ),
