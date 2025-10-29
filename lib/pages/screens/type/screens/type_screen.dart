@@ -65,7 +65,47 @@ class _TypeManagerScreenState extends State<TypeManagerScreen> {
     final isLargeScreen = MediaQuery.of(context).size.width > 1150;
     final theme = Theme.of(context);
     final isLight = theme.brightness == Brightness.light;
-    return  BlocBuilder<TypeDocCubit, TypeDocState>(
+    return BlocListener<TypeDocCubit, TypeDocState>(
+      listener: (context, state) {
+        // Ne pas afficher de notifications pour les suppressions (gérées dans le dialogue)
+        final isDeletion = state.errorMessage.toLowerCase().contains('supprim') || 
+                          state.errorMessage.toLowerCase().contains('suppression') ||
+                          state.errorMessage.toLowerCase().contains('rattaché');
+        
+        if (state.typeStatus == TypeStatus.sucess && state.errorMessage.isNotEmpty && !isDeletion) {
+          ElegantNotification.success(
+            title: const Text("Succès"),
+            background: theme.cardColor,
+            description: Text(
+              state.errorMessage,
+              style: theme.textTheme.labelSmall,
+            ),
+            position: Alignment.topRight,
+            animation: AnimationType.fromRight,
+            icon: const Icon(Icons.check_circle_outline, color: Colors.green),
+          ).show(context);
+          
+          // Rafraîchir la liste après succès (sauf pour les suppressions qui sont gérées dans le dialogue)
+          Future.delayed(const Duration(milliseconds: 500), () {
+            if (context.mounted) {
+              context.read<TypeDocCubit>().getAllType(1);
+            }
+          });
+        } else if (state.typeStatus == TypeStatus.error && state.errorMessage.isNotEmpty && !isDeletion) {
+          ElegantNotification.error(
+            title: const Text("Erreur"),
+            background: theme.cardColor,
+            description: Text(
+              state.errorMessage,
+              style: theme.textTheme.labelSmall,
+            ),
+            position: Alignment.topRight,
+            animation: AnimationType.fromRight,
+            icon: const Icon(Icons.error_outline, color: Colors.red),
+          ).show(context);
+        }
+      },
+      child: BlocBuilder<TypeDocCubit, TypeDocState>(
         builder: (context, state) { // Fournir le Cubit
           return Scaffold(
               drawer: isLargeScreen ? null : const NewDrawerDashboard(),
@@ -171,15 +211,14 @@ SizedBox(height: 2),
                                               return TypeWidget(
                                                 type: type,
                                                 onDelete: () {
-                                                  // context.read<TypeDocCubit>().deleteType(index);
+                                                  if (type.id != null) {
+                                                    showDeleteConfirmation(context, type);
+                                                  }
                                                 },
                                                 onEdit: () {
-
-                                                    log("Le bouton Éditer a été cliqué");
-                                                    showEditDialog(context, index, type);
-
+                                                  log("Le bouton Éditer a été cliqué");
+                                                  showEditDialog(context, index, type);
                                                 }
-
                                               );
                                             },
                                           ),
@@ -204,7 +243,9 @@ SizedBox(height: 2),
               ],
             ),
           );
-        });
+        },
+      ),
+    );
   }
 
   void showEditDialog(BuildContext context, int index, TypeDocModel type) {
@@ -233,9 +274,9 @@ SizedBox(height: 2),
         ),
         actions: [
           TextButton(
-            onPressed: () {
-              final newName = _editController.text;
-              if (newName.isNotEmpty) {
+            onPressed: () async {
+              final newName = _editController.text.trim();
+              if (newName.isNotEmpty && type.id != null) {
                 // Appeler le Cubit pour mettre à jour le type
                 final updatedType = TypeDocModel(
                   id: type.id, // Conserver l'ID existant
@@ -244,8 +285,12 @@ SizedBox(height: 2),
                 );
 
                 // Mettre à jour le type via le Cubit
-
+                await context.read<TypeDocCubit>().updateType(type.id!, updatedType);
+                
                 Navigator.of(context).pop(); // Fermer le dialogue
+                
+                // Rafraîchir la liste après la mise à jour
+                context.read<TypeDocCubit>().getAllType(1);
               }
             },
             child: Text('Enregistrer',style: Theme.of(context).textTheme.labelSmall),
@@ -265,48 +310,116 @@ SizedBox(height: 2),
     final theme = Theme.of(context);
     showDialog(
       context: context,
-      builder: (context) => AlertDialog(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)),
-        title: Text("Modifier le Type", style: theme.textTheme.labelSmall),
-        content: Text("Êtes-vous sûr de vouloir modifier le libelle du type ?", style: theme.textTheme.labelMedium),
+      builder: (dialogContext) => AlertDialog(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+        title: Row(
+          children: [
+            Icon(Icons.warning_amber_rounded, color: Colors.orange, size: 24),
+            SizedBox(width: 8),
+            Expanded(
+              child: Text(
+                "Supprimer le type",
+                style: theme.textTheme.labelMedium?.copyWith(
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
+          ],
+        ),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              "Êtes-vous sûr de vouloir supprimer le type \"${type.name}\" ?",
+              style: theme.textTheme.labelSmall,
+            ),
+            SizedBox(height: 8),
+            Text(
+              "Cette action est irréversible.",
+              style: theme.textTheme.displaySmall?.copyWith(
+                color: Colors.grey[600],
+                fontStyle: FontStyle.italic,
+              ),
+            ),
+          ],
+        ),
         actions: [
           TextButton(
             onPressed: () {
-              Navigator.of(context).pop();
+              Navigator.of(dialogContext).pop();
             },
-            child: Text("Annuler", style: theme.textTheme.labelSmall),
+            child: Text(
+              "Annuler",
+              style: theme.textTheme.labelSmall,
+            ),
           ),
           TextButton(
             onPressed: () async {
-              try {
-                // Supprimer le document
-                final result = await TypeService.updateType(type.id!, type);
+              Navigator.of(dialogContext).pop(); // Fermer le dialogue de confirmation
+              
+              if (type.id == null) {
+                ElegantNotification.error(
+                  background: theme.cardColor,
+                  description: Text(
+                    "Impossible de supprimer : ID du type manquant.",
+                    style: theme.textTheme.labelSmall,
+                  ),
+                  position: Alignment.topRight,
+                  animation: AnimationType.fromRight,
+                ).show(context);
+                return;
+              }
 
-                if (result["status_code"] == 200) {
+              try {
+                final result = await context.read<TypeDocCubit>().deleteType(type.id!);
+                
+                log("Résultat de la suppression: $result");
+
+                // Vérifier que le contexte est toujours valide avant d'afficher les notifications
+                if (!context.mounted) return;
+
+                if (result['success'] == true && result['status_code'] == 200) {
                   // ✅ Notification de succès
                   ElegantNotification.success(
+                    title: const Text("Succès"),
                     background: theme.cardColor,
-                    width: MediaQuery.of(context).size.width * 0.5,
                     description: Text(
-                      result['message'] ?? "Type modifié avec succès",
+                      result['message'] ?? "Type supprimé avec succès",
                       style: theme.textTheme.labelSmall,
                     ),
                     position: Alignment.topRight,
                     animation: AnimationType.fromRight,
                     icon: const Icon(Icons.check_circle_outline, color: Colors.green),
                   ).show(context);
-
-                  // ⏳ Attendre un peu avant de naviguer
-                  Future.delayed(const Duration(milliseconds: 300), () {
-                    if (context.mounted) context.go('/document/List_document');
+                  
+                  // Rafraîchir la liste après succès pour éviter les erreurs
+                  Future.delayed(const Duration(milliseconds: 500), () {
+                    if (context.mounted) {
+                      context.read<TypeDocCubit>().getAllType(1);
+                    }
                   });
                 } else {
-                  // ❌ Notification d'échec (code non 200)
+                  // Gérer les différents codes d'erreur
+                  final statusCode = result['status_code'] ?? 500;
+                  String errorMessage = result['message'] ?? "Erreur lors de la suppression du type.";
+                  
+                  // Pour le cas 409, le message du backend contient déjà toutes les informations
+                  // Pas besoin de modifier le message, il est déjà complet
+                  if (statusCode == 404) {
+                    // Type introuvable
+                    errorMessage = "Ce type n'existe plus.";
+                  } else if (statusCode == 500) {
+                    // Erreur serveur
+                    errorMessage = "Erreur serveur : $errorMessage";
+                  }
+
+                  // ❌ Notification d'erreur
                   ElegantNotification.error(
+                    title: const Text("Erreur"),
                     background: theme.cardColor,
-                    width: MediaQuery.of(context).size.width * 0.5,
                     description: Text(
-                      result['message'] ?? "Échec de la modification du type.",
+                      errorMessage,
                       style: theme.textTheme.labelSmall,
                     ),
                     position: Alignment.topRight,
@@ -315,12 +428,17 @@ SizedBox(height: 2),
                   ).show(context);
                 }
               } catch (e) {
-                // ❌ Notification d'erreur système (exception, etc.)
+                log("Erreur lors de la suppression: $e");
+                
+                // Vérifier que le contexte est toujours valide
+                if (!context.mounted) return;
+                
+                // ❌ Notification d'erreur système
                 ElegantNotification.error(
+                  title: const Text("Erreur"),
                   background: theme.cardColor,
-                  width: MediaQuery.of(context).size.width * 0.5,
                   description: Text(
-                    "Une erreur est survenue lors de la modification du type.",
+                    "Une erreur est survenue lors de la suppression du type: $e",
                     style: theme.textTheme.labelSmall,
                   ),
                   position: Alignment.topRight,
@@ -329,8 +447,13 @@ SizedBox(height: 2),
                 ).show(context);
               }
             },
-
-            child: Text("Supprimer", style: theme.textTheme.labelSmall!.copyWith(color: Colors.red)),
+            child: Text(
+              "Supprimer",
+              style: theme.textTheme.labelSmall?.copyWith(
+                color: Colors.red,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
           ),
         ],
       ),

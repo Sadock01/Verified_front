@@ -56,4 +56,26 @@ class TypeDocRepository {
       throw Exception("Erreur lors de la mise à jour du document");
     }
   }
+
+  Future<Map<String, dynamic>> deleteType(int typeId) async {
+    try {
+      log("Appel au service pour supprimer un type");
+      final response = await TypeService.deleteType(typeId);
+      log("Réponse de suppression du repository: $response");
+      
+      // Retourner directement la réponse du service (déjà formatée)
+      return {
+        'status_code': response['status_code'] ?? 500,
+        'message': response['message'] ?? 'Erreur lors de la suppression du type',
+        'nombre_documents': response['nombre_documents'], // Pour le cas 409
+      };
+    } catch (e) {
+      log("Erreur dans TypeDocRepository: $e");
+      return {
+        'status_code': 500,
+        'message': 'Erreur lors de la suppression du type: $e',
+        'nombre_documents': null,
+      };
+    }
+  }
 }

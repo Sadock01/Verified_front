@@ -25,6 +25,52 @@ class DocumentRepository {
     }
   }
 
+  Future<Map<String, dynamic>> filterDocuments({
+    String? identifier,
+    String? typeName,
+    int? typeId,
+    String? search,
+    String? dateInformationStart,
+    String? dateInformationEnd,
+    String? createdStart,
+    String? createdEnd,
+    int page = 1,
+    int perPage = 10,
+  }) async {
+    try {
+      log("Appel au service pour filtrer les documents");
+      final response = await DocumentService.filterDocuments(
+        identifier: identifier,
+        typeName: typeName,
+        typeId: typeId,
+        search: search,
+        dateInformationStart: dateInformationStart,
+        dateInformationEnd: dateInformationEnd,
+        createdStart: createdStart,
+        createdEnd: createdEnd,
+        page: page,
+        perPage: perPage,
+      );
+      
+      if (response['status_code'] == 200) {
+        log("Filtrage réussi : ${response['data'].length} documents trouvés");
+        return {
+          'status_code': response['status_code'],
+          'data': response['data'],
+          'current_page': response['current_page'],
+          'last_page': response['last_page'],
+          'total': response['total'],
+          'filters_applied': response['filters_applied'],
+        };
+      } else {
+        throw Exception("Échec du filtrage : ${response['message']}");
+      }
+    } catch (e) {
+      log("Erreur dans DocumentRepository lors du filtrage: $e");
+      throw Exception("Erreur lors du filtrage des documents: $e");
+    }
+  }
+
   Future<Map<String, dynamic>> addDocument(
       DocumentsModel documentsModel) async {
     try {
@@ -57,7 +103,8 @@ class DocumentRepository {
       return {
         'status_code': 200,
         'message': 'Documents ajoutés avec succès',
-        'csv_recap': response['csv_recap'], // Passer l'URL du CSV
+        'csv_recap': response['csv_recap'], // Passer l'URL du CSV (ancien format)
+        'excel_recap': response['excel_recap'], // Passer l'URL du Excel (nouveau format)
       };
     } catch (e) {
       return {

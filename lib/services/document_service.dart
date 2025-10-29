@@ -50,6 +50,89 @@ class DocumentService {
     }
   }
 
+  static Future<Map<String, dynamic>> filterDocuments({
+    String? identifier,
+    String? typeName,
+    int? typeId,
+    String? search,
+    String? dateInformationStart,
+    String? dateInformationEnd,
+    String? createdStart,
+    String? createdEnd,
+    int page = 1,
+    int perPage = 10,
+  }) async {
+    final token = SharedPreferencesUtils.getString('auth_token');
+    api.options.headers['AUTHORIZATION'] = 'Bearer $token';
+    
+    // Préparer le body de la requête en excluant les valeurs null ou vides
+    final Map<String, dynamic> requestBody = {};
+    
+    if (identifier != null && identifier.isNotEmpty) {
+      requestBody['identifier'] = identifier;
+    }
+    if (typeName != null && typeName.isNotEmpty) {
+      requestBody['type_name'] = typeName;
+    }
+    if (typeId != null) {
+      requestBody['type_id'] = typeId;
+    }
+    if (search != null && search.isNotEmpty) {
+      requestBody['search'] = search;
+    }
+    if (dateInformationStart != null && dateInformationStart.isNotEmpty) {
+      requestBody['date_information_start'] = dateInformationStart;
+    }
+    if (dateInformationEnd != null && dateInformationEnd.isNotEmpty) {
+      requestBody['date_information_end'] = dateInformationEnd;
+    }
+    if (createdStart != null && createdStart.isNotEmpty) {
+      requestBody['created_start'] = createdStart;
+    }
+    if (createdEnd != null && createdEnd.isNotEmpty) {
+      requestBody['created_end'] = createdEnd;
+    }
+    
+    // Toujours inclure la pagination
+    requestBody['page'] = page;
+    requestBody['per_page'] = perPage;
+    
+    log("Filtrage des documents avec les paramètres: $requestBody");
+
+    try {
+      final response = await api.post(
+        "documents/filter",
+        data: requestBody,
+        options: Options(
+          headers: {
+            'Authorization': 'Bearer $token',
+            'Content-Type': 'application/json',
+            'Accept': 'application/json',
+          },
+        ),
+      );
+
+      log("Réponse du filtrage: ${response.data}");
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        return {
+          'status_code': response.data['status_code'] ?? 200,
+          'message': response.data['message'] ?? 'Documents filtrés avec succès',
+          'data': response.data['data'] ?? [],
+          'current_page': response.data['current_page'] ?? 1,
+          'last_page': response.data['last_page'] ?? 1,
+          'total': response.data['total'] ?? 0,
+          'filters_applied': response.data['filters_applied'] ?? {},
+        };
+      } else {
+        throw Exception("Échec lors du filtrage des documents");
+      }
+    } catch (e) {
+      log("Erreur lors du filtrage des documents: $e");
+      throw Exception("Erreur lors du filtrage des documents: $e");
+    }
+  }
+
   static Future<Map<String, dynamic>> addDocument(DocumentsModel documentsModel) async {
     final token = SharedPreferencesUtils.getString('auth_token');
     api.options.headers['AUTHORIZATION'] = 'Bearer $token';
@@ -92,7 +175,8 @@ class DocumentService {
         return {
           'success': response.data['success'] ?? [],
           'failed': response.data['failed'] ?? [],
-          'csv_recap': response.data['csv_recap'], // URL du rapport CSV
+          'csv_recap': response.data['csv_recap'], // URL du rapport CSV (ancien format)
+          'excel_recap': response.data['excel_recap'], // URL du rapport Excel (nouveau format)
         };
       } else {
         log("Erreur HTTP ${response.statusCode}");
@@ -326,18 +410,37 @@ class DocumentService {
 
   static Future<void> _downloadCsvWebDirect(String csvUrl) async {
     try {
+      // Détecter l'extension du fichier (CSV ou Excel)
+      String fileName = "rapport_documents";
+      if (csvUrl.toLowerCase().contains('.xlsx')) {
+        fileName = "rapport_documents.xlsx";
+      } else if (csvUrl.toLowerCase().contains('.csv')) {
+        fileName = "rapport_documents.csv";
+      } else {
+        // Extraire le nom du fichier de l'URL si possible
+        try {
+          final uri = Uri.parse(csvUrl);
+          final pathSegments = uri.pathSegments;
+          if (pathSegments.isNotEmpty) {
+            fileName = pathSegments.last;
+          }
+        } catch (e) {
+          fileName = "rapport_documents.csv";
+        }
+      }
+      
       // Pour le web, créer un lien de téléchargement avec un nom de fichier
       final anchor = html.AnchorElement(href: csvUrl)
-        ..setAttribute("download", "rapport_documents.csv")
+        ..setAttribute("download", fileName)
         ..setAttribute("target", "_blank")
         ..click();
       
-      log("Rapport CSV téléchargé via lien direct (web)");
+      log("Rapport téléchargé via lien direct (web): $fileName");
     } catch (e) {
       // Fallback: ouvrir dans un nouvel onglet si le téléchargement direct échoue
       try {
         html.window.open(csvUrl, '_blank');
-        log("Rapport CSV ouvert dans un nouvel onglet (fallback)");
+        log("Rapport ouvert dans un nouvel onglet (fallback)");
       } catch (fallbackError) {
         throw Exception("Erreur lors du téléchargement web: $e, fallback: $fallbackError");
       }
@@ -349,11 +452,32 @@ class DocumentService {
       // Pour mobile/desktop, utiliser Dio avec headers spéciaux pour ngrok
       final Dio downloadDio = Dio();
       
+      // Détecter l'extension du fichier (CSV ou Excel)
+      String fileExtension = ".csv";
+      String mimeType = 'text/csv,application/csv,*/*';
+      if (csvUrl.toLowerCase().contains('.xlsx')) {
+        fileExtension = ".xlsx";
+        mimeType = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,*/*';
+      }
+      
+      // Extraire le nom du fichier de l'URL si possible
+      String fileName = "rapport_documents";
+      try {
+        final uri = Uri.parse(csvUrl);
+        final pathSegments = uri.pathSegments;
+        if (pathSegments.isNotEmpty && pathSegments.last.contains('.')) {
+          fileName = pathSegments.last;
+          fileExtension = fileName.substring(fileName.lastIndexOf('.'));
+        }
+      } catch (e) {
+        // Utiliser l'extension par défaut
+      }
+      
       // Headers pour contourner les restrictions ngrok
       downloadDio.options.headers.addAll({
         'ngrok-skip-browser-warning': 'true',
         'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36',
-        'Accept': 'text/csv,application/csv,*/*',
+        'Accept': mimeType,
         'Accept-Language': 'en-US,en;q=0.9',
         'Cache-Control': 'no-cache',
         'Pragma': 'no-cache',
@@ -380,12 +504,14 @@ class DocumentService {
         throw Exception("Impossible d'accéder au répertoire de téléchargement");
       }
       
-      // Créer le fichier
-      final String uniqueFileName = 'rapport_documents_${DateTime.now().millisecondsSinceEpoch}.csv';
+      // Créer le fichier avec le bon nom et extension
+      final String uniqueFileName = fileName.contains('.') 
+          ? '${fileName.split('.').first}_${DateTime.now().millisecondsSinceEpoch}${fileExtension}'
+          : 'rapport_documents_${DateTime.now().millisecondsSinceEpoch}$fileExtension';
       final File file = File('${downloadsDir.path}/$uniqueFileName');
       await file.writeAsBytes(bytes);
       
-      log("Rapport CSV téléchargé avec succès (mobile): ${file.path}");
+      log("Rapport téléchargé avec succès (mobile): ${file.path}");
     } catch (e) {
       log("Erreur détaillée du téléchargement mobile: $e");
       throw Exception("Erreur lors du téléchargement mobile: $e");

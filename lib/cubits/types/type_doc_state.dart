@@ -13,8 +13,8 @@ enum TypeStatus {
 class TypeDocState extends Equatable {
   final TypeStatus typeStatus;
   final List<TypeDocModel> listType;
-  // final int currentPage;
-  // final int totalPage;
+  final int currentPage;
+  final int totalPage;
   final String errorMessage;
   final TypeDocModel? selectedtype;
   // int? offset;
@@ -23,8 +23,9 @@ class TypeDocState extends Equatable {
     required this.typeStatus,
     required this.listType,
     required this.errorMessage,
-     this.selectedtype,
-    // required this.totalPage,
+    this.selectedtype,
+    this.currentPage = 1,
+    this.totalPage = 1,
     // this.searchKey,
   });
 
@@ -32,8 +33,8 @@ class TypeDocState extends Equatable {
     return TypeDocState(
       typeStatus: TypeStatus.initial,
       listType: [],
-      // currentPage: 1,
-      // totalPage: 1,
+      currentPage: 1,
+      totalPage: 1,
       errorMessage: "",
       
     );
@@ -42,7 +43,7 @@ class TypeDocState extends Equatable {
   TypeDocState copyWith({
     TypeStatus? typeStatus,
     List<TypeDocModel>? listType,
-     TypeDocModel? selectedtype,
+    TypeDocModel? selectedtype,
     int? currentPage,
     int? totalPage,
     String? errorMessage,
@@ -54,8 +55,8 @@ class TypeDocState extends Equatable {
       listType: listType ?? this.listType,
       selectedtype: selectedtype ?? this.selectedtype,
       errorMessage: errorMessage ?? this.errorMessage,
-      // currentPage: currentPage ?? this.currentPage,
-      // totalPage: totalPage ?? this.totalPage,
+      currentPage: currentPage ?? this.currentPage,
+      totalPage: totalPage ?? this.totalPage,
       // searchKey: searchKey ?? this.searchKey,
     );
   }
@@ -64,9 +65,9 @@ class TypeDocState extends Equatable {
   List<Object?> get props => [
         typeStatus,
         listType,
-    selectedtype,
-        // currentPage,
-        // totalPage,
+        selectedtype,
+        currentPage,
+        totalPage,
         errorMessage,
       ];
 }

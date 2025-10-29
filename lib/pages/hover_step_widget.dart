@@ -58,6 +58,7 @@ class _HoverAnimatedStepState extends State<HoverAnimatedStep> with SingleTicker
         scale: _scale,
         child: Container(
           width: 280,
+          height: 280, // Hauteur fixe pour tous les conteneurs
           padding: EdgeInsets.all(24),
           margin: EdgeInsets.symmetric(vertical: 12, horizontal: 8),
           decoration: BoxDecoration(
@@ -74,6 +75,7 @@ class _HoverAnimatedStepState extends State<HoverAnimatedStep> with SingleTicker
           ),
           child: Column(
             mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               CircleAvatar(
                 backgroundColor: widget.color,
@@ -81,22 +83,30 @@ class _HoverAnimatedStepState extends State<HoverAnimatedStep> with SingleTicker
                 child: Icon(widget.icon, size: 32, color: Colors.white),
               ),
               SizedBox(height: 16),
-              widget.number == 0 ? const SizedBox(): Text(
-                "Option ${widget.number}",
-                style: Theme.of(context).textTheme.labelSmall!.copyWith(fontWeight: FontWeight.bold, fontSize: 18, color: widget.color),
-              ),
-              SizedBox(height: 8),
+              if (widget.number != 0) ...[
+                Text(
+                  "Option ${widget.number}",
+                  style: Theme.of(context).textTheme.labelSmall!.copyWith(fontWeight: FontWeight.bold, fontSize: 18, color: widget.color),
+                ),
+                SizedBox(height: 8),
+              ],
               Text(
                 widget.title,
                 textAlign: TextAlign.center,
                 style: Theme.of(context).textTheme.labelSmall!.copyWith(fontWeight: FontWeight.w600, fontSize: 16),
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
               ),
               SizedBox(height: 6),
-              Text(
-                widget.desc,
-                textAlign: TextAlign.center,
-                style: Theme.of(context).textTheme.labelSmall!.copyWith(color: Colors.grey[700], fontSize: 14),
-              )
+              Expanded(
+                child: Text(
+                  widget.desc,
+                  textAlign: TextAlign.center,
+                  style: Theme.of(context).textTheme.labelSmall!.copyWith(color: Colors.grey[700], fontSize: 14),
+                  maxLines: 4,
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ),
             ],
           ),
         ),

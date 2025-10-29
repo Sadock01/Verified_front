@@ -33,6 +33,20 @@ class _InlineDateRangePickerState extends State<InlineDateRangePicker> {
   }
 
   @override
+  void didUpdateWidget(InlineDateRangePicker oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.startDate != oldWidget.startDate) {
+      _startDate = widget.startDate;
+    }
+    if (widget.endDate != oldWidget.endDate) {
+      _endDate = widget.endDate;
+    }
+    if (_startDate != null) {
+      _currentMonth = DateTime(_startDate!.year, _startDate!.month);
+    }
+  }
+
+  @override
   void dispose() {
     _overlayEntry?.remove();
     super.dispose();

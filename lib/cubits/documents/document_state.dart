@@ -21,7 +21,17 @@ class DocumentState extends Equatable {
   final int itemsPerPage;
   final String? searchKey;
   final String errorMessage;
-
+  
+  // Filtres actifs
+  final String? filterIdentifier;
+  final String? filterTypeName;
+  final int? filterTypeId;
+  final String? filterSearch;
+  final String? filterDateInformationStart;
+  final String? filterDateInformationEnd;
+  final String? filterCreatedStart;
+  final String? filterCreatedEnd;
+  final bool hasActiveFilters;
 
   const DocumentState({
     required this.documentStatus,
@@ -34,6 +44,15 @@ class DocumentState extends Equatable {
     required this.itemsPerPage,
     this.selectedDocument,
     required this.searchKey,
+    this.filterIdentifier,
+    this.filterTypeName,
+    this.filterTypeId,
+    this.filterSearch,
+    this.filterDateInformationStart,
+    this.filterDateInformationEnd,
+    this.filterCreatedStart,
+    this.filterCreatedEnd,
+    this.hasActiveFilters = false,
   });
 
   factory DocumentState.initial() {
@@ -48,6 +67,7 @@ class DocumentState extends Equatable {
       errorMessage: "",
       apiResponse: '',
       searchKey: '',
+      hasActiveFilters: false,
     );
   }
 
@@ -62,7 +82,37 @@ class DocumentState extends Equatable {
     int? itemsPerPage,
     String? errorMessage,
     String? searchKey,
+    String? filterIdentifier,
+    String? filterTypeName,
+    int? filterTypeId,
+    String? filterSearch,
+    String? filterDateInformationStart,
+    String? filterDateInformationEnd,
+    String? filterCreatedStart,
+    String? filterCreatedEnd,
+    bool? hasActiveFilters,
   }) {
+    // Déterminer les valeurs finales des filtres
+    final String? finalIdentifier = filterIdentifier ?? this.filterIdentifier;
+    final String? finalTypeName = filterTypeName ?? this.filterTypeName;
+    final int? finalTypeId = filterTypeId ?? this.filterTypeId;
+    final String? finalSearch = filterSearch ?? this.filterSearch;
+    final String? finalDateInfoStart = filterDateInformationStart ?? this.filterDateInformationStart;
+    final String? finalDateInfoEnd = filterDateInformationEnd ?? this.filterDateInformationEnd;
+    final String? finalCreatedStart = filterCreatedStart ?? this.filterCreatedStart;
+    final String? finalCreatedEnd = filterCreatedEnd ?? this.filterCreatedEnd;
+    
+    // Calculer hasActiveFilters si non spécifié
+    final bool activeFilters = hasActiveFilters ?? 
+      ((finalIdentifier != null && finalIdentifier.isNotEmpty) ||
+       (finalTypeName != null && finalTypeName.isNotEmpty) ||
+       finalTypeId != null ||
+       (finalSearch != null && finalSearch.isNotEmpty) ||
+       (finalDateInfoStart != null && finalDateInfoStart.isNotEmpty) ||
+       (finalDateInfoEnd != null && finalDateInfoEnd.isNotEmpty) ||
+       (finalCreatedStart != null && finalCreatedStart.isNotEmpty) ||
+       (finalCreatedEnd != null && finalCreatedEnd.isNotEmpty));
+    
     return DocumentState(
       documentStatus: documentStatus ?? this.documentStatus,
       documentStatus1: documentStatus1 ?? this.documentStatus1,
@@ -74,6 +124,31 @@ class DocumentState extends Equatable {
       lastPage: lastPage ?? this.lastPage,
       itemsPerPage: itemsPerPage ?? this.itemsPerPage,
       searchKey: searchKey ?? this.searchKey,
+      filterIdentifier: finalIdentifier,
+      filterTypeName: finalTypeName,
+      filterTypeId: finalTypeId,
+      filterSearch: finalSearch,
+      filterDateInformationStart: finalDateInfoStart,
+      filterDateInformationEnd: finalDateInfoEnd,
+      filterCreatedStart: finalCreatedStart,
+      filterCreatedEnd: finalCreatedEnd,
+      hasActiveFilters: activeFilters,
+    );
+  }
+  
+  // Méthode pour réinitialiser tous les filtres
+  DocumentState clearFilters() {
+    return copyWith(
+      filterIdentifier: null,
+      filterTypeName: null,
+      filterTypeId: null,
+      filterSearch: null,
+      filterDateInformationStart: null,
+      filterDateInformationEnd: null,
+      filterCreatedStart: null,
+      filterCreatedEnd: null,
+      hasActiveFilters: false,
+      currentPage: 1,
     );
   }
 
@@ -87,5 +162,14 @@ class DocumentState extends Equatable {
         itemsPerPage,
         errorMessage,
         searchKey,
+        filterIdentifier,
+        filterTypeName,
+        filterTypeId,
+        filterSearch,
+        filterDateInformationStart,
+        filterDateInformationEnd,
+        filterCreatedStart,
+        filterCreatedEnd,
+        hasActiveFilters,
       ];
 }

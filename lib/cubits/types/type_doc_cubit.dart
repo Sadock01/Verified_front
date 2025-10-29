@@ -66,4 +66,53 @@ class TypeDocCubit extends Cubit<TypeDocState> {
           typeStatus: TypeStatus.error));
     }
   }
+
+  Future<Map<String, dynamic>> deleteType(int typeId) async {
+    try {
+      emit(state.copyWith(
+        typeStatus: TypeStatus.loading,
+        errorMessage: "",
+      ));
+
+      final response = await typeDocRepository.deleteType(typeId);
+      
+      log("Réponse de suppression: ${response['status_code']} - ${response['message']}");
+
+      if (response['status_code'] == 200) {
+        // Suppression réussie : rafraîchir la liste
+        await getAllType(state.currentPage);
+        emit(state.copyWith(
+          typeStatus: TypeStatus.sucess,
+          errorMessage: response['message'],
+        ));
+        return {
+          'success': true,
+          'message': response['message'],
+        };
+      } else {
+        // Gérer les différents codes d'erreur
+        emit(state.copyWith(
+          typeStatus: TypeStatus.error,
+          errorMessage: response['message'],
+        ));
+        return {
+          'success': false,
+          'status_code': response['status_code'],
+          'message': response['message'],
+          'nombre_documents': response['nombre_documents'],
+        };
+      }
+    } catch (e) {
+      log("Erreur lors de la suppression du type: $e");
+      emit(state.copyWith(
+        errorMessage: e.toString(),
+        typeStatus: TypeStatus.error,
+      ));
+      return {
+        'success': false,
+        'status_code': 500,
+        'message': 'Erreur lors de la suppression du type: $e',
+      };
+    }
+  }
 }

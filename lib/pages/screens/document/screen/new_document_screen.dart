@@ -42,7 +42,6 @@ class _NewDocumentScreenState extends State<NewDocumentScreen> with SingleTicker
   final TextEditingController _newTypeController = TextEditingController();
   Uint8List? _selectedFileBytes;
   String? _selectedFileName;
-  bool _showExtractor = false;
 
   TypeDocModel? _selectedType;
 
@@ -57,6 +56,9 @@ class _NewDocumentScreenState extends State<NewDocumentScreen> with SingleTicker
     super.initState();
     _checkAuthentication();
     _tabController = TabController(length: 2, vsync: this);
+    _tabController.addListener(() {
+      setState(() {});
+    });
   }
 
   void _checkAuthentication() async {
@@ -81,6 +83,42 @@ class _NewDocumentScreenState extends State<NewDocumentScreen> with SingleTicker
     if (result != null && result.files.isNotEmpty) {
       setState(() => _selectedFile = result.files.first);
     }
+  }
+
+  Widget _buildTabButton(BuildContext context, String title, int index, IconData icon) {
+    final isSelected = _tabController.index == index;
+    final theme = Theme.of(context);
+    
+    return InkWell(
+      onTap: () {
+        _tabController.animateTo(index);
+      },
+      child: Container(
+        height: 40,
+        decoration: BoxDecoration(
+          color: isSelected ? AppColors.PRIMARY_BLUE_COLOR : Colors.transparent,
+          borderRadius: BorderRadius.circular(6),
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(
+              icon,
+              size: 16,
+              color: isSelected ? Colors.white : Colors.grey[600],
+            ),
+            const SizedBox(width: 6),
+            Text(
+              title,
+              style: theme.textTheme.labelSmall?.copyWith(
+                color: isSelected ? Colors.white : Colors.grey[600],
+                fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
   }
 
   @override
@@ -138,79 +176,86 @@ class _NewDocumentScreenState extends State<NewDocumentScreen> with SingleTicker
                             },
                           ),
                       Expanded(
-                        child: SingleChildScrollView(
-                          child: Column(
-                            children: [
-                              Padding(
-                                padding: const EdgeInsets.symmetric(horizontal: 50, vertical: 15),
-                                child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                                  children: [
-                                    Expanded(
-                                      child: ElevatedButton(
-                                onPressed: () {
-                        setState(() => _showExtractor = false);
-                        },
-
-                          style: ElevatedButton.styleFrom(
-                                          backgroundColor: !_showExtractor ? AppColors.PRIMARY_BLUE_COLOR : Colors.grey[300],
-                                        ),
-                                        child: Text(
-                                          "Enregistrement Manuel",
-                                          style: Theme.of(context).textTheme.labelSmall!.copyWith(color: !_showExtractor ? Colors.white : Colors.black),
-                                        ),
-                                      ),
-                                    ),
-                                    SizedBox(width: 8),
-                                    Expanded(
-                                      child: ElevatedButton(
-                                        onPressed: () {
-                                          setState(() => _showExtractor = true);
-                                        },
-
-                                        style: ElevatedButton.styleFrom(
-                                          backgroundColor: _showExtractor ? AppColors.PRIMARY_BLUE_COLOR : Colors.grey[300],
-                                        ),
-                                        child: Text(
-                                          "Enregistrement par PDF",
-                                          style: Theme.of(context).textTheme.labelSmall!.copyWith(color: _showExtractor ? Colors.white : Colors.black),
-                                        ),
-                                      ),
-                                    ),
-                                  ],
-                                ),
+                        child: Column(
+                          children: [
+                            // Onglets web-style
+                            Container(
+                              margin: const EdgeInsets.symmetric(horizontal: 50, vertical: 15),
+                              constraints: const BoxConstraints(maxWidth: 900),
+                              decoration: BoxDecoration(
+                                color: theme.cardColor,
+                                borderRadius: BorderRadius.circular(8),
+                                border: Border.all(color: Colors.grey[300]!),
                               ),
-
-                              if (_showExtractor) ...[
-                                if (extractedEntities != null)
-                                  ExtractedDataReviewForm(
-                                    extractedData: extractedEntities!,
-                                    documentIdentifier: _identifierController,
-                                    onSubmit: ({
-                                      required String identifier,
-                                      required String description,
-                                      required String typeCertificat,
-                                      required String beneficiaire,
-                                      String? date,
-                                    }) {
-                                      log("Enregistrement document...: $description");
-                                      context.read<DocumentCubit>().addDocument(
-                                        DocumentsModel(
-                                          identifier: identifier,
-                                          descriptionDocument: description,
-                                          typeName: typeCertificat,
-                                          dateInfo: date,
-                                          beneficiaire: beneficiaire,
-                                        ),
-                                      );
-                                    },
-                                  )
-                                else
-                                  _buildUploadForm(context, state),
-                              ] else
-                                ManualDocumentForm(state: state),
-                            ],
-                          ),
+                              child: Row(
+                                children: [
+                                  Expanded(
+                                    child: _buildTabButton(
+                                      context,
+                                      "Enregistrement Manuel",
+                                      0,
+                                      Icons.edit_document,
+                                    ),
+                                  ),
+                                  Container(
+                                    width: 1,
+                                    height: 40,
+                                    color: Colors.grey[300],
+                                  ),
+                                  Expanded(
+                                    child: _buildTabButton(
+                                      context,
+                                      "Enregistrement par PDF",
+                                      1,
+                                      Icons.picture_as_pdf,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            // Contenu des onglets
+                            Expanded(
+                              child: TabBarView(
+                                controller: _tabController,
+                                physics: const NeverScrollableScrollPhysics(), // Désactive le glissement
+                                children: [
+                                  // Onglet 1: Enregistrement Manuel
+                                  SingleChildScrollView(
+                                    child: ManualDocumentForm(state: state),
+                                  ),
+                                  // Onglet 2: Enregistrement par PDF
+                                  SingleChildScrollView(
+                                    child: _tabController.index == 1
+                                        ? (extractedEntities != null
+                                            ? ExtractedDataReviewForm(
+                                                extractedData: extractedEntities!,
+                                                documentIdentifier: _identifierController,
+                                                onSubmit: ({
+                                                  required String identifier,
+                                                  required String description,
+                                                  required String typeCertificat,
+                                                  required String beneficiaire,
+                                                  String? date,
+                                                }) {
+                                                  log("Enregistrement document...: $description");
+                                                  context.read<DocumentCubit>().addDocument(
+                                                    DocumentsModel(
+                                                      identifier: identifier,
+                                                      descriptionDocument: description,
+                                                      typeName: typeCertificat,
+                                                      dateInfo: date,
+                                                      beneficiaire: beneficiaire,
+                                                    ),
+                                                  );
+                                                },
+                                              )
+                                            : _buildUploadForm(context, state))
+                                        : const SizedBox.shrink(),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
                         ),
                       ),
                     ],

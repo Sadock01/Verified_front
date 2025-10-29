@@ -61,4 +61,54 @@ class TypeService {
       throw Exception("Echec lors de la mise à jour d'un document");
     }
   }
+
+  static Future<Map<String, dynamic>> deleteType(int typeId) async {
+    final token = SharedPreferencesUtils.getString('auth_token');
+    api.options.headers['AUTHORIZATION'] = 'Bearer $token';
+
+    try {
+      final response = await api.delete(
+        "types/$typeId",
+        options: Options(
+          validateStatus: (status) => status != null && status < 600, // Accepter tous les codes HTTP
+        ),
+      );
+      
+      log("Réponse de suppression du type: ${response.statusCode} - ${response.data}");
+      
+      // Toujours retourner la réponse, même si c'est une erreur (409, 404, etc.)
+      return {
+        'status_code': response.data['status_code'] ?? response.statusCode ?? 500,
+        'message': response.data['message'] ?? 'Type supprimé avec succès',
+        'nombre_documents': response.data['nombre_documents'], // Pour le cas 409
+      };
+    } on DioException catch (e) {
+      // Gérer les erreurs HTTP spécifiques
+      if (e.response != null) {
+        final statusCode = e.response!.statusCode;
+        final data = e.response!.data;
+        
+        log("Erreur DioException lors de la suppression: $statusCode - ${data}");
+        
+        return {
+          'status_code': statusCode ?? 500,
+          'message': data['message'] ?? 'Erreur lors de la suppression du type',
+          'nombre_documents': data['nombre_documents'], // Pour le cas 409
+        };
+      }
+      
+      // Erreur réseau sans réponse (pas de connexion, timeout, etc.)
+      log("Erreur de connexion: ${e.message}");
+      return {
+        'status_code': 500,
+        'message': 'Erreur de connexion lors de la suppression du type: ${e.message}',
+      };
+    } catch (e) {
+      log("Erreur inattendue lors de la suppression du type: $e");
+      return {
+        'status_code': 500,
+        'message': 'Erreur lors de la suppression du type: $e',
+      };
+    }
+  }
 }

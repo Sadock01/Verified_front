@@ -45,43 +45,69 @@ class _ListDocumentScreenState extends State<ListDocumentScreen> {
   }
 
   final ScrollController _scrollController = ScrollController();
+  
+  // Variables d'état pour les filtres
+  final TextEditingController _searchController = TextEditingController();
+  TypeDocModel? _selectedType;
+  final TextEditingController _manualTypeController = TextEditingController();
+  DateTime? _dateInformationStart;
+  DateTime? _dateInformationEnd;
+  DateTime? _createdStart;
+  DateTime? _createdEnd;
 
   @override
   void dispose() {
-    _scrollController.dispose(); // Toujours disposer le controller
+    _scrollController.dispose();
+    _searchController.dispose();
+    _manualTypeController.dispose();
     super.dispose();
-  }
-
-  void _showDatePicker(BuildContext context) {
-    showDateRangePicker(
-      context: context,
-      firstDate: DateTime(2020),
-      lastDate: DateTime.now(),
-    ).then((dateRange) {
-      if (dateRange != null) {
-        // TODO: Appliquer le filtre de date
-        print('Période sélectionnée: ${dateRange.start} - ${dateRange.end}');
-      }
-    });
-  }
-  String? _selectedMonth;
-  void handleMonthSelection(String monthValue) {
-    setState(() {
-      _selectedMonth = monthValue; // Mettre à jour la sélection du mois
-    });
-    log("Mois sélectionné : $monthValue");
-    // Vous pouvez appliquer ici la logique de filtrage en fonction de _selectedMonth
   }
 
   void _checkAuthentication() async {
     final token = SharedPreferencesUtils.getString('auth_token');
     if (token == null || token.isEmpty) {
-      // Rediriger vers la page de login
-      context.go('/login'); // ou Navigator.of(context).pushReplacementNamed('/login');
+      context.go('/login');
     }
   }
-  TypeDocModel? _selectedType;
-  final TextEditingController _manualTypeController = TextEditingController();
+
+  // Méthode pour formater une date au format YYYY-MM-DD
+  String _formatDate(DateTime? date) {
+    if (date == null) return '';
+    return '${date.year.toString().padLeft(4, '0')}-'
+           '${date.month.toString().padLeft(2, '0')}-'
+           '${date.day.toString().padLeft(2, '0')}';
+  }
+
+  // Méthode pour appliquer les filtres
+  void _applyFilters() {
+    context.read<DocumentCubit>().filterDocuments(
+      identifier: _searchController.text.trim().isEmpty ? null : _searchController.text.trim(),
+      typeId: _selectedType?.id,
+      typeName: _selectedType == null && _manualTypeController.text.trim().isNotEmpty 
+          ? _manualTypeController.text.trim() 
+          : null,
+      dateInformationStart: _dateInformationStart != null ? _formatDate(_dateInformationStart) : null,
+      dateInformationEnd: _dateInformationEnd != null ? _formatDate(_dateInformationEnd) : null,
+      createdStart: _createdStart != null ? _formatDate(_createdStart) : null,
+      createdEnd: _createdEnd != null ? _formatDate(_createdEnd) : null,
+      page: 1,
+      perPage: context.read<DocumentCubit>().state.itemsPerPage,
+    );
+  }
+
+  // Méthode pour réinitialiser les filtres
+  void _clearFilters() {
+    setState(() {
+      _searchController.clear();
+      _selectedType = null;
+      _manualTypeController.clear();
+      _dateInformationStart = null;
+      _dateInformationEnd = null;
+      _createdStart = null;
+      _createdEnd = null;
+    });
+    context.read<DocumentCubit>().clearFilters();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -111,7 +137,7 @@ class _ListDocumentScreenState extends State<ListDocumentScreen> {
                     margin: EdgeInsets.only(left: 10, right: 10, top: 10, bottom: 20),
                     decoration: BoxDecoration(
                       color: theme.cardColor,
-                      borderRadius: BorderRadius.circular(4),
+                      borderRadius: BorderRadius.circular(2),
                       boxShadow: [
                         isLight
                             ? BoxShadow(
@@ -125,8 +151,8 @@ class _ListDocumentScreenState extends State<ListDocumentScreen> {
                     ),child: Column(children: [
                       Row(
                         children: [
-                          Expanded(
-                            flex: 2,
+                          SizedBox(
+                            width: 200,
                             child: BlocBuilder<TypeDocCubit, TypeDocState>(
                               builder: (context, state) {
                                 return TypeDropdownWidget(
@@ -141,35 +167,100 @@ class _ListDocumentScreenState extends State<ListDocumentScreen> {
                                 );
                               },
                             ),
-                          ),SizedBox(width: 10,),
-                          Expanded(flex: 2,child: SearchFieldWidget()),SizedBox(width: 10,),
-                           Expanded(
-                             flex: 2,
-                             child: InlineDateRangePicker(
-                               onDateRangeChanged: (startDate, endDate) {
-                                 // TODO: Appliquer le filtre de date
-                                 print('Période sélectionnée: $startDate - $endDate');
-                               },
-                             ),
-                           ),SizedBox(width: 10,),
-                          Expanded(flex: 2,child:ElevatedButton(
-                            onPressed: (){},
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: AppColors.PRIMARY_BLUE_COLOR,
-                              padding: EdgeInsets.symmetric(vertical: 16),
-                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)),
-                            ),
-                            child:  Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Image.asset('assets/images/filtre.png',width:22,height:22,color: Colors.grey[300],),
-                                Text(
-                                  "Filtrer",
-                                  style: Theme.of(context).textTheme.labelSmall!.copyWith(fontSize: 18, color: Colors.white),
+                          ),
+                          SizedBox(width: 10,),
+                          SizedBox(
+                            width: 200,
+                            child: TextFormField(
+                              controller: _searchController,
+                              style: theme.textTheme.labelSmall,
+                              decoration: InputDecoration(
+                                hintText: "Rechercher par identifiant",
+                                hintStyle: theme.textTheme.labelSmall!.copyWith(color: Colors.grey),
+                                prefixIcon: const Icon(Icons.search, color: Colors.grey),
+                                border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(5),
+                                  borderSide: BorderSide(color: Colors.grey[300]!),
                                 ),
-                              ],
+                                enabledBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(5),
+                                  borderSide: BorderSide(color: Colors.grey[300]!),
+                                ),
+                                focusedBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(5),
+                                  borderSide: BorderSide(color: AppColors.PRIMARY_BLUE_COLOR),
+                                ),
+                                contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 14),
+                              ),
                             ),
-                          ),),
+                          ),
+                          SizedBox(width: 10,),
+                          SizedBox(
+                            width: 200,
+                            child: InlineDateRangePicker(
+                              startDate: _dateInformationStart,
+                              endDate: _dateInformationEnd,
+                              onDateRangeChanged: (startDate, endDate) {
+                                setState(() {
+                                  _dateInformationStart = startDate;
+                                  _dateInformationEnd = endDate;
+                                });
+                              },
+                            ),
+                          ),
+                          SizedBox(width: 10,),
+                          SizedBox(
+                            width: 200,
+                            child: ElevatedButton(
+                              onPressed: _applyFilters,
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: AppColors.PRIMARY_BLUE_COLOR,
+                                padding: EdgeInsets.symmetric(vertical: 16),
+                                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)),
+                              ),
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Image.asset('assets/images/filtre.png', width: 22, height: 22, color: Colors.grey[300]),
+                                  const SizedBox(width: 8),
+                                  Text(
+                                    "Filtrer",
+                                    style: Theme.of(context).textTheme.labelSmall!.copyWith(fontSize: 16, color: Colors.white),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                          SizedBox(width: 10,),
+                          SizedBox(
+                            width: 150,
+                            child: OutlinedButton(
+                              onPressed: state.hasActiveFilters ? _clearFilters : null,
+                              style: OutlinedButton.styleFrom(
+                                padding: EdgeInsets.symmetric(vertical: 16),
+                                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)),
+                                side: BorderSide(color: state.hasActiveFilters ? AppColors.PRIMARY_BLUE_COLOR : Colors.grey[300]!),
+                              ),
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Icon(
+                                    Icons.refresh,
+                                    size: 20,
+                                    color: state.hasActiveFilters ? AppColors.PRIMARY_BLUE_COLOR : Colors.grey[400],
+                                  ),
+                                  const SizedBox(width: 8),
+                                  Text(
+                                    "Réinitialiser",
+                                    style: Theme.of(context).textTheme.labelSmall!.copyWith(
+                                      fontSize: 16,
+                                      color: state.hasActiveFilters ? AppColors.PRIMARY_BLUE_COLOR : Colors.grey[400],
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
                         ],
                       ),
 
@@ -214,8 +305,14 @@ class _ListDocumentScreenState extends State<ListDocumentScreen> {
                               ResponsiveActionButtons(
                                 newDocumentRoute: '/document/nouveau-document',
                                 onReload: () {
-                                  // TODO: Implémenter le reload
-                                  print('Reload documents');
+                                  final currentState = context.read<DocumentCubit>().state;
+                                  if (currentState.hasActiveFilters) {
+                                    // Réappliquer les filtres
+                                    _applyFilters();
+                                  } else {
+                                    // Recharger tous les documents
+                                    context.read<DocumentCubit>().getAllDocument(1);
+                                  }
                                 },
                               ),
                             ],
